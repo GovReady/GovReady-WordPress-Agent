@@ -57,18 +57,5 @@
 <script src="https://cdn.auth0.com/js/lock-7.12.js"></script>
 
 <script>
-  var domain = 'govready.auth0.com';
-  var clientID = 'HbYZO5QXKfgNshjKlhZGizskiaJH9kGH';
-  var lock = new Auth0Lock(clientID, domain);
-  lock.show({
-    icon: 'https://avatars1.githubusercontent.com/u/6815262?v=3&s=200',
-    container: 'widget-container',
-    focusInput: false,
-    popup: false,
-    responseType: 'token'
-  }, function (err, profile, token) {
-    console.log(token);
-    alert(token);
-    
-  });
+  
 </script>
