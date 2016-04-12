@@ -67,6 +67,7 @@
     popup: false,
     responseType: 'token'
   }, function (err, profile, token) {
+    console.log(token);
     alert(token);
     
   });
