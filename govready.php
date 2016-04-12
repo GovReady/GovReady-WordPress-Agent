@@ -171,8 +171,8 @@ class Govready {
 
     // Make sure our token is a-ok
     $token = get_option( 'govready_token', array() );
-    if ( !$anonymous && ( empty($token['endoflife']) || $token['endoflife'] < time() ) ) {
-      $token = $this->api_refresh_token();
+    if ( !$anonymous && ( empty($token['id_token']) || empty($token['endoflife']) || $token['endoflife'] < time() ) ) {
+      $token = $this->api_refresh_token( true );
     }
     $token = !$anonymous && !empty($token['id_token']) ? $token['id_token'] : false;
 
@@ -180,7 +180,7 @@ class Govready {
     // @todo should we support HTTP_request (https://pear.php.net/manual/en/package.http.http-request.intro.php)?
     $headers = array( 'Content-Type: application/json' );
     if ( $token ) {
-      array_push( $headers, 'authentication: Bearer ' . $token );
+      array_push( $headers, 'Authorization: Bearer ' . $token );
     }
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $url);
@@ -192,6 +192,7 @@ class Govready {
     curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
     $response = curl_exec($curl);
     curl_close($curl);
+
 
     $response = json_decode( $response, true );
 
@@ -221,7 +222,7 @@ class Govready {
     }
 
     $response = $this->api( '/refresh-token', 'POST', array( 'refresh_token' => $token), true );
-    $response['endoflife'] = time() + (int) $response['expires'];
+    $response['endoflife'] = time() + (int) $response['expires_in'];
     update_option( 'govready_token', $response );
     
     if ($return) {
