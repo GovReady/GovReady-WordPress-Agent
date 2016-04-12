@@ -22,7 +22,12 @@ class Govready {
 
   public function __construct() {
     $this->key = 'govready';
-    $this->govready_url = 'http://localhost:4000/v1.0';
+    // @todo: get this from an API call?
+    $this->auth0 = array(
+      'domain' => 'govready.auth0.com',
+      'client_id' => 'HbYZO5QXKfgNshjKlhZGizskiaJH9kGH'
+    );
+    $this->govready_url = 'http://workhorse.albatrossdigital.com:4000/v1.0';
 
     // Load plugin textdomain
     add_action( 'init', array( $this, 'plugin_textdomain' ) );
@@ -34,9 +39,9 @@ class Govready {
     add_action( 'admin_menu', array($this, 'create_menu') );
 
     // Add the AJAX proxy endpoints
-    add_action( 'wp_ajax_govready_token', array($this, 'api_token') );
+    add_action( 'wp_ajax_govready_refresh_token', array($this, 'api_refresh_token') );
     add_action( 'wp_ajax_govready_proxy', array($this, 'api_proxy') );
-    add_action( 'wp_ajax_govready_v1_trigger', array($this, 'api_agent') );
+    add_action( 'wp_ajax_govready_nopriv_v1_trigger', array($this, 'api_agent') );
     
   }
 
@@ -109,18 +114,48 @@ class Govready {
    * Display the GovReady dashboard.
    */
   public function dashboard_page() {
-    
-    if( empty(get_option( 'govready_settings' )) ) {
+    $options = get_option( 'govready_options', array() );
+    $path = plugins_url('includes/js/',__FILE__);
+
+    // First time using app, need to set everything up
+    if( empty($options['refresh_token']) ) {
+      
+      // Save some JS variables (available at govready.siteId, etc)
+      wp_enqueue_script( 'govready-connect', $path . 'govready-connect.js' );
+      wp_localize_script( 'govready-connect', 'govready_connect', array( 
+        'nonce' => wp_create_nonce( $this->key ),
+        'auth0' => $this->auth0
+      ) );
+
+      // Call GovReady /initialize to set the allowed CORS endpoint
+      // @todo: error handling: redirect user to GovReady API dedicated login page
+      if (empty($options['siteId'])) {
+        $data = array(
+          'url' => get_site_url(),
+        );
+        $response = $this->api( '/initialize', 'POST', $data, true );
+        print_r($response);
+        $options['siteId'] = $response['_id'];
+        update_option( 'govready_options', $options );
+      }
       
       require_once plugin_dir_path(__FILE__) . '/templates/govready-connect.php';
     
     }
+
+    // Show me the dashboard!
     else {
+    
+      // Save some JS variables (available at govready.siteId, etc)
+      wp_enqueue_script( 'govready-dashboard', $path . 'govready.js' );
+      wp_localize_script( 'govready-dashboard', 'govready', array( 
+        'siteId' => !is_null($options['siteId']) ? $options['siteId'] : null, 
+        'nonce' => wp_create_nonce( $this->key )
+      ) );
 
-      print 'This will be the dashboard';
-      // @todo: call separate class?
+      require_once plugin_dir_path(__FILE__) . '/templates/govready-dashboard.php';
 
-    }
+    } // if()
 
   }
 
@@ -128,43 +163,80 @@ class Govready {
 
   /**
    * Make a request to the GovReady API.
+   * @todo: error handling
    */
-  public function api( $endpoint, $method = 'GET', $data = array() ) {
+  public function api( $endpoint, $method = 'GET', $data = array(), $anonymous = false ) {
 
     $url = $this->govready_url . $endpoint;
-    $token = get_option( 'govready_token' );
 
-    $ch = curl_init();
-    curl_setopt( $ch, CURLOPT_URL, $url );
-    curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, $method );
-    if ( !empty($data) ) {
-      curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query($data) );
+    // Make sure our token is a-ok
+    $token = get_option( 'govready_token', array() );
+    if ( !$anonymous && ( empty($token['endoflife']) || $token['endoflife'] < time() ) ) {
+      $token = $this->api_refresh_token();
     }
-    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+    $token = !$anonymous && !empty($token['id_token']) ? $token['id_token'] : false;
+
+    // Make the API request with cURL
+    // @todo should we support HTTP_request (https://pear.php.net/manual/en/package.http.http-request.intro.php)?
+    $headers = array( 'Content-Type: application/json' );
     if ( $token ) {
-      curl_setopt( $ch, CURLOPT_HTTPHEADER, array( 'Bearer: ' . $token ) );
+      array_push( $headers, 'authentication: Bearer ' . $token );
     }
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+    if ( $data ) {
+      curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
+    }
+    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+    $response = curl_exec($curl);
+    curl_close($curl);
 
-    $response = curl_exec($ch);
-    print_r($response);
-    $response = json_decode($response);
-    print_r($url);
-        print_r($response);
+    $response = json_decode( $response, true );
 
     return $response;
 
   }
 
 
-  // API Token callback
-  public function api_token() {
+  /**
+   * Refresh the access token.
+   */
+  public function api_refresh_token( $return = false ) {
+    
+    // @todo: nonce this call
+    $options = get_option( 'govready_options' );
+    if ( $_REQUEST['refresh_token'] ) {
+      // Validate the nonce
+      if (check_ajax_referer( $this->key, '_ajax_nonce' )) {
+        //return;
+      }
+      $token = $_REQUEST['refresh_token'];
+      $options['refresh_token'] = $token;
+      update_option( 'govready_options', $options );
+    }
+    else {
+      $token = !empty($options['refresh_token']) ? $options['refresh_token'] : '';
+    }
 
-    //require_once plugin_dir_path(__FILE__) . '/lib/govready-agent.class.php';
+    $response = $this->api( '/refresh-token', 'POST', array( 'refresh_token' => $token), true );
+    $response['endoflife'] = time() + (int) $response['expires'];
+    update_option( 'govready_token', $response );
+    
+    if ($return) {
+      return $response;
+    }
+    else {
+      wp_send_json($response);
+    }
 
   }
 
 
-  // API Proxy callback
+  /**
+   * Call the GovReady API.
+   */
   public function api_proxy() {
 
     $method = !empty($_REQUEST['method']) ? $_REQUEST['method'] : $_SERVER['REQUEST_METHOD'];
@@ -175,7 +247,10 @@ class Govready {
   }
 
 
-  // API Ping trigger callback
+  /**
+   * Ping the site to trigger the agent to collect data.
+   * Does not require authentication.
+   */
   public function api_agent() {
 
     require_once plugin_dir_path(__FILE__) . '/lib/govready-agent.class.php';
