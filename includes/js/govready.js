@@ -1,17 +1,15 @@
 
-(function($, Proud) {
-  Proud.behaviors.proud_map_app = {
-    attach: function(context, settings) {
-      var instances = _.get(settings, 'proud_map_app.instances');
-      // initialize instances
-      if (instances) {
-        $.each(instances, function(id, appVals) {
-          var $app = $('#' + id);
-          if(!$app.hasClass('ng-scope')) {
-            angular.bootstrap($app, ['mapAppParent']);
-          }
-        });
-      }
+(function($) {
+  console.log(govready);
+  // Example API query
+  jQuery.get(
+    ajaxurl, 
+    {
+      'action': 'govready_proxy',
+      'endpoint': 'sites/' + govready.siteId
+    }, 
+    function(response){
+      console.log('Data from the api', response);
     }
-  }
-})(jQuery, Proud);
+  );
+})(jQuery);
