@@ -21,8 +21,8 @@ namespace Govready;
 class Govready {
 
   public function __construct() {
-
     $this->key = 'govready';
+    $this->govready_url = 'http://localhost:4000/v1.0';
 
     // Load plugin textdomain
     add_action( 'init', array( $this, 'plugin_textdomain' ) );
@@ -32,6 +32,11 @@ class Govready {
 
     // Add the dashboard page
     add_action( 'admin_menu', array($this, 'create_menu') );
+
+    // Add the AJAX proxy endpoints
+    add_action( 'wp_ajax_govready_token', array($this, 'api_token') );
+    add_action( 'wp_ajax_govready_proxy', array($this, 'api_proxy') );
+    add_action( 'wp_ajax_govready_v1_trigger', array($this, 'api_agent') );
     
   }
 
@@ -120,12 +125,63 @@ class Govready {
   }
 
 
-  // Init on plugins loaded
-  public function govready_agent() {
+
+  /**
+   * Make a request to the GovReady API.
+   */
+  public function api( $endpoint, $method = 'GET', $data = array() ) {
+
+    $url = $this->govready_url . $endpoint;
+    $token = get_option( 'govready_token' );
+
+    $ch = curl_init();
+    curl_setopt( $ch, CURLOPT_URL, $url );
+    curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, $method );
+    if ( !empty($data) ) {
+      curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query($data) );
+    }
+    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+    if ( $token ) {
+      curl_setopt( $ch, CURLOPT_HTTPHEADER, array( 'Bearer: ' . $token ) );
+    }
+
+    $response = curl_exec($ch);
+    print_r($response);
+    $response = json_decode($response);
+    print_r($url);
+        print_r($response);
+
+    return $response;
+
+  }
+
+
+  // API Token callback
+  public function api_token() {
+
+    //require_once plugin_dir_path(__FILE__) . '/lib/govready-agent.class.php';
+
+  }
+
+
+  // API Proxy callback
+  public function api_proxy() {
+
+    $method = !empty($_REQUEST['method']) ? $_REQUEST['method'] : $_SERVER['REQUEST_METHOD'];
+    $response = $this->api( $_REQUEST['endpoint'], $method, $_REQUEST );
+    wp_send_json($response);
+    wp_die();
+
+  }
+
+
+  // API Ping trigger callback
+  public function api_agent() {
 
     require_once plugin_dir_path(__FILE__) . '/lib/govready-agent.class.php';
 
   }
+
 
 } // end class
 
