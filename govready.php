@@ -27,7 +27,7 @@ class Govready {
       'domain' => 'govready.auth0.com',
       'client_id' => 'HbYZO5QXKfgNshjKlhZGizskiaJH9kGH'
     );
-    $this->govready_url = 'http://workhorse.albatrossdigital.com:4000/v1.0';
+    $this->govready_url = 'http://plugin.govready.com/v1.0';
 
     // Load plugin textdomain
     add_action( 'init', array( $this, 'plugin_textdomain' ) );
