@@ -10,18 +10,18 @@ import StackWidget from './widgets/StackWidget';
 import LogsWidget from './widgets/LogsWidget';
 
 class WidgetsListPage extends Component {
-  render() {
+  render () {
     return (
       <div className='widget-layout'>
         <div className='row row-top'>
           <div className='col-sm-6 col-md-3'>
             <PluginWidget widgetName='PluginWidget'/>
           </div>
-         
+
           <div className='col-sm-6 col-md-3'>
             <MeasuresWidget widgetName='MeasuresWidget'/>
           </div>
-         
+
           <div className='col-sm-6 col-md-3'>
             <DomainsWidget widgetName='DomainsWidget'/>
           </div>
@@ -30,16 +30,15 @@ class WidgetsListPage extends Component {
           <div className='col-xs-12'>
             <h2>Logs</h2>
           </div>
-       
+
           <div className='col-sm-6 col-md-3'>
             <LogsWidget widgetName='LogsWidget' logType='error'/>
           </div>
 
-       
           <div className='col-sm-6 col-md-3'>
             <LogsWidget widgetName='LogsWidget' logType='access'/>
           </div>
-       
+
           <div className='col-sm-6 col-md-3'>
             <LogsWidget widgetName='LogsWidget' logType='login'/>
           </div>
@@ -51,7 +50,7 @@ class WidgetsListPage extends Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 
@@ -60,14 +59,13 @@ WidgetsListPage.propTypes = {
   appState: PropTypes.object.isRequired
 };
 
-
-function mapStateToProps(state) {
+function mapStateToProps (state) {
   return {
     appState: state.widgetState
   };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps (dispatch) {
   return {
     actions: bindActionCreators(actions, dispatch)
   };

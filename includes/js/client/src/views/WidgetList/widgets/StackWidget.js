@@ -1,32 +1,31 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import Widget from '../Widget';
-
 
 class StackWidget extends Component {
 
-  componentWillMount() {
+  componentWillMount () {
     Widget.getPayload(this, apiUrl + 'measuresData.json');
   }
 
-  processData(data) {
+  processData (data) {
     return data;
   }
 
-  systemTable(widget) {
+  systemTable (widget) {
     const permissionsState = () => {
       let classname = 'danger';
       let text = 'Not run';
       if (widget.data.scan && widget.data.scan.state) {
         text = widget.data.scan.state;
-        if (widget.data.scan.state == 'Passing') {
+        if (widget.data.scan.state === 'Passing') {
           classname = 'success';
         }
       }
       return (
-        <span className={"label label-" + classname}>{text}</span>
+        <span className={'label label-' + classname}>{text}</span>
       );
     };
-  
+
     return (
       <div className='table-responsive'>
         <table className='table'>
@@ -58,25 +57,17 @@ class StackWidget extends Component {
           </tbody>
         </table>
       </div>
-    )
+    );
   }
 
-  render() {
+  render () {
     const widget = this.props.widget;
-    let title = 'Logs';
-    if (this.props.logType == 'error') {
-      title = 'Errors';
-    } else if (this.props.logType == 'access') {
-      title = 'Access';
-    } else if (this.props.logType == 'login') {
-      title = 'Logins';
-    }
     return (
-      <div className="widget stack-widget">
-        {widget.status !== "loaded" && Widget.loadingDisplay()}
-        {widget.status === "loaded" &&  
+      <div className='widget stack-widget'>
+        {widget.status !== 'loaded' && Widget.loadingDisplay()}
+        {widget.status === 'loaded' &&
           <div>
-            {Widget.titleSection(title)}
+            {Widget.titleSection('System')}
             {this.systemTable(widget)}
           </div>
         }

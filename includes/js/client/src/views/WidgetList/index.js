@@ -1,2 +1,2 @@
-import WidgetList from './WidgetList'
-export default WidgetList
+import WidgetList from './WidgetList';
+export default WidgetList;

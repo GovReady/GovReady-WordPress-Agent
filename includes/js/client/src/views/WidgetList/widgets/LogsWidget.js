@@ -1,18 +1,17 @@
 import React, { Component, PropTypes } from 'react';
 import Widget from '../Widget';
 
-
 class LogsWidget extends Component {
 
-  componentWillMount() {
+  componentWillMount () {
     Widget.getPayload(this, apiUrl + 'measuresData.json');
   }
 
-  processData(data) {
+  processData (data) {
     return data;
   }
 
-  printLogsList(widget, count) {
+  printLogsList (widget, count) {
     if (widget.data[this.props.logType]) {
       const logs = widget.data[this.props.logType].slice(0, count);
       return (
@@ -28,24 +27,24 @@ class LogsWidget extends Component {
             </div>
           ))}
         </div>
-      )
+      );
     }
   }
 
-  render() {
+  render () {
     const widget = this.props.widget;
     let title = 'Logs';
-    if (this.props.logType == 'error') {
+    if (this.props.logType === 'error') {
       title = 'Errors';
-    } else if (this.props.logType == 'access') {
+    } else if (this.props.logType === 'access') {
       title = 'Access';
-    } else if (this.props.logType == 'login') {
+    } else if (this.props.logType === 'login') {
       title = 'Logins';
     }
     return (
-      <div className="widget plugin-measures">
-        {widget.status !== "loaded" && Widget.loadingDisplay()}
-        {widget.status === "loaded" &&  
+      <div className='widget plugin-measures'>
+        {widget.status !== 'loaded' && Widget.loadingDisplay()}
+        {widget.status === 'loaded' &&
           <div>
             {Widget.titleSection(title)}
             {this.printLogsList(widget, 5)}
@@ -56,6 +55,8 @@ class LogsWidget extends Component {
   }
 }
 
-LogsWidget.propTypes = Widget.propTypes();
+LogsWidget.propTypes = Widget.propTypes({
+  logType: PropTypes.string.isRequired
+});
 
 export default Widget.connect(LogsWidget);

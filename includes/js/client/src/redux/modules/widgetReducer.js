@@ -8,28 +8,27 @@ export const WIDGETS_IMPORTED = 'WIDGETS_IMPORTED';
 export const WIDGET_LOADING = 'WIDGET_LOADING';
 export const WIDGET_LOADED = 'WIDGET_LOADED';
 
-
 // ------------------------------------
 // Actions
 // ------------------------------------
 
 // Fired when widgets are ready
-export function widgetsImported(widgets: object): Action {
+export function widgetsImported (widgets: object): Action {
   return { type: WIDGETS_IMPORTED, widgets: widgets };
 }
 
 // Fired when individual widget fetching data
-export function widgetLoading(widgetName): Action {
+export function widgetLoading (widgetName): Action {
   return { type: WIDGET_LOADING, widgetName: widgetName };
 }
 
 // Fired when widget has data
-export function widgetLoaded(widgetName, data): Action {
+export function widgetLoaded (widgetName, data): Action {
   return { type: WIDGET_LOADED, widgetName: widgetName, data: data };
 }
 
 // Fired when widget should get data
-export function widgetLoadData(widgetName: string, url: string, processData: Function): Function  {
+export function widgetLoadData (widgetName: string, url: string, processData: Function): Function {
   return (dispatch: Function) => {
     // Call loading action
     dispatch(widgetLoading(widgetName));
@@ -46,11 +45,11 @@ export function widgetLoadData(widgetName: string, url: string, processData: Fun
         return response.json();
         // @TODO handle Error
       } else {
-          let error = new Error(response.statusText);
-          error.response = response;
-          console.log(error);
-          return;
-        }
+        let error = new Error(response.statusText);
+        error.response = response;
+        console.log(error);
+        return;
+      }
     }).then((json: object) => {
       const data = processData(json);
       // Call loaded action
@@ -87,7 +86,7 @@ const ACTION_HANDLERS = {
     };
     return newState;
   }
-}
+};
 
 // ------------------------------------
 // Reducer
@@ -124,8 +123,8 @@ const initialState = {
 };
 
 export default function counterReducer (state: object = initialState, action: Action): object {
-  const handler = ACTION_HANDLERS[action.type]
-  if(handler) {
+  const handler = ACTION_HANDLERS[action.type];
+  if (handler) {
     let newState = objectAssign({}, state);
     return handler(newState, action);
   }

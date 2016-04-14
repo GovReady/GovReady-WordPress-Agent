@@ -1,18 +1,17 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import Widget from '../Widget';
-
 
 class MeasuresWidget extends Component {
 
-  componentWillMount() {
+  componentWillMount () {
     Widget.getPayload(this, apiUrl + 'measuresData.json');
   }
 
-  processData(data) {
+  processData (data) {
     return data;
   }
 
-  render() {
+  render () {
     const widget = this.props.widget;
     let lastRun = 'Never';
     let totalMeasures = 0;
@@ -22,11 +21,11 @@ class MeasuresWidget extends Component {
       totalMeasures = widget.data.measures.length;
     }
     return (
-      <div className="widget measures-widget">
-        {widget.status !== "loaded" && Widget.loadingDisplay()}
-        {widget.status === "loaded" &&  
-          <div className="panel panel-default">
-            <div className="panel-body">
+      <div className='widget measures-widget'>
+        {widget.status !== 'loaded' && Widget.loadingDisplay()}
+        {widget.status === 'loaded' &&
+          <div className='panel panel-default'>
+            <div className='panel-body'>
               <h4>
                 {lastRun}
                 <br/>
