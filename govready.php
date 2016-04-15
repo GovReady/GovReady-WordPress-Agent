@@ -64,10 +64,8 @@ class Govready {
    * can connect to the GovReady API.
    */
   public function plugin_activation() {
-
-    if( empty(get_option( 'govready_domain' )) ) {
-
-      //add_option( 'govready_version', GOVREADY_VERSION ); @todo: this should be done only after connecting
+    $options = get_option( 'govready_options', array() );
+    if( empty($options['refresh_token']) ) {
 
       $html = '<div class="updated">';
         $html .= '<p>';
@@ -134,7 +132,6 @@ class Govready {
           'url' => get_site_url(),
         );
         $response = $this->api( '/initialize', 'POST', $data, true );
-        print_r($response);
         $options['siteId'] = $response['_id'];
         update_option( 'govready_options', $options );
       }
