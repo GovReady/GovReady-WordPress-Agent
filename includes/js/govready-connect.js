@@ -10,18 +10,18 @@
     container: 'widget-container',
     focusInput: false,
     popup: false,
-    responseType: 'token',
     authParams: {
       scope: 'openid offline_access'
-    }
-  }, function (err, profile, token) {
-
+    },
+    device: 'govready-wordpress-' + govready_connect.siteId
+  }, function (err, profile, id_token, access_token, state, refresh_token) {
+console.log(refresh_token);
     // Save the refresh token in WordPress
     jQuery.post(
       ajaxurl + '?action=govready_refresh_token', 
       {
         //'action': 'govready_refresh_token',
-        'refresh_token': token,
+        'refresh_token': refresh_token,
         '_ajax_nonce': govready_connect.nonce
       }, 
       function(response){
@@ -31,7 +31,7 @@
         }
         else {
           // @todo
-          alert('There was a problem creating your GovReady credentials. Please contact ops@govready.com for assistance.')
+          alert('There was a problem creating your GovReady credentials. Please contact ops@govready.com for assistance.');
         }
       }
     );

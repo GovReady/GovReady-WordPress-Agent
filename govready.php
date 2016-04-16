@@ -30,7 +30,7 @@ class Govready {
     $this->govready_url = 'http://plugin.govready.com/v1.0';
 
     // Load plugin textdomain
-    add_action( 'init', array( $this, 'plugin_textdomain' ) );
+    //add_action( 'init', array( $this, 'plugin_textdomain' ) );
 
     // Display the admin notification
     add_action( 'admin_notices', array( $this, 'plugin_activation' ) ) ;
@@ -49,14 +49,14 @@ class Govready {
   /**
     * Defines the plugin textdomain.
     */
-  public function plugin_textdomain() {
+  /*public function plugin_textdomain() {
 
     $locale = apply_filters( $this->key, get_locale(), $domain );
 
     load_textdomain( $domain, WP_LANG_DIR . '/' . $domain . '/' . $domain . '-' . $locale . '.mo' );
     load_plugin_textdomain( $domain, FALSE, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
 
-  } // end plugin_textdomain
+  }*/ // end plugin_textdomain
 
 
   /**
@@ -86,7 +86,8 @@ class Govready {
    */
   public static function plugin_deactivation() {
 
-    delete_option( 'govready_domain' );
+    delete_option( 'govready_options' );
+    delete_option( 'govready_token' );
 
   } // end plugin_deactivation
 
@@ -117,13 +118,6 @@ class Govready {
 
     // First time using app, need to set everything up
     if( empty($options['refresh_token']) ) {
-      
-      // Save some JS variables (available at govready.siteId, etc)
-      wp_enqueue_script( 'govready-connect', $path . 'govready-connect.js' );
-      wp_localize_script( 'govready-connect', 'govready_connect', array( 
-        'nonce' => wp_create_nonce( $this->key ),
-        'auth0' => $this->auth0
-      ) );
 
       // Call GovReady /initialize to set the allowed CORS endpoint
       // @todo: error handling: redirect user to GovReady API dedicated login page
@@ -135,6 +129,14 @@ class Govready {
         $options['siteId'] = $response['_id'];
         update_option( 'govready_options', $options );
       }
+
+      // Save some JS variables (available at govready.siteId, etc)
+      wp_enqueue_script( 'govready-connect', $path . 'govready-connect.js' );
+      wp_localize_script( 'govready-connect', 'govready_connect', array( 
+        'nonce' => wp_create_nonce( $this->key ),
+        'auth0' => $this->auth0,
+        'siteId' => $options['siteId']
+      ) );
       
       require_once plugin_dir_path(__FILE__) . '/templates/govready-connect.php';
     
@@ -168,6 +170,7 @@ class Govready {
 
     // Make sure our token is a-ok
     $token = get_option( 'govready_token', array() );
+
     if ( !$anonymous && ( empty($token['id_token']) || empty($token['endoflife']) || $token['endoflife'] < time() ) ) {
       $token = $this->api_refresh_token( true );
     }
@@ -189,7 +192,6 @@ class Govready {
     curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
     $response = curl_exec($curl);
     curl_close($curl);
-
 
     $response = json_decode( $response, true );
 
@@ -221,7 +223,7 @@ class Govready {
     $response = $this->api( '/refresh-token', 'POST', array( 'refresh_token' => $token), true );
     $response['endoflife'] = time() + (int) $response['expires_in'];
     update_option( 'govready_token', $response );
-    
+
     if ($return) {
       return $response;
     }
