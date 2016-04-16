@@ -12,6 +12,8 @@ License:            Affero GPL v3
 namespace Govready;
 
 
+require_once plugin_dir_path(__FILE__) . 'lib/govready-agent.class.php';
+
 // Set the version of this plugin
 //if( ! defined( 'GOVREADY_VERSION' ) ) {
 //  define( 'GOVREADY_VERSION', '1.0' );
@@ -41,10 +43,8 @@ class Govready {
     // Add the AJAX proxy endpoints
     add_action( 'wp_ajax_govready_refresh_token', array($this, 'api_refresh_token') );
     add_action( 'wp_ajax_govready_proxy', array($this, 'api_proxy') );
-    add_action( 'wp_ajax_govready_nopriv_v1_trigger', array($this, 'api_agent') );
-    
+    add_action( 'wp_ajax_nopriv_govready_v1_trigger', array($this, 'api_agent') );
   }
-
 
   /**
     * Defines the plugin textdomain.
@@ -243,17 +243,6 @@ class Govready {
     $response = $this->api( $_REQUEST['endpoint'], $method, $_REQUEST );
     wp_send_json($response);
     wp_die();
-
-  }
-
-
-  /**
-   * Ping the site to trigger the agent to collect data.
-   * Does not require authentication.
-   */
-  public function api_agent() {
-
-    require_once plugin_dir_path(__FILE__) . '/lib/govready-agent.class.php';
 
   }
 
