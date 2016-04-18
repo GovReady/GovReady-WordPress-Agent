@@ -5,23 +5,35 @@
 
 namespace Govready\GovreadyAgent;
 
-class GovreadyAgent  {
+use Govready;
+
+class GovreadyAgent extends Govready\Govready {
 
 
   function __construct() {
+    parent::__construct();
+
     add_action( 'wp_ajax_govready_v1_trigger', array($this, 'ping') );    
   }
 
-  // Generic callback for ?action=govready_v1_trigger&key&callback&siteId
+  // Generic callback for ?action=govready_v1_trigger&key&endpoint&siteId
   public function ping() {
+    
+
     $options = get_option( 'govready_options' );
-    //$site = $options['siteId'];
-    $key = $_POST['key'];
-    if ( !empty($key) ) {
-      $data = call_user_func( array($this, $key), $options['siteId'] );
-      if (!empty($data)) {
-        print_r($data);
+    if ($_POST['siteId'] == $options['siteId']) {
+
+      $key = $_POST['key'];
+      if ( !empty($key) ) {
+        $data = call_user_func( array($this, $key) );
+        if (!empty($data)) {
+
+          $endpoint = '/sites/' . $options['siteId'] . '/' . $_POST['endpoint'];
+          $return = parent::api( $endpoint, 'POST', $data );
+          print_r($return); // @todo: comment this out, also return data in API
+        }
       }
+
     }
   }
 
@@ -36,7 +48,7 @@ class GovreadyAgent  {
       array_push( $out, array(
         'label' => $plugin['Name'],
         'namespace' => $key,
-        'status' => is_plugin_active($key),
+        'status' => is_plugin_active($key),  // @todo: this is always returning FALSE
         'version' => $plugin['Version'],
       ) );
     }
@@ -55,15 +67,15 @@ class GovreadyAgent  {
 
     foreach ($users as $key => $user) {
       array_push( $out, array(
-        'userId' => $user['ID'],
-        'username' => $user['user_login'],
-        'email' => $user['user_email'],
-        'name' => $user['user_nicename'],
-        'created' => $user['user_registered'],
-        'lastLogin' => null, // @todo
+        'userId' => $user->ID,
+        'username' => $user->user_login,
+        'email' => $user->user_email,
+        'name' => $user->user_nicename,
+        'created' => $user->user_registered,
+        'lastLogin' => null, // @todo']
       ) );
     }
-
+    
     return array( 'accounts' => $out, 'forceDelete' => true );
 
   }
@@ -80,15 +92,14 @@ class GovreadyAgent  {
     global $wp_version;
     $phpinfo['application'] = 'WordPress ' . $wp_version;
 
-
-    return $phpinfo;
+    return array( 'phpinfo' => $phpinfo );
 
   }
 
 
   // phpinfo() as an array.
   // From http://php.net/manual/en/function.phpinfo.php#87463
-  private function phpinfo_array($return=false){
+  private function phpinfo_array(){
     /* Andale!  Andale!  Yee-Hah! */
     ob_start(); 
     phpinfo(-1);
@@ -123,7 +134,7 @@ class GovreadyAgent  {
            $pi[$n][$m[1]]=(!isset($m[3])||$m[2]==$m[3])?$m[2]:array_slice($m,2);
     }
 
-    return ($return === false) ? print_r($pi) : $pi;
+    return $pi;
   }
 
 
