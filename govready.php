@@ -30,6 +30,8 @@ class Govready {
       'client_id' => 'HbYZO5QXKfgNshjKlhZGizskiaJH9kGH'
     );
     $this->govready_url = 'http://plugin.govready.com/v1.0';
+    //$this->govready_url = 'http://localhost:4000/v1.0';
+    //$this->api_debug = true;
 
     // Load plugin textdomain
     //add_action( 'init', array( $this, 'plugin_textdomain' ) );
@@ -192,6 +194,13 @@ class Govready {
     curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
     $response = curl_exec($curl);
     curl_close($curl);
+    
+    // Only for debugging
+    if ( !empty($this->api_debug) && $this->api_debug ) {
+      print_r($url);
+      print_r($data);
+      print_r($response);
+    }
 
     $response = json_decode( $response, true );
 
