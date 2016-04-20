@@ -13,24 +13,29 @@ class GovreadyAgent extends Govready\Govready {
   function __construct() {
     parent::__construct();
 
-    add_action( 'wp_ajax_govready_v1_trigger', array($this, 'ping') );    
+    add_action( 'wp_ajax_nopriv_govready_v1_trigger', array($this, 'ping') );    
   }
 
-  // Generic callback for ?action=govready_v1_trigger&key&endpoint&siteId
+  /**
+   * Generic callback for ?action=govready_v1_trigger&key&endpoint&siteId
+   * Examples:
+   * ?action=govready_v1_trigger&key=plugins&endpoint=plugins&siteId=xxx
+   * ?action=govready_v1_trigger&key=accounts&endpoint=accounts&siteId=xxx
+   * ?action=govready_v1_trigger&key=stack&endpoint=stack/phpinfo&siteId=xxx
+   */
   public function ping() {
     
-
     $options = get_option( 'govready_options' );
     if ($_POST['siteId'] == $options['siteId']) {
 
       $key = $_POST['key'];
-      if ( !empty($key) ) {
+      if ( !empty($key) ) { 
         $data = call_user_func( array($this, $key) );
         if (!empty($data)) {
 
           $endpoint = '/sites/' . $options['siteId'] . '/' . $_POST['endpoint'];
           $return = parent::api( $endpoint, 'POST', $data );
-          print_r($return); // @todo: comment this out, also return data in API
+          print_r($return); // @todo: comment this out, also don't return data in API
         }
       }
 
