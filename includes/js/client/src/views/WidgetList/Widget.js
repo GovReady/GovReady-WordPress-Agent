@@ -38,16 +38,21 @@ class Widget {
     )(widget);
   }
 
-  static titleSection (title, header) {
+  static titleSection (title, header, link = true) {
     header = header || 'h3';
     return (
       <div className='title'>
         {React.createElement(header, {}, (
           <span>
-            <a className='title-text' href='#'>{title}</a>
-            <a className='btn btn-sml pull-right' href='#'>
-              <i className='fa fa-chevron-right'></i>
-            </a>
+            {link && (
+              <span>
+                <a className='title-text' href='#'>{title}</a>
+                <a className='btn btn-sml pull-right' href='#'>
+                  <i className='fa fa-chevron-right'></i>
+                </a>
+              </span>
+            )}
+            {!link && title}
           </span>
         ))}
       </div>
@@ -57,7 +62,7 @@ class Widget {
   static loadingDisplay () {
     return (
       <div className='loading'>
-        <i className='fa fa-spinner'></i><span className='sr-only'>Loading</span>
+        <i className='fa fa-spinner fa-2x fa-spin'></i><span className='sr-only'>Loading</span>
       </div>
     );
   }

@@ -7,6 +7,7 @@ import objectAssign from 'object-assign';
 export const WIDGETS_IMPORTED = 'WIDGETS_IMPORTED';
 export const WIDGET_LOADING = 'WIDGET_LOADING';
 export const WIDGET_LOADED = 'WIDGET_LOADED';
+export const WIDGET_LOAD_FAILED = 'WIDGET_LOAD_FAILED';
 
 // ------------------------------------
 // Actions
@@ -18,13 +19,18 @@ export function widgetsImported (widgets: object): Action {
 }
 
 // Fired when individual widget fetching data
-export function widgetLoading (widgetName): Action {
+export function widgetLoading (widgetName: string): Action {
   return { type: WIDGET_LOADING, widgetName: widgetName };
 }
 
 // Fired when widget has data
-export function widgetLoaded (widgetName, data): Action {
+export function widgetLoaded (widgetName: string, data: object): Action {
   return { type: WIDGET_LOADED, widgetName: widgetName, data: data };
+}
+
+// Fired when widget has data
+export function widgetLoadFailed (widgetName: string, error: object): Action {
+  return { type: WIDGET_LOAD_FAILED, widgetName: widgetName };
 }
 
 // Fired when widget should get data
@@ -47,15 +53,23 @@ export function widgetLoadData (widgetName: string, url: string, processData: Fu
       } else {
         let error = new Error(response.statusText);
         error.response = response;
-        console.log(error);
-        return;
+        error.error = response.statusText;
+        return error;
       }
     }).then((json: object) => {
-      const data = processData(json);
-      // Call loaded action
-      dispatch(widgetLoaded(widgetName, data));
+      console.log('hello');
+      if(json && !json.error) {
+        const data = processData(json);
+        // Call loaded action
+        dispatch(widgetLoaded(widgetName, data));
+      }
+      else {
+        console.log('request failed', json);
+        dispatch(widgetLoadFailed(widgetName, json));
+      }
     }).catch(function (error) {
       console.log('request failed', error);
+      dispatch(widgetLoadFailed(widgetName, error));
     });
   };
 }
@@ -116,6 +130,16 @@ const initialState = {
     },
     'LogsWidget': {
       name: 'LogsWidget',
+      status: 'init',
+      data: {}
+    },
+    'AccountsWidget': {
+      name: 'AccountsWidget',
+      status: 'init',
+      data: {}
+    },
+    'InactiveAccountsWidget': {
+      name: 'InactiveAccountsWidget',
       status: 'init',
       data: {}
     }

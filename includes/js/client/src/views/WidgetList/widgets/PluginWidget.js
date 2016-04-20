@@ -1,14 +1,20 @@
 import React, { Component } from 'react';
+import config from '../../../config/';
 import Widget from '../Widget';
 
 class PluginWidget extends Component {
 
   componentWillMount () {
-    Widget.getPayload(this, apiUrl + 'pluginData.json');
+    Widget.getPayload(this, config.apiUrl + 'plugins');
   }
 
   processData (data) {
-    return data;
+    return {
+      core: {
+        status: 'Current'
+      },
+      plugins: data,
+    };
   }
 
   render () {
@@ -19,7 +25,7 @@ class PluginWidget extends Component {
     // Compile data
     if (widget.data && widget.data.plugins && widget.data.plugins.length) {
       widget.data.plugins.map((plugin) => {
-        if (plugin.status !== 'Current') {
+        if (!plugin.status) {
           updates++;
         }
       });

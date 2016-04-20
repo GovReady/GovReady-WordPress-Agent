@@ -6,8 +6,10 @@ import { actions } from '../../redux/modules/widgetReducer';
 import PluginWidget from './widgets/PluginWidget';
 import MeasuresWidget from './widgets/MeasuresWidget';
 import DomainsWidget from './widgets/DomainsWidget';
+import AccountsWidget from './widgets/AccountsWidget';
 import StackWidget from './widgets/StackWidget';
 import LogsWidget from './widgets/LogsWidget';
+import InactiveAccountsWidget from './widgets/InactiveAccountsWidget';
 
 class WidgetsListPage extends Component {
   render () {
@@ -24,6 +26,10 @@ class WidgetsListPage extends Component {
 
           <div className='col-sm-6 col-md-3'>
             <DomainsWidget widgetName='DomainsWidget'/>
+          </div>
+
+          <div className='col-sm-6 col-md-3'>
+            <AccountsWidget widgetName='AccountsWidget'/>
           </div>
         </div>
         <div className='row row-second'>
@@ -47,6 +53,11 @@ class WidgetsListPage extends Component {
         <div className='row row-third'>
           <div className='col-sm-6'>
             <StackWidget widgetName='StackWidget'/>
+          </div>
+        </div>
+        <div className='row row-fifth'>
+          <div className='col-sm-6'>
+            <InactiveAccountsWidget widgetName='InactiveAccountsWidget'/>
           </div>
         </div>
       </div>

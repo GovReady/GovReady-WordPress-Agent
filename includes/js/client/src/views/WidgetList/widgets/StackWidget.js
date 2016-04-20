@@ -1,30 +1,34 @@
 import React, { Component } from 'react';
+import config from '../../../config/';
 import Widget from '../Widget';
 
 class StackWidget extends Component {
 
   componentWillMount () {
-    Widget.getPayload(this, apiUrl + 'measuresData.json');
+    Widget.getPayload(this, config.apiUrl + 'stack');
   }
 
   processData (data) {
     return data;
   }
 
-  systemTable (widget) {
-    const permissionsState = () => {
-      let classname = 'danger';
-      let text = 'Not run';
-      if (widget.data.scan && widget.data.scan.state) {
-        text = widget.data.scan.state;
-        if (widget.data.scan.state === 'Passing') {
-          classname = 'success';
-        }
+
+  permissionsState (scan) {
+    let classname = 'danger';
+    let text = 'Not run';
+    if (scan && scan.state) {
+      text = scan.state;
+      if (scan.state === 'Passing') {
+        classname = 'success';
       }
-      return (
-        <span className={'label label-' + classname}>{text}</span>
-      );
-    };
+    }
+    return (
+      <span className={'label label-' + classname}>{text}</span>
+    );
+  }
+
+  systemTable (widget) {
+    
 
     return (
       <div className='table-responsive'>
@@ -32,27 +36,27 @@ class StackWidget extends Component {
           <tbody>
             <tr>
               <th>Os</th>
-              <td>widget.data.os</td>
+              <td>{widget.data.os}</td>
             </tr>
             <tr>
               <th>PHP</th>
-              <td>widget.data.language</td>
+              <td>{widget.data.language}</td>
             </tr>
             <tr>
-              <th>widget.data.application</th>
-              <td>widget.data.application_version</td>
+              <th>Application</th>
+              <td>{widget.data.application}</td>
             </tr>
             <tr>
               <th>Webserver</th>
-              <td>widget.data.server</td>
+              <td>{widget.data.server}</td>
             </tr>
             <tr>
               <th>MySQL</th>
-              <td>widget.data.database</td>
+              <td>{widget.data.database}</td>
             </tr>
             <tr>
               <th>Permissions</th>
-              <td>{permissionsState()}</td>
+              <td>{this.permissionsState(widget.data.scan)}</td>
             </tr>
           </tbody>
         </table>
