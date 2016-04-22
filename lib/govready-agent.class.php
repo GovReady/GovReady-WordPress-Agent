@@ -13,7 +13,9 @@ class GovreadyAgent extends Govready\Govready {
   function __construct() {
     parent::__construct();
 
-    add_action( 'wp_ajax_nopriv_govready_v1_trigger', array($this, 'ping') );    
+    add_action( 'wp_ajax_nopriv_govready_v1_trigger', array($this, 'ping') );
+    add_action( 'wp_login', array($this, 'last_login_save') );
+
   }
 
   /**
@@ -77,7 +79,7 @@ class GovreadyAgent extends Govready\Govready {
         'email' => $user->user_email,
         'name' => $user->user_nicename,
         'created' => $user->user_registered,
-        'lastLogin' => null, // @todo']
+        'lastLogin' => get_user_meta( $user->ID, 'govready_last_login', true ),
       ) );
     }
     
@@ -140,6 +142,21 @@ class GovreadyAgent extends Govready\Govready {
     }
 
     return $pi;
+  }
+
+
+
+
+  /**
+   * Helper functions
+   **/
+
+  // Save the user's last login
+  // From: https://wordpress.org/support/topic/capture-users-last-login-datetime
+  function last_login_save($login) {
+    global $user_ID;
+    $user = get_userdatabylogin($login);
+    update_user_meta( $user->ID, 'govready_last_login', time() );
   }
 
 
