@@ -36,7 +36,7 @@ webpackConfig.entry = {
 // Bundle Output
 // ------------------------------------
 webpackConfig.output = {
-  filename: `[name].[${config.compiler_hash_type}].js`,
+  filename: `[name].${config.compiler_hash_type ? '[' + config.compiler_hash_type + ']' : 'dist' }.js`,
   path: paths.base(config.dir_dist),
   publicPath: config.compiler_public_path
 };
@@ -287,7 +287,8 @@ if (!__DEV__) {
   });
 
   webpackConfig.plugins.push(
-    new ExtractTextPlugin('[name].[contenthash].css', {
+
+    new ExtractTextPlugin(`[name].${ __DEV__ ? '[contenthash]' : 'dist' }.css`, {
       allChunks: true
     })
   );

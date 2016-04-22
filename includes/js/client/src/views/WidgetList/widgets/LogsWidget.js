@@ -1,10 +1,11 @@
 import React, { Component, PropTypes } from 'react';
+import config from '../../../config/';
 import Widget from '../Widget';
 
 class LogsWidget extends Component {
 
   componentWillMount () {
-    Widget.getPayload(this, apiUrl + 'measuresData.json');
+    Widget.getPayload(this, config.apiUrl + 'logs');
   }
 
   processData (data) {

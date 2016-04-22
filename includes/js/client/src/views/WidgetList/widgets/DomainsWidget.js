@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import config from '../../../config/';
 import Widget from '../Widget';
 
 class DomainsWidget extends Component {
 
   componentWillMount () {
-    Widget.getPayload(this, apiUrl + 'pluginData.json');
+    Widget.getPayload(this, config.apiUrl + 'domains');
   }
 
   processData (data) {
