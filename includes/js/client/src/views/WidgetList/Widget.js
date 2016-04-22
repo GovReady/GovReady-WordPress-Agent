@@ -1,23 +1,41 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { actions } from '../../redux/modules/widgetReducer';
+import { Link } from 'react-router';
+import { actions } from 'redux/modules/widgetReducer';
 import objectAssign from 'object-assign';
 
 class Widget {
-  static getPayload (widget, url) {
-    // Loading
-    widget.props.actions.widgetLoadData(widget.props.widgetName, url, widget.processData);
+
+  static registerWidget(widget, props) {
+    // Do we need to register initial state info?
+    if(!widget.props.widget || !widget.props.widget || !widget.props.widget.status) {
+      widget.props.actions.widgetImported(props.widgetName, null);
+    }
   }
 
-  static propTypes (props) {
-    props = props || {};
+  static getPayload (widget, url, processData = () => {})  {
+    // Need to load data from api?
+    if(!widget.props.widget || !widget.props.widget || widget.props.widget.status !== 'loaded') {
+      widget.props.actions.widgetLoadData(widget.props.widgetName, url, processData);
+    }
+  }
+
+  static propTypes (props = {}) {
     return objectAssign(props, {
+      widgetType: PropTypes.string,
+      display: PropTypes.string.isRequired,
       widget: PropTypes.object.isRequired,
       widgetName: PropTypes.string.isRequired,
       actions: PropTypes.object.isRequired
     });
   }
+
+  static defaultProps(props = {}) {
+    props.widget = {};
+    return props;
+  }
+
 
   static mapStateToProps (state, ownProps) {
     return {
@@ -38,27 +56,6 @@ class Widget {
     )(widget);
   }
 
-  static titleSection (title, header, link = true) {
-    header = header || 'h3';
-    return (
-      <div className='title'>
-        {React.createElement(header, {}, (
-          <span>
-            {link && (
-              <span>
-                <a className='title-text' href='#'>{title}</a>
-                <a className='btn btn-sml pull-right' href='#'>
-                  <i className='fa fa-chevron-right'></i>
-                </a>
-              </span>
-            )}
-            {!link && title}
-          </span>
-        ))}
-      </div>
-    );
-  }
-
   static loadingDisplay () {
     return (
       <div className='loading'>
@@ -67,11 +64,64 @@ class Widget {
     );
   }
 
-  static panelFooter (text) {
+  static titleSection (text, pageUrl, header = 'h3', absolute = false) {
+    
+    const headerInner = () => {
+      if(pageUrl && !absolute) {
+        return (
+          <div>
+            <Link className='title-text' to={`/section/${pageUrl}`}>{text}</Link>
+            <Link className='btn btn-sml pull-right' to={`/section/${pageUrl}`}>
+              <i className='fa fa-chevron-right'></i>
+            </Link>
+          </div>
+        )
+      }
+      else if(pageUrl) {
+        return (
+          <div>
+            <a className='title-text' href={pageUrl}>{text}</a>
+            <a className='btn btn-sml pull-right' href={pageUrl}>
+              <i className='fa fa-chevron-right'></i>
+            </a>
+          </div>
+        )
+      } 
+      else {
+        return text;
+      }
+    } 
+
+    return (
+      <div className='title'>
+        {React.createElement(header, {}, headerInner())}
+      </div>
+    );
+  }
+
+  static panelFooter (text, pageUrl, absolute = false) {
     return (
       <div className='panel-footer'>
-        <a className='title-text' href='#'>{text} <i className='fa fa-chevron-right'></i></a>
+        {pageUrl && !absolute &&
+          <Link className='title-text' to={`/section/${pageUrl}`}>
+            {text} <i className='fa fa-chevron-right'></i>
+          </Link>
+        }
+        {pageUrl && absolute &&
+          <a href={pageUrl} className="title-text">
+            {text} <i className='fa fa-chevron-right'></i>
+          </a>
+        }
+        {!pageUrl &&
+          {text}
+        } 
       </div>
+    );
+  }
+
+  static backLink (text= 'Back', classes = 'back', backUrl = '/') {
+    return (
+      <Link className={classes} to={backUrl}>{text}</Link>
     );
   }
 }

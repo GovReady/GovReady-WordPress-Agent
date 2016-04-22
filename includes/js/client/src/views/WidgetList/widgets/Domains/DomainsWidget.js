@@ -1,8 +1,13 @@
 import React, { Component } from 'react';
-import config from '../../../config/';
-import Widget from '../Widget';
+import config from 'config/';
+import Widget from '../../Widget';
 
 class DomainsWidget extends Component {
+
+  constructor(props) {
+    super(props);
+    Widget.registerWidget(this);
+  }
 
   componentWillMount () {
     Widget.getPayload(this, config.apiUrl + 'domains');
@@ -45,7 +50,7 @@ class DomainsWidget extends Component {
                 <small>Next domain renewal</small>
               </h4>
             </div>
-            {Widget.panelFooter('Domains + SSL')}
+            {Widget.panelFooter(widget, 'Domains + SSL')}
           </div>
         }
       </div>
@@ -54,5 +59,6 @@ class DomainsWidget extends Component {
 }
 
 DomainsWidget.propTypes = Widget.propTypes();
+DomainsWidget.defaultProps = Widget.defaultProps();
 
 export default Widget.connect(DomainsWidget);

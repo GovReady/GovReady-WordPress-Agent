@@ -4,7 +4,7 @@ import objectAssign from 'object-assign';
 // Constants
 // ------------------------------------
 
-export const WIDGETS_IMPORTED = 'WIDGETS_IMPORTED';
+export const WIDGET_IMPORTED = 'WIDGET_IMPORTED';
 export const WIDGET_LOADING = 'WIDGET_LOADING';
 export const WIDGET_LOADED = 'WIDGET_LOADED';
 export const WIDGET_LOAD_FAILED = 'WIDGET_LOAD_FAILED';
@@ -14,8 +14,8 @@ export const WIDGET_LOAD_FAILED = 'WIDGET_LOAD_FAILED';
 // ------------------------------------
 
 // Fired when widgets are ready
-export function widgetsImported (widgets: object): Action {
-  return { type: WIDGETS_IMPORTED, widgets: widgets };
+export function widgetImported (widgetName: string, widgetInit: object): Action {
+  return { type: WIDGET_IMPORTED, widgetName: widgetName, widgetInit: widgetInit };
 }
 
 // Fired when individual widget fetching data
@@ -75,7 +75,7 @@ export function widgetLoadData (widgetName: string, url: string, processData: Fu
 }
 
 export const actions = {
-  widgetsImported,
+  widgetImported,
   widgetLoading,
   widgetLoaded,
   widgetLoadData
@@ -85,7 +85,16 @@ export const actions = {
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
-  [WIDGETS_IMPORTED]: (newState: object, action: {payload: number}): object => {
+  [WIDGET_IMPORTED]: (newState: object, action: {widgetName: string, widgetInit: object}): object => {
+    // If nothing is passed, just do default
+    if(!action.widgetInit) {
+      action.widgetInit = {
+        name: action.widgetName,
+        status: 'init',
+        data: {}
+      }
+    }
+    newState.widgets[action.widgetName] = action.widgetInit;
     return newState;
   },
   [WIDGET_LOADING]: (newState: object, action: {widgetName: string}): object => {
@@ -107,43 +116,7 @@ const ACTION_HANDLERS = {
 // ------------------------------------
 
 const initialState = {
-  widgets: {
-    'PluginWidget': {
-      name: 'PluginWidget',
-      status: 'init',
-      data: {}
-    },
-    'MeasuresWidget': {
-      name: 'MeasuresWidget',
-      status: 'init',
-      data: {}
-    },
-    'DomainsWidget': {
-      name: 'DomainsWidget',
-      status: 'init',
-      data: {}
-    },
-    'StackWidget': {
-      name: 'StackWidget',
-      status: 'init',
-      data: {}
-    },
-    'LogsWidget': {
-      name: 'LogsWidget',
-      status: 'init',
-      data: {}
-    },
-    'AccountsWidget': {
-      name: 'AccountsWidget',
-      status: 'init',
-      data: {}
-    },
-    'InactiveAccountsWidget': {
-      name: 'InactiveAccountsWidget',
-      status: 'init',
-      data: {}
-    }
-  }
+  widgets: {}
 };
 
 export default function counterReducer (state: object = initialState, action: Action): object {

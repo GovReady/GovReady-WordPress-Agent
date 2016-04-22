@@ -8,9 +8,11 @@ import { Route, IndexRoute } from 'react-router';
 // your current file is.
 import CoreLayout from 'layouts/CoreLayout/CoreLayout';
 import WidgetList from 'views/WidgetList/WidgetList';
+import WidgetPage from 'views/WidgetList/WidgetPage';
 
 export default (store) => (
   <Route path='/' component={CoreLayout}>
     <IndexRoute component={WidgetList} />
+    <Route path="/section/:widget" component={WidgetPage}/>
   </Route>
 );

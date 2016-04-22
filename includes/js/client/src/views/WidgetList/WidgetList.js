@@ -2,62 +2,52 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actions } from '../../redux/modules/widgetReducer';
+import widgets from './widgets';
 
-import PluginWidget from './widgets/PluginWidget';
-import MeasuresWidget from './widgets/MeasuresWidget';
-import DomainsWidget from './widgets/DomainsWidget';
-import AccountsWidget from './widgets/AccountsWidget';
-import StackWidget from './widgets/StackWidget';
-import LogsWidget from './widgets/LogsWidget';
-import InactiveAccountsWidget from './widgets/InactiveAccountsWidget';
+console.log(widgets);
 
 class WidgetsListPage extends Component {
+  
   render () {
+    // Simple render function from widgetName
+    const renderWidget = (name, params = {}) => {
+      params.widgetName = name;
+      params.display = 'widget';
+      return React.createElement(widgets[name].component, params);
+    }
+
     return (
       <div className='widget-layout'>
         <div className='row row-top'>
           <div className='col-sm-6 col-md-3'>
-            <PluginWidget widgetName='PluginWidget'/>
+            {renderWidget('Plugins')}
+          </div>
+          <div className='col-sm-6 col-md-3'>
+            {false && renderWidget('Measures')}
           </div>
 
           <div className='col-sm-6 col-md-3'>
-            <MeasuresWidget widgetName='MeasuresWidget'/>
+            {false && renderWidget('Domains')}
           </div>
 
           <div className='col-sm-6 col-md-3'>
-            <DomainsWidget widgetName='DomainsWidget'/>
-          </div>
-
-          <div className='col-sm-6 col-md-3'>
-            <AccountsWidget widgetName='AccountsWidget'/>
-          </div>
-        </div>
-        <div className='row row-second'>
-          <div className='col-xs-12'>
-            <h2>Logs</h2>
-          </div>
-
-          <div className='col-sm-6 col-md-3'>
-            <LogsWidget widgetName='LogsWidget' logType='error'/>
-          </div>
-
-          <div className='col-sm-6 col-md-3'>
-            <LogsWidget widgetName='LogsWidget' logType='access'/>
-          </div>
-
-          <div className='col-sm-6 col-md-3'>
-            <LogsWidget widgetName='LogsWidget' logType='login'/>
+            {renderWidget('Accounts', {widgetType: 'default'})}
           </div>
         </div>
 
         <div className='row row-third'>
           <div className='col-sm-6'>
-            <StackWidget widgetName='StackWidget'/>
+            {renderWidget('Stack')}
+          </div>
+        </div>
+        <div className='row row-fourth'>
+          <div className='col-xs-12'>
+            {renderWidget('Contacts')}
           </div>
         </div>
         <div className='row row-fifth'>
           <div className='col-sm-6'>
-            <InactiveAccountsWidget widgetName='InactiveAccountsWidget'/>
+            {renderWidget('Accounts', {widgetType: 'inactive'})}
           </div>
         </div>
       </div>

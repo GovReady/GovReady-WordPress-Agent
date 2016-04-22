@@ -1,8 +1,13 @@
 import React, { Component, PropTypes } from 'react';
-import config from '../../../config/';
-import Widget from '../Widget';
+import config from 'config/';
+import Widget from '../../Widget';
 
 class LogsWidget extends Component {
+  
+  constructor(props) {
+    super(props);
+    Widget.registerWidget(this);
+  }
 
   componentWillMount () {
     Widget.getPayload(this, config.apiUrl + 'logs');
@@ -59,5 +64,6 @@ class LogsWidget extends Component {
 LogsWidget.propTypes = Widget.propTypes({
   logType: PropTypes.string.isRequired
 });
+LogsWidget.defaultProps = Widget.defaultProps();
 
 export default Widget.connect(LogsWidget);
