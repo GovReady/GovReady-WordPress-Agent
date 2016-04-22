@@ -48,4 +48,26 @@
       console.log('/sites/:siteId/stack', response);
     }
   );
+
+  jQuery.get(
+    ajaxurl, 
+    {
+      'action': 'govready_proxy',
+      'endpoint': '/recommended'
+    }, 
+    function(response){
+      console.log('/recommended', response);
+    }
+  );
+
+  jQuery.get(
+    ajaxurl, 
+    {
+      'action': 'govready_proxy',
+      'endpoint': '/vulnerabilities'
+    }, 
+    function(response){
+      console.log('/vulnerabilities', response);
+    }
+  );
 })(jQuery);
