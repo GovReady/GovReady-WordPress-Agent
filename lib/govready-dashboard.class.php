@@ -78,7 +78,7 @@ class GovreadyDashboard extends Govready\Govready {
       'manage_options',
       'govready',
       array($this, 'dashboard_page'), 
-      plugins_url('/images/icon.png', __FILE__) 
+      plugins_url('/../images/icon.png', __FILE__) 
     );
 
   } // end create_menu
