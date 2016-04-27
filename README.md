@@ -1,7 +1,34 @@
 # govready
 GovReady provides a dashboard and tools to enhance security for government websites and achieve FISMA compliance.
 
+## Overview
 
+The GovReady Agent monitors your WordPress site, domain, and ssl certificate to ensure that you are
+following current security best-practices.
+
+The GovReady Dashboard gives you a shared, easy-to-digest overview of the status of security on your
+website, including:
+* WordPress Core update status
+* Contributed plugin update status, with vulnerability warnings from the [WPScan Vulnerability Database](wpvulndb.com)
+* Superadmin accounts
+* Site uptime monitoring
+* The status of your domain and SSL certificate renewals
+* A manual measures checklist to be completed periodically to ensure compliance
+* A contact info matrix ("who do I contact to change my password", etc)
+* Accounts that have not recently logged-in (and may have left your organization)
+* Recent WordPress security news
+* Recent important Internet security news (such as the recent [HeartBleed bug](http://heartbleed.com/))
+
+`@todo` add screenshot(s)
+
+Note: This plugin is currently under active development and should not be used on production websites.
+
+
+## Requirements
+* cURL must be installed and appear in `php.ini`. [Tutorial to enable cURL in PHP]
+(http://www.tomjepson.co.uk/enabling-curl-in-php-php-ini-wamp-xamp-ubuntu/).
+
+---
 
 ## Developing
 
@@ -26,3 +53,6 @@ jQuery.get(
   }
 );
 ```
+
+
+### Example calls to the API
