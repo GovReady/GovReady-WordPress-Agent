@@ -23,7 +23,7 @@ class ContactsWidget extends Component {
             <tbody>
              {contacts.map((contact, index) => (
                 <tr key={index}>
-                  <td>{contact.role}</td>
+                  <td>{contact.responsibility}</td>
                   <td>{contact.email}</td>
                   <td>{contact.phone}</td>
                 </tr>

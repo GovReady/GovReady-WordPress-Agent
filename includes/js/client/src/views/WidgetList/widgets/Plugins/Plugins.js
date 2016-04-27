@@ -51,7 +51,7 @@ class Plugins extends Component {
     if(this.props.display === 'page') {
       return (
         <PluginsPage 
-          header={Widget.titleSection(this.props.widgetName, false, 'h2')} 
+          header={Widget.titleSection(this.props.widgetName, false, 'h2', false, true)} 
           updates={updates} 
           coreUpdate={coreUpdate} 
           plugins={widget.data.plugins} />

@@ -1,10 +1,64 @@
 import React, { PropTypes, Component } from 'react';
-import { reduxForm, initialize } from 'redux-form';
+import { reduxForm, initialize, propTypes } from 'redux-form';
 export const fields = [
-  'contacts[].role',
+  'contacts[].responsibility',
+  'contacts[].name',
   'contacts[].email',
-  'contacts[].phone'
+  'contacts[].phone',
+  'contacts[]._id',
+  'contacts[].confirmDelete'
 ];
+
+class DeleteConfirm extends Component {
+  shouldComponentUpdate(nextProps) {
+    return this.props.confirmDelete !== nextProps.confirmDelete
+  }
+
+  cancelClick(event) {
+    event.preventDefault();
+    this.props.deleteConfirm(false);
+  }
+
+  deleteClick(event) {
+    event.preventDefault();
+    this.props.deleteConfirm(true);
+  }
+
+  render() {
+    const style = {
+      marginLeft: this.props.confirmDelete ? '-100%' : 0
+    };
+    return (
+      <div className="confirm-delete">
+        <div className="confirm-inner" style={style}>
+          <div>
+            <button className="btn btn-danger" type="button" onClick={this.deleteClick.bind(this)}>
+              <i className="fa fa-trash"></i> <span className="sr-only">Remove</span>
+            </button>
+          </div>
+          <div>
+            <span>Are you sure?</span>
+            <button className="btn btn-danger" type="button" onClick={this.props.deleteFunc}>Yes</button>
+            <button className="btn btn-default" type="button" onClick={this.cancelClick.bind(this)}>No</button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+}
+
+DeleteConfirm.propTypes = {
+  confirmDelete: PropTypes.bool,
+  index: PropTypes.number.isRequired,
+  deleteConfirm: PropTypes.func.isRequired,
+  deleteFunc: PropTypes.func.isRequired
+}
+
+DeleteConfirm.defaultProps = () => {
+  return {
+    confirmDelete: false
+  }
+}
 
 class PureInput extends Component {
   shouldComponentUpdate(nextProps) {
@@ -25,7 +79,7 @@ class ContactsEditPage extends Component {
 
   componentWillMount() {
     console.log('contactsssss');
-    console.log(this.props.contacts);
+    console.log(this.props.contactsData);
     // this.props.dispatch(initialize('contactsEdit', {
     //   contacts: this.props.contacts
     // }, ['contacts']));
@@ -38,8 +92,12 @@ class ContactsEditPage extends Component {
           {contacts.map((contact, index) => (
             <fieldset key={index}>
               <div className="form-group">
-                <label>Contact title</label>
-                <PureInput type="text" field={contact.role}/>
+                <label>Name</label>
+                <PureInput type="text" field={contact.name}/>
+              </div>
+              <div className="form-group">
+                <label>Responsibility</label>
+                <PureInput type="text" field={contact.responsibility}/>
               </div>
               <div className="form-group">
                 <label>Email</label>
@@ -49,12 +107,11 @@ class ContactsEditPage extends Component {
                 <label>Phone Number</label>
                 <PureInput type="text" field={contact.phone}/>
               </div>
-              <div>
-                <button className="btn btn-danger" type="button" onClick={() => {
-                  contacts.removeField(index)  // remove from index
-                }}><i className="fa fa-trash"></i> <span className="sr-only">Remove</span>
-                </button>
-              </div>
+              <DeleteConfirm 
+                index={index} 
+                confirmDelete={Boolean(contact.confirmDelete.value)}
+                deleteConfirm={contact.confirmDelete.onChange}
+                deleteFunc={() => { contacts.removeField(index) }} />
             </fieldset>
           ))}
         </div>
@@ -65,15 +122,15 @@ class ContactsEditPage extends Component {
 
   editForm() {
     // Extract props
-    const { fields: { contacts }, handleSubmit, submitting } = this.props;
+    const { fields: { contacts }, handleSubmit, contactsSubmit, deleteConfirm, submitting } = this.props;
     return (
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(contactsSubmit)}>
         {this.contactArea(contacts)}
         <div>
           <button className="btn btn-info" type="button" onClick={() => {
             console.log(contacts);
             contacts.addField({
-              role: '',
+              responsibility: '',
               email: '',
               phone: ''
              }, contacts.length);
@@ -100,11 +157,11 @@ class ContactsEditPage extends Component {
 }
 
 ContactsEditPage.propTypes = {
+  ...propTypes,
   header: PropTypes.object.isRequired,
-  contacts: PropTypes.array.isRequired,
+  contactsData: PropTypes.array.isRequired,
   emptyText: PropTypes.object.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  submitting: PropTypes.bool.isRequired,
+  contactsSubmit: PropTypes.func.isRequired,
   backLink: PropTypes.object.isRequired
 };
 
@@ -114,6 +171,7 @@ export default reduxForm({
 },
 (state, ownProps) => ({
   initialValues: {
-    'contacts': ownProps.contacts
+    'contacts': ownProps.contactsData
   }
-}))(ContactsEditPage);
+})
+)(ContactsEditPage);

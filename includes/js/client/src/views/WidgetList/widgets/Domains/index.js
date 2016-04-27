@@ -1,5 +1,7 @@
-import DomainsWidget from './DomainsWidget';
+import Domains from './Domains';
 
 export default {
-  widget: DomainsWidget
+  component: Domains,
+  widget: true,
+  page: true
 }

@@ -3,6 +3,7 @@ import config from 'config';
 import Widget from '../../Widget';
 import ContactsWidget from './ContactsWidget';
 import ContactsEditPage from './ContactsEditPage';
+import objectAssign from 'object-assign';
 
 class Contacts extends Component {
   
@@ -17,9 +18,7 @@ class Contacts extends Component {
 
   processData (data) {
     return {
-      contacts: [
-        {role: "1", email: 'asdhjahs@asdhjkas.com', phone: '2-6-240121'}
-      ]
+      contacts: data
     };
   }
 
@@ -31,12 +30,43 @@ class Contacts extends Component {
     );
   }
 
-  handleSubmit() {
-    console.log('submitting');
-  }
+  handleSubmit(data) {
+    // Widget.submitPayload(this, config.apiUrl + 'contacts', data.contacts);
+    let widget = this.props.widget;
+    const assignProps = (toSet, setData) => {
+      this.props.submitFields.map((field) => {
+        toSet[field] = setData[field];
+      });
+      return toSet;
+    }
 
-  addContact() {
-    console.log('adding');
+    if(widget && widget.status !== 'posting') {
+      let calls = [];
+      data.contacts.map((contact, index) => {
+        // Existing record
+        if(contact._id) {
+          let contactData = objectAssign({}, widget.data.contacts[index]);
+          calls.push({
+            method: 'PATCH',
+            url: config.apiUrl + 'contacts/' + contact._id,
+            data: assignProps({}, contact)
+          });
+        } 
+        // New item
+        else {
+          calls.push({
+            method: 'POST',
+            url: config.apiUrl + 'contacts',
+            data: assignProps({}, contact)
+          });
+        }
+      });
+      // Launch all actions
+      this.props.actions.widgetPostAllData(this.props.widgetName, calls).then(
+        this.props.actions.widgetLoaded(this.props.widgetName, null)
+      );
+    }
+    
   }
 
   render () {
@@ -44,17 +74,16 @@ class Contacts extends Component {
     let widget = this.props.widget;
     
     // Return loading if not set
-    if(!widget || widget.status !== 'loaded') {
+    if(!widget || !(widget.status === 'loaded' || widget.status === 'posting')) {
       return Widget.loadingDisplay();
     }
 
     if(this.props.display === 'page') {
       return (
         <ContactsEditPage 
-          header={Widget.titleSection('Edit contacts', false)} 
-          contacts={widget.data.contacts}
-          addContact={this.addContact}
-          handleSubmit={this.handleSubmit}
+          header={Widget.titleSection('Edit contacts', false, 'h2', false, true)} 
+          contactsData={widget.data.contacts}
+          contactsSubmit={this.handleSubmit.bind(this)}
           emptyText={this.emptyText()}
           backLink={Widget.backLink('Cancel', 'btn btn-default')} />
       )
@@ -72,10 +101,15 @@ class Contacts extends Component {
 }
 
 Contacts.propTypes = Widget.propTypes({
-  submitting: PropTypes.bool
+  submitFields: PropTypes.array
 });
 Contacts.defaultProps = Widget.defaultProps({
-  submitting: false
+  submitFields: [
+    'name',
+    'email',
+    'responsibility',
+    'phone'
+  ]
 });
 
 export default Widget.connect(Contacts);

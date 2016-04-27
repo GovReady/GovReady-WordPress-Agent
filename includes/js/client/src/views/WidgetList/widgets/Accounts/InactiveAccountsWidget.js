@@ -3,6 +3,11 @@ import React, { Component, PropTypes } from 'react';
 class InactiveAccountsWidget extends Component {
 
   listUsersTable (users) {
+    const printRoles = (user) => {
+      if(user.roles) {
+        return Object.keys(user.roles).join(', ');
+      }
+    }
     return (
       <div className='table-responsive'>
         <table className='table'>
@@ -10,6 +15,9 @@ class InactiveAccountsWidget extends Component {
             <tr>
               <th>
                 User
+              </th>
+              <th>
+                Roles
               </th>
               <th>
                 Last Login
@@ -20,6 +28,7 @@ class InactiveAccountsWidget extends Component {
            {users.map((user) => (
               <tr key={user.userId}>
                 <td>{user.name}</td>
+                <td>{printRoles(user)}</td>
                 <td>{user.lastLogin ? user.lastLogin : 'Never'}</td>
               </tr>
             ))}

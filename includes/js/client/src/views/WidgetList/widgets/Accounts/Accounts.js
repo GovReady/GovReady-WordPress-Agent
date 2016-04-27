@@ -53,7 +53,7 @@ class Accounts extends Component {
       // Compile data
       if (widget.data && widget.data.accounts && widget.data.accounts.length) {
         widget.data.accounts.map((account) => {
-          if (account.role && account.role == 'super admin') {
+          if (account.roles && account.roles.administrator) {
             admins++;
           }
         });

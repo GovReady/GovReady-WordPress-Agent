@@ -5,6 +5,8 @@ import Accounts from './Accounts';
 import Stack from './Stack';
 import Logs from './Logs';
 import Contacts from './Contacts';
+import Recommended from './Recommended';
+import CmsVulnerabilities from './CmsVulnerabilities';
 
 const widgets = {
   Plugins,
@@ -13,7 +15,9 @@ const widgets = {
   Accounts,
   Stack,
   Logs,
-  Contacts
+  Contacts,
+  Recommended,
+  CmsVulnerabilities
 };
 
 export default widgets;

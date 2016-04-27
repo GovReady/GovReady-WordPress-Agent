@@ -1,64 +1,27 @@
-import React, { Component } from 'react';
-import config from 'config/';
-import Widget from '../../Widget';
+import React, { Component, PropTypes } from 'react';
 
 class DomainsWidget extends Component {
 
-  constructor(props) {
-    super(props);
-    Widget.registerWidget(this);
-  }
-
-  componentWillMount () {
-    Widget.getPayload(this, config.apiUrl + 'domains');
-  }
-
-  processData (data) {
-    return data;
-  }
-
-  nextDomainsRenew (widget) {
-    let nextDomain = 'Unknown';
-    widget.data.domains.map((domain) => {
-      const moment = window.moment(domain.expires);
-      if (nextDomain === 'Unknown') {
-        nextDomain = moment;
-      } else {
-        // Sooner
-        if (moment.valueOf() < nextDomain.valueOf()) {
-          nextDomain = moment;
-        }
-      }
-    });
-    if (nextDomain !== 'Unknown') {
-      return nextDomain.toNow(true);
-    }
-    return nextDomain;
-  }
-
   render () {
-    let widget = this.props.widget;
     return (
-      <div className='widget domains-widget'>
-        {widget.status !== 'loaded' && Widget.loadingDisplay()}
-        {widget.status === 'loaded' &&
-          <div className='panel panel-default'>
-            <div className='panel-body'>
-              <h4>
-                {this.nextDomainsRenew(widget)}
-                <br/>
-                <small>Next domain renewal</small>
-              </h4>
-            </div>
-            {Widget.panelFooter(widget, 'Domains + SSL')}
-          </div>
-        }
+      <div className='panel panel-default'>
+        <div className='panel-body'>
+          <h4>
+            {this.props.nextExpires}
+            <br/>
+            <small>Next domain renewal</small>
+          </h4>
+        </div>
+        {this.props.footer}
       </div>
     );
   }
 }
 
-DomainsWidget.propTypes = Widget.propTypes();
-DomainsWidget.defaultProps = Widget.defaultProps();
+DomainsWidget.propTypes = {
+  nextExpires: PropTypes.string.isRequired,
+  footer: PropTypes.object.isRequired
+};
 
-export default Widget.connect(DomainsWidget);
+
+export default DomainsWidget;

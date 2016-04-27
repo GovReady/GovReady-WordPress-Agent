@@ -18,26 +18,28 @@ class WidgetsListPage extends Component {
 
     return (
       <div className='widget-layout'>
-        <div className='row row-top'>
+        <div className='row row-first'>
           <div className='col-sm-6 col-md-3'>
             {renderWidget('Plugins')}
           </div>
           <div className='col-sm-6 col-md-3'>
-            {false && renderWidget('Measures')}
+            {renderWidget('Measures')}
           </div>
 
           <div className='col-sm-6 col-md-3'>
-            {false && renderWidget('Domains')}
+            {renderWidget('Domains')}
           </div>
-
           <div className='col-sm-6 col-md-3'>
             {renderWidget('Accounts', {widgetType: 'default'})}
           </div>
         </div>
-
         <div className='row row-third'>
           <div className='col-sm-6'>
             {renderWidget('Stack')}
+          </div>
+          <div className='col-sm-6'>
+            {renderWidget('Recommended')}
+            {renderWidget('CmsVulnerabilities')}
           </div>
         </div>
         <div className='row row-fourth'>

@@ -4,3 +4,35 @@
   text-align: center;
   min-height: 100px;
 }
+
+
+.confirm-delete {
+  position: relative;
+  overflow: hidden;
+}
+
+.confirm-inner {
+  position: relative;
+  width: 200%;
+
+  > div {
+    float: left;
+    width: 50%;
+  }
+}
+
+.vulnerability {
+  li a {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 100%;
+    text-overflow: ellipsis;
+  }
+
+  + .vulnerability {
+    border-top: 1px solid #ddd;
+    margin-top: 20px;
+    padding-top: 10px;
+  }
+}

@@ -9,14 +9,14 @@ class Widget {
 
   static registerWidget(widget, props) {
     // Do we need to register initial state info?
-    if(!widget.props.widget || !widget.props.widget || !widget.props.widget.status) {
+    if(!widget.props.widget || !widget.props.widget.status) {
       widget.props.actions.widgetImported(props.widgetName, null);
     }
   }
 
-  static getPayload (widget, url, processData = () => {})  {
+  static getPayload (widget, url, processData = (data) => { return data; }) {
     // Need to load data from api?
-    if(!widget.props.widget || !widget.props.widget || widget.props.widget.status !== 'loaded') {
+    if(!widget.props.widget || widget.props.widget.status !== 'loaded') {
       widget.props.actions.widgetLoadData(widget.props.widgetName, url, processData);
     }
   }
@@ -64,7 +64,21 @@ class Widget {
     );
   }
 
-  static titleSection (text, pageUrl, header = 'h3', absolute = false) {
+  static loadFailed (widgetName) {
+    return (
+      <p>
+        Sorry, {widgetName} is not avalable right now.
+      </p>
+    );
+  }
+
+  static backLink (text= 'Back', classes = 'back', backUrl = '/') {
+    return (
+      <Link className={classes} to={backUrl}>{text}</Link>
+    );
+  }
+
+  static titleSection (text, pageUrl, header = 'h3', absolute = false, backlink = false) {
     
     const headerInner = () => {
       if(pageUrl && !absolute) {
@@ -86,7 +100,15 @@ class Widget {
             </a>
           </div>
         )
-      } 
+      }
+      else if(backlink) {
+        return (
+          <span>
+            <span>{text}</span>
+            {this.backLink('Back', 'back btn btn-primary pull-right')}
+          </span>
+        )
+      }
       else {
         return text;
       }
@@ -116,12 +138,6 @@ class Widget {
           {text}
         } 
       </div>
-    );
-  }
-
-  static backLink (text= 'Back', classes = 'back', backUrl = '/') {
-    return (
-      <Link className={classes} to={backUrl}>{text}</Link>
     );
   }
 }

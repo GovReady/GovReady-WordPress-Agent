@@ -17,7 +17,7 @@ class StackWidget extends Component {
             </tr>
             <tr>
               <th>Application</th>
-              <td>{systemData.application}</td>
+              <td>{systemData.application.platform}: {systemData.application.version}</td>
             </tr>
             <tr>
               <th>Webserver</th>
