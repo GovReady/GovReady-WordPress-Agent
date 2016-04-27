@@ -13,8 +13,11 @@ class GovreadyAgent extends Govready\Govready {
   function __construct() {
     parent::__construct();
 
+    // Define the ping trigger endpoint
     add_action( 'wp_ajax_nopriv_govready_v1_trigger', array($this, 'ping') );
-    add_action( 'wp_login', array($this, 'last_login_save') );
+
+    // Save the user's last login timestamp
+    add_action( 'wp_login', array($this, 'last_login_save'), 10, 2 );
 
   }
 
@@ -26,7 +29,7 @@ class GovreadyAgent extends Govready\Govready {
    * ?action=govready_v1_trigger&key=stack&endpoint=stack/phpinfo&siteId=xxx
    */
   public function ping() {
-    
+
     $options = get_option( 'govready_options' );
     if ($_POST['siteId'] == $options['siteId']) {
 
@@ -34,7 +37,7 @@ class GovreadyAgent extends Govready\Govready {
       if ( !empty($key) ) { 
         $data = call_user_func( array($this, $key) );
         if (!empty($data)) {
-
+          //print_r($data);return;
           $endpoint = '/sites/' . $options['siteId'] . '/' . $_POST['endpoint'];
           $return = parent::api( $endpoint, 'POST', $data );
           print_r($return); // @todo: comment this out, also don't return data in API
@@ -52,9 +55,10 @@ class GovreadyAgent extends Govready\Govready {
     $plugins = get_plugins();
     foreach ($plugins as $key => $plugin) {
       $plugins[$key]['Active'] = is_plugin_active($key);
+      $namespace = explode('/', $key);
       array_push( $out, array(
         'label' => $plugin['Name'],
-        'namespace' => $key,
+        'namespace' => $namespace[0],
         'status' => is_plugin_active($key),  // @todo: this is always returning FALSE
         'version' => $plugin['Version'],
       ) );
@@ -70,7 +74,10 @@ class GovreadyAgent extends Govready\Govready {
 
     $out = array();
     $fields = array( 'ID', 'user_login', 'user_email', 'user_nicename', 'user_registered', 'user_status' );
-    $users = get_users( array( 'fields' => $fields ) );
+    $users = get_users( array( 
+      'fields' => $fields,
+      'role__not_in' => 'subscriber',
+    ) );
 
     foreach ($users as $key => $user) {
       array_push( $out, array(
@@ -79,6 +86,7 @@ class GovreadyAgent extends Govready\Govready {
         'email' => $user->user_email,
         'name' => $user->user_nicename,
         'created' => $user->user_registered,
+        'roles' => get_user_meta( $user->ID, 'wp_capabilities', true ),
         'lastLogin' => get_user_meta( $user->ID, 'govready_last_login', true ),
       ) );
     }
@@ -97,7 +105,10 @@ class GovreadyAgent extends Govready\Govready {
     $phpinfo['php'] = 'PHP ' . phpversion();
 
     global $wp_version;
-    $phpinfo['application'] = 'WordPress ' . $wp_version;
+    $phpinfo['application'] = array(
+      'platform' => 'WordPress',
+      'version' => $wp_version,
+    );
 
     return array( 'phpinfo' => $phpinfo );
 
@@ -153,10 +164,9 @@ class GovreadyAgent extends Govready\Govready {
 
   // Save the user's last login
   // From: https://wordpress.org/support/topic/capture-users-last-login-datetime
-  function last_login_save($login) {
-    global $user_ID;
-    $user = get_userdatabylogin($login);
-    update_user_meta( $user->ID, 'govready_last_login', time() );
+  function last_login_save($user_login, $user) {
+    $user = get_userdatabylogin($user_login);
+    update_user_meta( $user->ID, 'govready_last_login', date('c') );
   }
 
 
