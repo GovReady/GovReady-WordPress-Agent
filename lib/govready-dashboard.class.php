@@ -27,6 +27,8 @@ class GovreadyDashboard extends Govready\Govready {
    */
   public function plugin_activation() {
     $options = get_option( 'govready_options', array() );
+    
+    // Check that GovReady has been enabled
     if( empty($options['refresh_token']) ) {
 
       $html = '<div class="updated">';
@@ -34,6 +36,17 @@ class GovreadyDashboard extends Govready\Govready {
           $html .= __( '<a href="admin.php?page=govready">Connect to GovReady</a> to finish your setup and begin monitoring your site.', $this->key );
         $html .= '</p>';
       $html .= '</div><!-- /.updated -->';
+
+      echo $html;
+
+    } // end if
+
+    // check that cURL exists
+    if( !function_exists('curl_version') ) {
+
+      $html = '<div class="update-nag">';
+        $html .= __( 'It looks like cURL is currently not enabled.  The GovReady plugin will not work without cURL enabled. <a href="http://www.tomjepson.co.uk/enabling-curl-in-php-php-ini-wamp-xamp-ubuntu/" target="_blank">Tutorial to enable cURL in PHP</a>.', $this->key );
+      $html .= '</div><!-- /.update-nag -->';
 
       echo $html;
 
