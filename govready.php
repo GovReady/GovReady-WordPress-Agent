@@ -41,7 +41,6 @@ class Govready {
     add_action( 'wp_ajax_govready_refresh_token', array($this, 'api_refresh_token') );
     add_action( 'wp_ajax_govready_proxy', array($this, 'api_proxy') );
     add_action( 'wp_ajax_nopriv_govready_proxy', array($this, 'api_proxy') );  // @todo: this is temp! only for testing!!!
-    add_action( 'wp_ajax_nopriv_govready_v1_trigger', array($this, 'api_agent') );
   }
 
   /**
