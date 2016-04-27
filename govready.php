@@ -143,12 +143,7 @@ class Govready {
   public function api_proxy() {
 
     $method = !empty($_REQUEST['method']) ? $_REQUEST['method'] : $_SERVER['REQUEST_METHOD'];
-    if($_REQUEST['endpoint'] != '/sites/570d742fdb05ec6548965b75/contacts') { 
-      $response = $this->api( $_REQUEST['endpoint'], $method, $_REQUEST );
-    }
-    else {
-      $response = [];
-    }
+    $response = $this->api( $_REQUEST['endpoint'], $method, $_REQUEST );
     wp_send_json($response);
     wp_die();
 
