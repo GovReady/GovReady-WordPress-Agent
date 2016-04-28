@@ -62,7 +62,7 @@ class Plugins extends Component {
         <PluginsWidget 
           updates={updates} 
           coreUpdate={coreUpdate} 
-          footer={Widget.panelFooter(totalPlugins + ' total plugins', this.props.widgetName)} />
+          footer={Widget.panelFooter(totalPlugins + ' total plugins', '/wp-admin/plugins.php', true)} />
       )
     }
   }

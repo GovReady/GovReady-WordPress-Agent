@@ -98,10 +98,6 @@ export function widgetPostData (widgetName: string, url: string, method: string 
     // Load data
     return fetch(url + '&method=' + method, {
       method: 'post',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
       body: form_data
     }).then((response: object) => {
       // Good?

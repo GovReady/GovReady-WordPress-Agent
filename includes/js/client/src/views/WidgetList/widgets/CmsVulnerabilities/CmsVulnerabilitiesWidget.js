@@ -66,38 +66,30 @@ class CmsVulnerabilities extends Component {
     }
   }
 
-  pluginsList (plugins) {
-    return (
-      <div>
-        {plugins.map((plugin, index) => (
-          <div key={index} className="panel panel-default">
-            <div className="panel-heading" role="tab" id={'heading-item-' + plugin.nameSpace}>
-              <h4 className="panel-title">
-                <a role="button" data-toggle="collapse" data-parent="#accordion" href={'#collapse-item-' + plugin.nameSpace} aria-expanded="true" aria-controls={'collapse-item-' + plugin.nameSpace}>
-                  {plugin.nameSpace}
-                </a>
-              </h4>
-            </div>
-            <div id={'collapse-item-' + plugin.nameSpace} className="panel-collapse collapse" role="tabpanel" aria-labelledby={'heading-item-' + plugin.nameSpace}>
-              <div className="panel-body">
-                {plugin.vulnerabilities.map((vulnerability, j) => (
-                  <Vulnerability data={vulnerability} key={j} />
-                ))}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
   render () {
     return (
       <div>
         {this.props.header}
         <div className="panel-group" id="collapse-cms-vulnerable" role="tablist" aria-multiselectable="true">
           {this.coreSection(this.props.core)}
-          {this.pluginsList(this.props.plugins)}
+          {this.props.plugins.map((plugin, index) => (
+            <div key={index} className="panel panel-default">
+              <div className="panel-heading" role="tab" id={'heading-item-' + plugin.nameSpace}>
+                <h4 className="panel-title">
+                  <a role="button" data-toggle="collapse" data-parent="#accordion" href={'#collapse-item-' + plugin.nameSpace} aria-expanded="true" aria-controls={'collapse-item-' + plugin.nameSpace}>
+                    {plugin.nameSpace}
+                  </a>
+                </h4>
+              </div>
+              <div id={'collapse-item-' + plugin.nameSpace} className="panel-collapse collapse" role="tabpanel" aria-labelledby={'heading-item-' + plugin.nameSpace}>
+                <div className="panel-body">
+                  {plugin.vulnerabilities.map((vulnerability, j) => (
+                    <Vulnerability data={vulnerability} key={j} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     );
