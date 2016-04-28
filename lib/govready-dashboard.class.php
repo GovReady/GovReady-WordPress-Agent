@@ -78,7 +78,7 @@ class GovreadyDashboard extends Govready\Govready {
       'manage_options',
       'govready',
       array($this, 'dashboard_page'), 
-      plugins_url('/images/icon.png', __FILE__) 
+      plugins_url('/../images/icon.png', __FILE__) 
     );
 
   } // end create_menu
@@ -127,12 +127,16 @@ class GovreadyDashboard extends Govready\Govready {
         'nonce' => wp_create_nonce( $this->key )
       ) );
 
+      // Enqueue Bootstrap 
+      wp_enqueue_style( 'govready-bootstrap-style', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css' );
+      wp_enqueue_script( 'govready-bootstrap-script', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js', array(), true );
+
       // Enqueue react
       wp_enqueue_script( 'govready-dashboard-app-vendor', $path . 'client/dist/vendor.dist.js' );
       wp_enqueue_script( 'govready-dashboard-app', $path . 'client/dist/app.dist.js', array('govready-dashboard-app-vendor') );
       wp_enqueue_style ( 'govready-dashboard-app', $path . 'client/dist/app.dist.css' );
 
-
+      $logo = plugins_url('/../images/logo.png', __FILE__);
       require_once plugin_dir_path(__FILE__) . '../templates/govready-dashboard.php';
 
     } // if()
