@@ -136,7 +136,7 @@ class GovreadyDashboard extends Govready\Govready {
       wp_enqueue_script( 'govready-dashboard-app', $path . 'client/dist/app.dist.js', array('govready-dashboard-app-vendor') );
       wp_enqueue_style ( 'govready-dashboard-app', $path . 'client/dist/app.dist.css' );
 
-
+      $logo = plugins_url('/../images/logo.png', __FILE__);
       require_once plugin_dir_path(__FILE__) . '../templates/govready-dashboard.php';
 
     } // if()
