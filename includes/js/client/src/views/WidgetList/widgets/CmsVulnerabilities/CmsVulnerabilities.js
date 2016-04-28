@@ -19,15 +19,15 @@ class CmsVulnerabilities extends Component {
       core: {},
       plugins: []
     }
-    for(let key of Object.keys(data)) {
-      if(key.includes('wordpress')) {
-        returns['core'] = data[key];
+    console.log(data);
+    data.map((module) => {
+      if(module.type && module.type === 'application') {
+        returns['core'] = module;
       }
       else {
-        data[key].nameSpace = key;
-        returns['plugins'].push(data[key]);
+        returns['plugins'].push(module);
       }
-    }
+    });
     return returns;
   }
 

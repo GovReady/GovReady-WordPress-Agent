@@ -32,7 +32,7 @@ export function widgetLoaded (widgetName: string, data: object): Action {
 
 // Fired when widget has data
 export function widgetLoadFailed (widgetName: string, error: object): Action {
-  return { type: WIDGET_LOAD_FAILED, widgetName: widgetName };
+  return { type: WIDGET_LOAD_FAILED, widgetName: widgetName, error: error };
 }
 
 // Fired when individual widget fetching data
@@ -41,8 +41,8 @@ export function widgetPosting (widgetName: string): Action {
 }
 
 // Fired when individual widget fetching data
-export function widgetPostFailed (widgetName: string): Action {
-  return { type: WIDGET_POST_FAILED, widgetName: widgetName };
+export function widgetPostFailed (widgetName: string, error: object): Action {
+  return { type: WIDGET_POST_FAILED, widgetName: widgetName, error: error };
 }
 
 // Fired when widget should get data
@@ -75,11 +75,12 @@ export function widgetLoadData (widgetName: string, url: string, processData: Fu
         dispatch(widgetLoaded(widgetName, data));
       }
       else {
-        console.log('post failed', json);
         dispatch(widgetLoadFailed(widgetName, json));
       }
     }).catch(function (error) {
-      console.log('post failed', error);
+      console.log(url);
+      console.log(error);
+      console.log('post failed222', error);
       dispatch(widgetLoadFailed(widgetName, error));
     });
   };
@@ -115,7 +116,7 @@ export function widgetPostData (widgetName: string, url: string, method: string 
       if(json && !json.error) {
         // Call loaded action
         // dispatch(widgetLoaded(widgetName, null));
-        console.log('post success')
+        console.log('post success');
       }
       else {
         console.log('request failed', json);
@@ -140,6 +141,7 @@ export const actions = {
   widgetLoaded,
   widgetLoadData,
   widgetLoadFailed,
+  widgetPosting,
   widgetPostData,
   widgetPostAllData,
   widgetPostFailed

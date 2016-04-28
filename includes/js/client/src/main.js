@@ -1,3 +1,4 @@
+// Polyfill promise
 import React from 'react';
 import ReactDOM from 'react-dom';
 import createHashHistory from 'history/lib/createHashHistory';

@@ -108,10 +108,9 @@ class Contacts extends Component {
     else {
       return (
         <ContactsWidget 
-          header={Widget.titleSection('Contact Matrix', false)} 
+          header={Widget.titleSection('Contact Matrix', this.props.widgetName)} 
           contacts={widget.data.contacts}
-          emptyText={this.emptyText()}
-          footer={Widget.panelFooter('Edit', this.props.widgetName)} />
+          emptyText={this.emptyText()} />
       )
     }
   }
