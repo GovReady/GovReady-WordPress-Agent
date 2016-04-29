@@ -12,7 +12,7 @@
       <p>By creating and connecting to an account, you are opting in to the GovReady Terms of Service (@todo: link to Terms of Service).  GovReady will contact your site periodically to collect information about your WordPress plugins, users and server information. Learn more (@todo: links to GitHub/README with information about the info we collect, etc).</p>
     </div>
     <div id="signup-loading" style="display:none">
-      <h2><i class="fa fa-spinner fa-2x fa-spin"></i> Loading</h2>
+      <h2><i class="fa fa-spinner fa-fw fa-spin"></i> Loading</h2>
       <p>We are collecting data about your site. It should only take a minute.  After we have collected your initial
       data, GovReady will automatically contact your site periodically to keep the data up-to-date. Learn more (@todo: links to GitHub/README with information about the info we collect, etc).</p>
     </div>
