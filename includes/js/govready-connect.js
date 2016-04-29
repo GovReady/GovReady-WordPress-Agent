@@ -55,7 +55,7 @@
     'stack'
   ];
   var initRemote = function( completed ) {
-    if (completed > remoteSteps.length) {
+    if (completed >= remoteSteps.length) {
       location.reload();
     }
     else {
@@ -90,7 +90,7 @@
     { key: 'stack', endpoint: 'stack/phpinfo' }
   ];
   var initLocal = function( completed ) {
-    if (completed > remoteSteps.length) {
+    if (completed >= remoteSteps.length) {
       location.reload();
     }
     else {
