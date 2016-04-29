@@ -90,6 +90,11 @@ class GovreadyDashboard extends Govready\Govready {
   public function dashboard_page() {
     $options = get_option( 'govready_options', array() );
     $path = plugins_url('../includes/js/',__FILE__);
+    $logo = plugins_url('/../images/logo.png', __FILE__);
+
+    // Enqueue Bootstrap 
+    wp_enqueue_style( 'govready-bootstrap-style', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css' );
+    wp_enqueue_script( 'govready-bootstrap-script', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js', array(), true );
 
     // First time using app, need to set everything up
     if( empty($options['refresh_token']) ) {
@@ -127,16 +132,11 @@ class GovreadyDashboard extends Govready\Govready {
         'nonce' => wp_create_nonce( $this->key )
       ) );
 
-      // Enqueue Bootstrap 
-      wp_enqueue_style( 'govready-bootstrap-style', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css' );
-      wp_enqueue_script( 'govready-bootstrap-script', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js', array(), true );
-
       // Enqueue react
       wp_enqueue_script( 'govready-dashboard-app-vendor', $path . 'client/dist/vendor.dist.js' );
       wp_enqueue_script( 'govready-dashboard-app', $path . 'client/dist/app.dist.js', array('govready-dashboard-app-vendor') );
       wp_enqueue_style ( 'govready-dashboard-app', $path . 'client/dist/app.dist.css' );
 
-      $logo = plugins_url('/../images/logo.png', __FILE__);
       require_once plugin_dir_path(__FILE__) . '../templates/govready-dashboard.php';
 
     } // if()

@@ -29,8 +29,10 @@ class GovreadyAgent extends Govready\Govready {
    * ?action=govready_v1_trigger&key=stack&endpoint=stack/phpinfo&siteId=xxx
    */
   public function ping() {
+    print_r($_POST);
 
     $options = get_option( 'govready_options' );
+    // @todo: check that request is coming from plugin.govready.com, or is properly nonced (for manual refreshes)
     if ($_POST['siteId'] == $options['siteId']) {
 
       $key = $_POST['key'];
@@ -71,7 +73,6 @@ class GovreadyAgent extends Govready\Govready {
 
   // Callback for ?action=govready_v1_trigger&key=accounts
   private function accounts() {
-
     $out = array();
     $fields = array( 'ID', 'user_login', 'user_email', 'user_nicename', 'user_registered', 'user_status' );
     $users = get_users( array( 
