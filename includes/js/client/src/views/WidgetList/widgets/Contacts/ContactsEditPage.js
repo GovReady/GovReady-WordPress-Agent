@@ -150,7 +150,7 @@ class ContactsEditPage extends Component {
     const { fields: { contacts }, handleSubmit, contactsSubmit, contactsDelete, submitting } = this.props;
     return (
       <form className="form-horizontal" onSubmit={handleSubmit(contactsSubmit)}>
-        {this.contactArea(contacts, contactsDelete)}
+        {this.contactArea([], contactsDelete)}
         <div>
           <button className="btn btn-info" type="button" onClick={() => {
             console.log(contacts);

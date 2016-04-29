@@ -14,5 +14,6 @@ export default (store) => (
   <Route path='/' component={CoreLayout}>
     <IndexRoute component={WidgetList} />
     <Route path="/section/:widget" component={WidgetPage}/>
+    <Route path="/section/:widget/:individual" component={WidgetPage}/>
   </Route>
 );

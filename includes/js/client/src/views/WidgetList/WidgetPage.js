@@ -8,22 +8,46 @@ import widgets from './widgets';
 class WidgetPage extends Component {
 
   render () {
-    if(!widgets[this.props.routeParams.widget] || !widgets[this.props.routeParams.widget].page) {
-      return (
-        <EmptyPage />
-      )
+    const showEmpty = () => {
+      // Widget not found
+      if(!widgets[this.props.routeParams.widget]) {
+        return true;
+      }
+      // Individual page param, but no component
+      if(this.props.routeParams.individual && !widgets[this.props.routeParams.widget].pageIndividual) {
+        return true;
+      }
+      // Page param, but no param
+      if(!widgets[this.props.routeParams.widget].page) {
+        return true
+      }
+      return false;
     }
 
     // Simple render function from widgetName
     const renderPage = (params = {}) => {
       params.widgetName = this.props.routeParams.widget;
-      params.display = 'page';
+      // Special page route? or generic ?
+      if(this.props.routeParams.individual) {
+        params.display = 'pageIndividual';
+        params.individual = this.props.routeParams.individual;
+      }
+      else {
+        params.display = 'page';
+      }
       return React.createElement(widgets[this.props.routeParams.widget].component, params);
     }
 
+    // Page not found
+    if(showEmpty()) {
+      return (
+        <EmptyPage />
+      )
+    }
+    // Show page
     return (
       <div className="page-view">
-        {this.props.routeParams && this.props.routeParams.widget && renderPage()}
+        {renderPage()}
       </div>
     )
   }

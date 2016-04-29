@@ -37,6 +37,12 @@
   }
 }
 
+.news-item + .news-item {
+  border-top: 1px solid #ddd;
+  margin-top: 20px;
+  padding-top: 10px;
+}
+
 fieldset + fieldset {
   border-top: 1px solid #ddd;
   margin-top: 20px;

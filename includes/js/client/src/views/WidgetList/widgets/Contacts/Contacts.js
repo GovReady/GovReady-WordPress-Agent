@@ -4,6 +4,7 @@ import Widget from '../../Widget';
 import ContactsWidget from './ContactsWidget';
 import ContactsEditPage from './ContactsEditPage';
 import objectAssign from 'object-assign';
+import { Link } from 'react-router';
 
 class Contacts extends Component {
   
@@ -22,10 +23,16 @@ class Contacts extends Component {
     };
   }
 
-  emptyText() {
+  emptyText(includeLink) {
     return (
       <div className="alert alert-warning">
-        No contact information completed. Please add some!
+        <span>No contact information completed. Please </span>
+        {includeLink && (
+          <Link to='/section/Contacts'>add some!</Link>
+        )}
+        {!includeLink && (
+          <span>add some!</span>
+        )}
       </div>
     );
   }
@@ -110,7 +117,7 @@ class Contacts extends Component {
         <ContactsWidget 
           header={Widget.titleSection('Contact Matrix', this.props.widgetName)} 
           contacts={widget.data.contacts}
-          emptyText={this.emptyText()} />
+          emptyText={this.emptyText(true)} />
       )
     }
   }

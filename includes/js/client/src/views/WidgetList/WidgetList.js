@@ -19,18 +19,17 @@ class WidgetsListPage extends Component {
     return (
       <div className='widget-layout'>
         <div className='row row-first'>
-          <div className='col-sm-6 col-md-3'>
+          <div className='col-sm-4 col-md-4'>
             {renderWidget('Plugins')}
           </div>
-          <div className='col-sm-6 col-md-3'>
-            {renderWidget('Measures')}
-          </div>
-
-          <div className='col-sm-6 col-md-3'>
+          <div className='col-sm-4 col-md-4'>
             {renderWidget('Domains')}
           </div>
-          <div className='col-sm-6 col-md-3'>
+          <div className='col-sm-4 col-md-4'>
             {renderWidget('Accounts', {widgetType: 'default'})}
+          </div>
+          <div className='col-sm-4 col-md-4'>
+            {false && renderWidget('Measures')}
           </div>
         </div>
         <div className='row row-third'>
@@ -50,6 +49,9 @@ class WidgetsListPage extends Component {
         <div className='row row-fifth'>
           <div className='col-sm-6'>
             {renderWidget('Accounts', {widgetType: 'inactive'})}
+          </div>
+          <div className='col-sm-6'>
+            {renderWidget('News')}
           </div>
         </div>
       </div>

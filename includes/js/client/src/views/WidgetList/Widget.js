@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Link } from 'react-router';
+import { browserHistory, History, Link } from 'react-router';
 import { actions } from 'redux/modules/widgetReducer';
 import objectAssign from 'object-assign';
 
@@ -73,8 +73,20 @@ class Widget {
   }
 
   static backLink (text= 'Back', classes = 'back', backUrl = '/') {
+    const backClick = (event) => {
+      event.preventDefault();
+      if (History.length > 1) {
+        // this will take you back if there is history
+        History.back();
+      } else {
+        browserHistory.push('/#/');
+      }
+    }
     return (
       <Link className={classes} to={backUrl}>{text}</Link>
+    );
+    return (
+      <a href="#" className={classes} onClick={backClick}>{text}</a>
     );
   }
 
