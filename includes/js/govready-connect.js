@@ -87,7 +87,7 @@
     { key: 'activateLocal' },
     { key: 'plugins', endpoint: 'plugins' },
     { key: 'accounts', endpoint: 'accounts' },
-    { key: 'stack', endpoint: 'stack/phpinfo' }
+    { key: 'stack', endpoint: 'stack' }
   ];
   var initLocal = function( completed ) {
     if (completed >= remoteSteps.length) {
