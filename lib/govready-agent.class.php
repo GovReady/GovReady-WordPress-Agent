@@ -42,6 +42,7 @@ class GovreadyAgent extends Govready\Govready {
           //print_r($data);return;
           $endpoint = '/sites/' . $options['siteId'] . '/' . $_POST['endpoint'];
           $return = parent::api( $endpoint, 'POST', $data );
+          print_r($data);
           print_r($return); // @todo: comment this out, also don't return data in API
         }
       }
@@ -102,7 +103,7 @@ class GovreadyAgent extends Govready\Govready {
 
   // Callback for ?action=govready_v1_trigger&key=stack
   private function stack() {
-print_r('asdf');
+
     global $wp_version;
     $stack = array(
       'os' => php_uname( 's' ) .' '. php_uname( 'r' ),
@@ -114,7 +115,6 @@ print_r('asdf');
       ),
       'database' => null,
     );
-    print_r($stack);
 
     return array( 'stack' => $stack );
 
