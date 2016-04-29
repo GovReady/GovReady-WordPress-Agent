@@ -25,7 +25,7 @@ class Vulnerability extends Component {
         <h5>
           {data.title}
         </h5>
-        <p><span className="label label-info pull-left">{data.vuln_type}</span><strong>Fixed in:</strong><span> {data.fixed_in}</span></p>
+        <p><span className="label label-warning pull-left">{data.vuln_type}</span><strong>Fixed in:</strong><span> {data.fixed_in}</span></p>
         {references()}
       </div>
     )  
@@ -50,7 +50,7 @@ class CmsVulnerabilities extends Component {
           <div className="panel-heading" role="tab" id={'heading-item-core'}>
             <h4 className="panel-title">
               <a role="button" data-toggle="collapse" data-parent="#accordion" href={'#collapse-item-core'} aria-expanded="true" aria-controls={'collapse-item-core'}>
-                Core
+                {core.application}
               </a>
             </h4>
           </div>
@@ -66,38 +66,30 @@ class CmsVulnerabilities extends Component {
     }
   }
 
-  pluginsList (plugins) {
-    return (
-      <div>
-        {plugins.map((plugin, index) => (
-          <div key={index} className="panel panel-default">
-            <div className="panel-heading" role="tab" id={'heading-item-' + plugin.nameSpace}>
-              <h4 className="panel-title">
-                <a role="button" data-toggle="collapse" data-parent="#accordion" href={'#collapse-item-' + plugin.nameSpace} aria-expanded="true" aria-controls={'collapse-item-' + plugin.nameSpace}>
-                  {plugin.nameSpace}
-                </a>
-              </h4>
-            </div>
-            <div id={'collapse-item-' + plugin.nameSpace} className="panel-collapse collapse" role="tabpanel" aria-labelledby={'heading-item-' + plugin.nameSpace}>
-              <div className="panel-body">
-                {plugin.vulnerabilities.map((vulnerability, j) => (
-                  <Vulnerability data={vulnerability} key={j} />
-                ))}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
   render () {
     return (
       <div>
         {this.props.header}
         <div className="panel-group" id="collapse-cms-vulnerable" role="tablist" aria-multiselectable="true">
           {this.coreSection(this.props.core)}
-          {this.pluginsList(this.props.plugins)}
+          {this.props.plugins.map((plugin, index) => (
+            <div key={index} className="panel panel-default">
+              <div className="panel-heading" role="tab" id={'heading-item-' + plugin.name}>
+                <h4 className="panel-title">
+                  <a role="button" data-toggle="collapse" data-parent="#accordion" href={'#collapse-item-' + plugin.name} aria-expanded="true" aria-controls={'collapse-item-' + plugin.name}>
+                    {plugin.name}
+                  </a>
+                </h4>
+              </div>
+              <div id={'collapse-item-' + plugin.name} className="panel-collapse collapse" role="tabpanel" aria-labelledby={'heading-item-' + plugin.name}>
+                <div className="panel-body">
+                  {plugin.vulnerabilities.map((vulnerability, j) => (
+                    <Vulnerability data={vulnerability} key={j} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     );

@@ -8,8 +8,8 @@ class DomainsPage extends Component {
         {this.props.header}
         <h3>Domains</h3>
         <div className='domains'>
-          {this.props.domains.map((domain) => (
-            <div>
+          {this.props.domains.map((domain, index) => (
+            <div key={index}>
               <p><strong>Domain:</strong><span> {domain.domain}</span></p>
               <p><strong>Expires:</strong><span>  {domain.expires}</span></p>
               <p>

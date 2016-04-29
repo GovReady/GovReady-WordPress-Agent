@@ -19,7 +19,7 @@ class MeasuresWidget extends Component {
 }
 
 MeasuresWidget.propTypes = {
-  lastRun: PropTypes.number.isRequired,
+  lastRun: PropTypes.string.isRequired,
   totalMeasures: PropTypes.number.isRequired,
   footer: PropTypes.object.isRequired
 };

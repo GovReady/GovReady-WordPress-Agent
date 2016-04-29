@@ -27,10 +27,6 @@ class StackWidget extends Component {
               <th>MySQL</th>
               <td>{systemData.database}</td>
             </tr>
-            <tr>
-              <th>Permissions</th>
-              <td>{assessmentState}</td>
-            </tr>
           </tbody>
         </table>
       </div>

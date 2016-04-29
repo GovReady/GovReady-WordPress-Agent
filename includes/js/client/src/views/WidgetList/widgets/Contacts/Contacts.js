@@ -35,7 +35,9 @@ class Contacts extends Component {
     let widget = this.props.widget;
     const assignProps = (toSet, setData) => {
       this.props.submitFields.map((field) => {
-        toSet[field] = setData[field];
+        if(setData[field] || setData[field] === false) {
+          toSet[field] = setData[field];
+        }
       });
       return toSet;
     }
@@ -63,10 +65,24 @@ class Contacts extends Component {
       });
       // Launch all actions
       this.props.actions.widgetPostAllData(this.props.widgetName, calls).then(
-        this.props.actions.widgetLoaded(this.props.widgetName, null)
+        this.props.actions.widgetLoadData(this.props.widgetName, config.apiUrl + 'contacts', this.processData)
       );
     }
     
+  }
+
+  contactsDelete(contact) {
+    // Launch all actions
+    let calls = [
+      {
+        method: 'DELETE',
+        url: config.apiUrl + 'contacts/' + contact._id,
+        data: contact
+      }
+    ];
+    this.props.actions.widgetPostAllData(this.props.widgetName, calls).then(
+      this.props.actions.widgetLoadData(this.props.widgetName, config.apiUrl + 'contacts', this.processData)
+    );
   }
 
   render () {
@@ -84,6 +100,7 @@ class Contacts extends Component {
           header={Widget.titleSection('Edit contacts', false, 'h2', false, true)} 
           contactsData={widget.data.contacts}
           contactsSubmit={this.handleSubmit.bind(this)}
+          contactsDelete={this.contactsDelete.bind(this)}
           emptyText={this.emptyText()}
           backLink={Widget.backLink('Cancel', 'btn btn-default')} />
       )
@@ -91,10 +108,9 @@ class Contacts extends Component {
     else {
       return (
         <ContactsWidget 
-          header={Widget.titleSection('Contact Matrix', false)} 
+          header={Widget.titleSection('Contact Matrix', this.props.widgetName)} 
           contacts={widget.data.contacts}
-          emptyText={this.emptyText()}
-          footer={Widget.panelFooter('Edit', this.props.widgetName)} />
+          emptyText={this.emptyText()} />
       )
     }
   }
