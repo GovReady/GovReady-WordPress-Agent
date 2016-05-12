@@ -65,7 +65,7 @@
 <script src="https://cdn.auth0.com/js/es5-shim.min.js"></script>
 <![endif]-->
 
-<script src="https://cdn.auth0.com/js/lock-7.12.js"></script>
+<script src="https://cdn.auth0.com/js/lock-9.1.min.js"></script>
 
 <script>
   
