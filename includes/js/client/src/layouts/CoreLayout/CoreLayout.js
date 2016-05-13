@@ -1,5 +1,7 @@
 import React, { PropTypes } from 'react';
+import '../../styles/bootstrap-partial.scss';
 import '../../styles/core.scss';
+
 
 // Note: Stateless/function components *will not* hot reload!
 // react-transform *only* works on component classes.
@@ -12,7 +14,7 @@ import '../../styles/core.scss';
 // define it with a plain javascript function...
 function CoreLayout ({ children }) {
   return (
-    <div className='page-container'>
+    <div className='page-container govready-container'>
       <div className='view-container container'>
         {children}
       </div>

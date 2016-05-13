@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import {Accordion, Panel} from 'react-bootstrap';
 
 class Vulnerability extends Component {
   render() {
@@ -36,70 +37,54 @@ Vulnerability.propTypes = {
   data: PropTypes.object.isRequired
 }
 
-class CmsVulnerabilities extends Component {
+class CmsVulnerabilitiesWidget extends Component {
+
+  coreVulnerabilty (core) {
+    return !core || !core.vulnerabilities || !core.vulnerabilities.length;
+  }
 
   coreSection (core) {
-    if(!core || !core.vulnerabilities || !core.vulnerabilities.length) {
+    if(this.coreVulnerabilty(core)) {
       return (
-        <div className="alert alert-success">Wordpress core is up-to-date</div>
+        <div className="alert alert-success">{this.props.cms} core is up-to-date</div>
       )
     }
     else {
       return (
-        <div className="panel panel-default">
-          <div className="panel-heading" role="tab" id={'heading-item-core'}>
-            <h4 className="panel-title">
-              <a role="button" data-toggle="collapse" data-parent="#accordion" href={'#collapse-item-core'} aria-expanded="true" aria-controls={'collapse-item-core'}>
-                {core.application}
-              </a>
-            </h4>
-          </div>
-          <div id={'collapse-item-core'} className="panel-collapse collapse" role="tabpanel" aria-labelledby={'collapse-item-core'}>
-            <div className="panel-body">
-              {core.vulnerabilities.map((vulnerability, index) => (
-                <Vulnerability data={vulnerability} key={index} />
-              ))}
-            </div>
-          </div>
-        </div>
+        <Panel header={this.props.cms} eventKey="0">
+          {core.vulnerabilities.map((vulnerability, index) => (
+            <Vulnerability data={vulnerability} key={index} />
+          ))}
+        </Panel>
       )
     }
   }
 
   render () {
+    const indexMod = this.coreVulnerabilty(this.props.core) ? 1 : 0;
     return (
       <div>
         {this.props.header}
-        <div className="panel-group" id="collapse-cms-vulnerable" role="tablist" aria-multiselectable="true">
+        <Accordion>
           {this.coreSection(this.props.core)}
           {this.props.plugins.map((plugin, index) => (
-            <div key={index} className="panel panel-default">
-              <div className="panel-heading" role="tab" id={'heading-item-' + plugin.name}>
-                <h4 className="panel-title">
-                  <a role="button" data-toggle="collapse" data-parent="#accordion" href={'#collapse-item-' + plugin.name} aria-expanded="true" aria-controls={'collapse-item-' + plugin.name}>
-                    {plugin.name}
-                  </a>
-                </h4>
-              </div>
-              <div id={'collapse-item-' + plugin.name} className="panel-collapse collapse" role="tabpanel" aria-labelledby={'heading-item-' + plugin.name}>
-                <div className="panel-body">
-                  {plugin.vulnerabilities.map((vulnerability, j) => (
-                    <Vulnerability data={vulnerability} key={j} />
-                  ))}
-                </div>
-              </div>
-            </div>
+            <Panel header={plugin.name} eventKey={index + indexMod} key={index}>
+              {plugin.vulnerabilities.map((vulnerability, j) => (
+                <Vulnerability data={vulnerability} key={j} />
+              ))}
+            </Panel>
           ))}
-        </div>
+        </Accordion>
       </div>
     );
   }
 }
 
-CmsVulnerabilities.propTypes = {
+CmsVulnerabilitiesWidget.propTypes = {
+  cms: PropTypes.string.isRequired,
   header: PropTypes.object,
   core: PropTypes.object.isRequired,
   plugins: PropTypes.array.isRequired
 };
 
-export default CmsVulnerabilities;
+export default CmsVulnerabilitiesWidget;

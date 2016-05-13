@@ -56,6 +56,7 @@ class Recommended extends Component {
     else {
       return (
         <RecommendedWidget 
+          plugText={config.plugText}
           header={Widget.titleSection('Recommended security plugins', false, 'h3')} 
           plugins={widget.data.plugins} />
       )

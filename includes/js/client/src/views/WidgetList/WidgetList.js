@@ -42,16 +42,11 @@ class WidgetsListPage extends Component {
           </div>
         </div>
         <div className='row row-fourth'>
-          <div className='col-xs-12'>
+          <div className='col-sm-6'>
             {renderWidget('Contacts')}
           </div>
-        </div>
-        <div className='row row-fifth'>
           <div className='col-sm-6'>
             {renderWidget('Accounts', {widgetType: 'inactive'})}
-          </div>
-          <div className='col-sm-6'>
-            {renderWidget('News')}
           </div>
         </div>
       </div>

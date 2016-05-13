@@ -1,13 +1,17 @@
 import React, { PropTypes, Component } from 'react';
 import { reduxForm, initialize, propTypes } from 'redux-form';
+import DatePicker from 'react-datepicker';
 export const fields = [
   'contacts[].responsibility',
   'contacts[].name',
   'contacts[].email',
   'contacts[].phone',
+  'contacts[].lastConfirmed',
   'contacts[]._id',
   'contacts[].confirmDelete'
 ];
+// Css
+require('react-datepicker/dist/react-datepicker.css');
 
 class DeleteConfirm extends Component {
   shouldComponentUpdate(nextProps) {
@@ -87,6 +91,27 @@ class ContactsEditPage extends Component {
 
   contactArea(contacts,contactsDelete) {
     if(contacts && contacts.length) {
+      // Returns datePicker for a contact
+      const datePicker = (contact) => {
+        if(contact.lastConfirmed.value) {
+          return (
+            <DatePicker
+              {...contact.lastConfirmed}
+              dateFormat="MMMM Do YYYY"
+              className='form-control'
+              selected={window.moment(contact.lastConfirmed.value, 'MMMM Do YYYY')} />
+          )
+        }
+        else {
+          return (
+            <DatePicker
+              {...contact.lastConfirmed}
+              className='form-control'
+              dateFormat="MMMM Do YYYY"
+              placeholderText="Never Confirmed" />
+          )
+        }
+      }
       return (
         <div className="contacts-edit">
           {contacts.map((contact, index) => (
@@ -102,7 +127,7 @@ class ContactsEditPage extends Component {
                         </div>
                       </div>
                       <div className="form-group">
-                        <label className="col-sm-5 col-md-4 control-label">Responsibility</label>
+                        <label className="col-sm-5 col-md-4 control-label">What to call them for</label>
                         <div className="col-sm-7 col-md-8">
                           <PureInput type="text" field={contact.responsibility}/>
                         </div>
@@ -120,6 +145,14 @@ class ContactsEditPage extends Component {
                         <div className="col-sm-7 col-md-8">
                           <PureInput type="text" field={contact.phone}/>
                         </div>
+                      </div>
+                    </div>
+                    <div className="col-sm-6">
+                      <div className="form-group">
+                          <label className="col-sm-5 col-md-4 control-label">Last Confirmed</label>
+                          <div className="col-sm-7 col-md-8">
+                            {datePicker(contact)}
+                          </div>
                       </div>
                     </div>
                   </div>

@@ -10,13 +10,16 @@ class ContactsWidget extends Component {
             <thead>
               <tr>
                 <th>
-                  Contact Role
+                  What to call them for
                 </th>
                 <th>
                   Email
                 </th>
                 <th>
                   Phone
+                </th>
+                <th>
+                  Last Confirmed
                 </th>
               </tr>
             </thead>
@@ -26,6 +29,7 @@ class ContactsWidget extends Component {
                   <td>{contact.responsibility}</td>
                   <td>{contact.email}</td>
                   <td>{contact.phone}</td>
+                  <td>{contact.lastConfirmed ? contact.lastConfirmed : "Never"}</td>
                 </tr>
               ))}
             </tbody>
@@ -40,6 +44,7 @@ class ContactsWidget extends Component {
     return (
       <div>
         {this.props.header}
+        {this.props.subHeader}
         {this.listContactsTable(this.props.contacts, this.props.emptyText)}
         {this.props.footer}
       </div>
@@ -49,6 +54,7 @@ class ContactsWidget extends Component {
 
 ContactsWidget.propTypes = {
   header: PropTypes.object,
+  subHeader: PropTypes.object,
   contacts: PropTypes.array.isRequired,
   emptyText: PropTypes.object.isRequired,
   footer: PropTypes.object

@@ -19,7 +19,6 @@ class CmsVulnerabilities extends Component {
       core: {},
       plugins: []
     }
-    console.log(data);
     data.map((module) => {
       if(module.type && module.type === 'application') {
         returns['core'] = module;
@@ -49,6 +48,7 @@ class CmsVulnerabilities extends Component {
     else {
       return (
         <CmsVulnerabilitiesWidget 
+          cms={config.cmsNice}
           header={Widget.titleSection('Known vulnerabilities', false, 'h3')}
           core={widget.data.core}
           plugins={widget.data.plugins} />

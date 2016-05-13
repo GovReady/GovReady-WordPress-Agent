@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import config from 'config';
 import Widget from '../../Widget';
-import PluginsWidget from './PluginsWidget';
-import PluginsPage from './PluginsPage';
+import ModulesWidget from './ModulesWidget';
+import ModulesPage from './ModulesPage';
 
-class Plugins extends Component {
+class Modules extends Component {
 
   constructor(props) {
     super(props);
@@ -20,7 +20,7 @@ class Plugins extends Component {
       core: {
         status: 'Current'
       },
-      plugins: data,
+      modules: data,
     };
   }
 
@@ -34,56 +34,41 @@ class Plugins extends Component {
     }
 
     let updates = 0;
-    let totalPlugins = 0;
+    let totalModules = 0;
     let coreUpdate = false;
 
     // Compile data for display
-    if (widget.data && widget.data.plugins && widget.data.plugins.length) {
-      widget.data.plugins.map((plugin) => {
-        if (plugin.status) {
+    if (widget.data && widget.data.modules && widget.data.modules.length) {
+      widget.data.modules.map((module) => {
+        if (module.status) {
           updates++;
         }
       });
-      totalPlugins = widget.data.plugins.length;
+      totalModules = widget.data.modules.length;
       coreUpdate = widget.data.core.status !== 'Current';
-    }
-
-    let plugText, footUrl;
-
-    // CMS Specific
-    switch(config.cms) {  
-      case 'wordpress':
-        footUrl = '/wp-admin/plugins.php';
-        break;
-      case 'drupal': 
-        footUrl = '/admin/modules';
-        break;
     }
 
     if(this.props.display === 'page') {
       return (
-        <PluginsPage 
-          cms={config.cmsNice}
+        <ModulesPage 
           header={Widget.titleSection(this.props.widgetName, false, 'h2', false, true)} 
           updates={updates} 
           coreUpdate={coreUpdate} 
-          plugins={widget.data.plugins} />
+          modules={widget.data.modules} />
       )
     }
     else {
       return (
-        <PluginsWidget 
-          cms={config.cmsNice}
-          plugText={config.plugText}
+        <ModulesWidget 
           updates={updates} 
           coreUpdate={coreUpdate} 
-          footer={Widget.panelFooter(totalPlugins + ' total ' + config.plugText.toLowerCase() + 's', footUrl, true)} />
+          footer={Widget.panelFooter(totalModules + ' total modules', '/admin/modules', true)} />
       )
     }
   }
 }
 
-Plugins.propTypes = Widget.propTypes();
-Plugins.defaultProps = Widget.defaultProps();
+Modules.propTypes = Widget.propTypes();
+Modules.defaultProps = Widget.defaultProps();
 
-export default Widget.connect(Plugins);
+export default Widget.connect(Modules);

@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 
-class PluginsWidget extends Component {
+class ModulesWidget extends Component {
 
   render () {
     return (
@@ -9,9 +9,9 @@ class PluginsWidget extends Component {
           <h4>
             {this.props.updates}
             <br/>
-            <small>{this.props.plugText} updates</small>
+            <small>Module updates</small>
             {this.props.coreUpdate &&
-              <small>including {this.props.cms} Core</small>
+              <small>including WP Core</small>
             }
           </h4>
         </div>
@@ -21,12 +21,10 @@ class PluginsWidget extends Component {
   }
 }
 
-PluginsWidget.propTypes = {
-  cms: PropTypes.string.isRequired,
-  plugText: PropTypes.string.isRequired,
+ModulesWidget.propTypes = {
   updates: PropTypes.number.isRequired,
   coreUpdate: PropTypes.bool,
   footer: PropTypes.object.isRequired
 };
 
-export default PluginsWidget;
+export default ModulesWidget;

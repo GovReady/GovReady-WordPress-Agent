@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { browserHistory, History, Link } from 'react-router';
+import { hashHistory, RouterContext, Link } from 'react-router';
+import { push } from 'react-router-redux';
 import { actions } from 'redux/modules/widgetReducer';
 import objectAssign from 'object-assign';
 
@@ -75,16 +76,15 @@ class Widget {
   static backLink (text= 'Back', classes = 'back', backUrl = '/') {
     const backClick = (event) => {
       event.preventDefault();
-      if (History.length > 1) {
-        // this will take you back if there is history
-        History.back();
-      } else {
-        browserHistory.push('/#/');
-      }
+      //@TODO currently no way to do this????
+      const currentHash = window.location.hash;
+      hashHistory.goBack();
+      setTimeout(() => {
+        if(currentHash === window.location.hash) {
+          hashHistory.push('/');
+        }
+      }, 0);
     }
-    return (
-      <Link className={classes} to={backUrl}>{text}</Link>
-    );
     return (
       <a href="#" className={classes} onClick={backClick}>{text}</a>
     );
@@ -96,9 +96,8 @@ class Widget {
       if(pageUrl && !absolute) {
         return (
           <div>
-            <Link className='title-text' to={`/section/${pageUrl}`}>{text}</Link>
-            <Link className='btn btn-sml pull-right' to={`/section/${pageUrl}`}>
-              <i className='fa fa-chevron-right'></i>
+            <Link className='title-text' to={`/section/${pageUrl}`}>
+              {text}
             </Link>
           </div>
         )
@@ -106,9 +105,8 @@ class Widget {
       else if(pageUrl) {
         return (
           <div>
-            <a className='title-text' href={pageUrl}>{text}</a>
-            <a className='btn btn-sml pull-right' href={pageUrl}>
-              <i className='fa fa-chevron-right'></i>
+            <a className='title-text' href={pageUrl}>
+              {text}
             </a>
           </div>
         )

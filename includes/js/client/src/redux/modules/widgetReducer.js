@@ -150,56 +150,63 @@ export const actions = {
 // ------------------------------------
 // Action Handlers
 // ------------------------------------
+
+const assignWidgetState = (state, widgetName, widget) => {
+  let newWidget = {};
+  newWidget[widgetName] = widget;
+  return {
+    widgets: Object.assign({}, state.widgets, newWidget)
+  };
+}
+
 const ACTION_HANDLERS = {
-  [WIDGET_IMPORTED]: (newState: object, action: {widgetName: string, widgetInit: object}): object => {
+  [WIDGET_IMPORTED]: (state: object, action: {widgetName: string, widgetInit: object}): object => {
+    let widget = action.widgetInit;
     // If nothing is passed, just do default
-    if(!action.widgetInit) {
-      action.widgetInit = {
+    if(!widget) {
+      widget = {
         name: action.widgetName,
         status: 'init',
         data: {}
       }
     }
-    newState.widgets[action.widgetName] = action.widgetInit;
-    return newState;
+    return assignWidgetState(state, action.widgetName, widget);
   },
-  [WIDGET_LOADING]: (newState: object, action: {widgetName: string}): object => {
-    newState.widgets[action.widgetName] = objectAssign(
-      {}, newState.widgets[action.widgetName], {'status': 'loading'}
-    );
-    return newState;
+  [WIDGET_LOADING]: (state: object, action: {widgetName: string}): object => {
+    let widget = objectAssign({}, state.widgets[action.widgetName], {
+      'status': 'loading'
+    });
+    return assignWidgetState(state, action.widgetName, widget);
   },
-  [WIDGET_LOADED]: (newState: object, action: {widgetName: string, data: object}): object => {
-    let newWidget = {
+  [WIDGET_LOADED]: (state: object, action: {widgetName: string, data: object}): object => {
+    let widget = objectAssign({}, state.widgets[action.widgetName], {
       'status': 'loaded'
-    };
+    });
     if(action.data) {
-      newWidget.data = action.data
+      widget.data = action.data
     }
-    newState.widgets[action.widgetName] = objectAssign({}, newState.widgets[action.widgetName], newWidget);
-    return newState;
+    return assignWidgetState(state, action.widgetName, widget);
   },
-  [WIDGET_LOAD_FAILED]: (newState: object, action: {widgetName: string}): object => {
+  [WIDGET_LOAD_FAILED]: (state: object, action: {widgetName: string, error: object}): object => {
+    let widget = objectAssign({}, state.widgets[action.widgetName], {
+      'status': 'load_failed',
+      'error': action.error
+    });
+    return assignWidgetState(state, action.widgetName, widget);
+  },
+  [WIDGET_POSTING]: (state: object, action: {widgetName: string, data: object}): object => {
+    let widget = objectAssign({}, state.widgets[action.widgetName], {
+      'status': 'posting'
+    });
+    return assignWidgetState(state, action.widgetName, widget);
+  },
+  [WIDGET_POST_FAILED]: (state: object, action: {widgetName: string, error: object}): object => {
     // @TODO handle this
-    let newWidget = {
-      'status': 'load_failed'
-    };
-    newState.widgets[action.widgetName] = objectAssign({}, newState.widgets[action.widgetName], newWidget);
-    return newState;
-  },
-  [WIDGET_POSTING]: (newState: object, action: {widgetName: string, data: object}): object => {
-    newState.widgets[action.widgetName] = objectAssign(
-      {}, newState.widgets[action.widgetName], {'status': 'posting'}
-    );
-    return newState;
-  },
-  [WIDGET_POST_FAILED]: (newState: object, action: {widgetName: string}): object => {
-    // @TODO handle this
-    let newWidget = {
-      'status': 'post_failed'
-    };
-    newState.widgets[action.widgetName] = objectAssign({}, newState.widgets[action.widgetName], newWidget);
-    return newState;
+    let widget = objectAssign({}, state.widgets[action.widgetName], {
+      'status': 'post_failed',
+      'error': action.error
+    });
+    return assignWidgetState(state, action.widgetName, widget);
   },
 };
 
@@ -214,8 +221,7 @@ const initialState = {
 export default function widgetReducer (state: object = initialState, action: Action): object {
   const handler = ACTION_HANDLERS[action.type];
   if (handler) {
-    let newState = objectAssign({}, state);
-    return handler(newState, action);
+    return handler(state, action);
   }
   return state;
 }

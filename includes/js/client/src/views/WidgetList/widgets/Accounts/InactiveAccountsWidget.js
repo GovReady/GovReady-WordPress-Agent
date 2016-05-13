@@ -5,7 +5,7 @@ class InactiveAccountsWidget extends Component {
   listUsersTable (users) {
     const printRoles = (user) => {
       if(user.roles) {
-        return Object.keys(user.roles).join(', ');
+        return Object.values(user.roles).join(', ');
       }
     }
     return (
@@ -43,7 +43,7 @@ class InactiveAccountsWidget extends Component {
       <div className='widget account-widget'>
         <div>
           {this.props.header}
-          <h5>Are these users still in your organization?</h5>
+          {this.props.subHeader}
           {this.listUsersTable(this.props.accounts)}
         </div>
       </div>
@@ -53,6 +53,7 @@ class InactiveAccountsWidget extends Component {
 
 InactiveAccountsWidget.propTypes = {
   header: PropTypes.object,
+  subHeader: PropTypes.object,
   accounts: PropTypes.array.isRequired
 };
 

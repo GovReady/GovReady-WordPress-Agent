@@ -23,7 +23,7 @@ class PluginsPage extends Component {
             <div className="alert alert-danger">
               {this.props.updates} <small>Plugin updates</small>
               {this.props.coreUpdate && (
-                <small>including WP Core</small>
+                <small>including {this.props.cms} Core</small>
               )}
             </div>
           )}
@@ -35,6 +35,7 @@ class PluginsPage extends Component {
 }
 
 PluginsPage.propTypes = {
+  cms: PropTypes.string.isRequired,
   header: PropTypes.object.isRequired,
   updates: PropTypes.number.isRequired,
   coreUpdate: PropTypes.bool,
