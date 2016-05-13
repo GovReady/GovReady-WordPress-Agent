@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name:        GovReady
+Plugin Name:        GovReady (BETA)
 Plugin URI:         http://govready.com/wordpress
 Description:        GovReady provides a dashboard and tools to enhance security for government websites and achieve FISMA compliance.
 Version:            1.0.0

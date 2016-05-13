@@ -1,7 +1,7 @@
 <div class="container"><div class="col-xs-12">
   <h1 style="line-height: 65px;margin: 10px 0;">
     <img src="<?php print $logo ?>" style="height:50px;float:left;margin-right:10px;" alt="GovReady" />
-    Welcome to GovReady
+    Welcome to GovReady <sup>BETA</sup>
   </h1>
 
   <div class="content">
@@ -65,7 +65,7 @@
 <script src="https://cdn.auth0.com/js/es5-shim.min.js"></script>
 <![endif]-->
 
-<script src="https://cdn.auth0.com/js/lock-7.12.js"></script>
+<script src="https://cdn.auth0.com/js/lock-9.1.min.js"></script>
 
 <script>
   

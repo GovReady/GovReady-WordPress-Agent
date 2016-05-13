@@ -1,6 +1,8 @@
 # govready
 GovReady provides a dashboard and tools to enhance security for government websites and achieve FISMA compliance.
 
+**Note: This plugin is currently under active development and should not be used on production websites.**
+
 ## Overview
 
 The GovReady Agent monitors your WordPress site, domain, and ssl certificate to ensure that you are
@@ -21,7 +23,6 @@ website, including:
 
 `@todo` add screenshot(s)
 
-Note: This plugin is currently under active development and should not be used on production websites.
 
 
 ## Requirements
