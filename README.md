@@ -21,7 +21,6 @@ website, including:
 * Recent WordPress security news
 * Recent important Internet security news (such as the recent [HeartBleed bug](http://heartbleed.com/))
 
-`@todo` add screenshot(s)
 ![screenshot of GovReady WordPress dashboard](images/govready-wordpress-plugin-screen-may2016.png)
 
 ## Requirements
