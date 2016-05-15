@@ -22,6 +22,7 @@ website, including:
 * Recent important Internet security news (such as the recent [HeartBleed bug](http://heartbleed.com/))
 
 `@todo` add screenshot(s)
+![screenshot of GovReady WordPress dashboard](images/govready-wordpress-plugin-screen-may2016.png)
 
 ## Requirements
 * cURL must be installed and appear in `php.ini`. [Tutorial to enable cURL in PHP]
