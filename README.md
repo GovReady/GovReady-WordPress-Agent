@@ -1,4 +1,4 @@
-# govready
+# GovReady
 GovReady provides a dashboard and tools to enhance security for government websites and achieve FISMA compliance.
 
 **Note: This plugin is currently under active development and should not be used on production websites.**
@@ -23,11 +23,27 @@ website, including:
 
 `@todo` add screenshot(s)
 
-
-
 ## Requirements
 * cURL must be installed and appear in `php.ini`. [Tutorial to enable cURL in PHP]
 (http://www.tomjepson.co.uk/enabling-curl-in-php-php-ini-wamp-xamp-ubuntu/).
+
+
+## Installation
+**NOT RECOMMENDED FOR PRODUCTION - UNDER ACTIVE DEVELOPMENT**
+
+This plugin code is under active development and has not been fully vetted for reliability or security.
+
+That said, here is how to install the plugin and on say, your test blog.
+
+1. Download a zipped version of this repo.
+2. Open your WordPress blog in your browser.
+3. Log into WP admin page and navigate to "Plugins."
+4. Click "Add New."
+5. Click "Upload Plugin."
+6. Select the zipped version of this rep that you downloaded in step 1 and click "Install Now." (OS X automatically uncompresses a zipped file, so first compress the downloaded folder `GovReady-WordPress-Agent-master` to get `GovReady-WordPress-Agent-master.zip` to upload.)
+7. Enter your FTP credentials if prompted.
+8. Activate the plugin.
+9. 
 
 ---
 
