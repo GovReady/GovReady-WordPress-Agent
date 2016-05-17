@@ -48,7 +48,7 @@ class Plugins extends Component {
       coreUpdate = widget.data.core.status !== 'Current';
     }
 
-    let plugText, footUrl;
+    let pluginText, footUrl;
 
     // CMS Specific
     switch(config.cms) {  
@@ -74,10 +74,10 @@ class Plugins extends Component {
       return (
         <PluginsWidget 
           cms={config.cmsNice}
-          plugText={config.plugText}
+          pluginText={config.pluginText}
           updates={updates} 
           coreUpdate={coreUpdate} 
-          footer={Widget.panelFooter(totalPlugins + ' total ' + config.plugText.toLowerCase() + 's', footUrl, true)} />
+          footer={Widget.panelFooter(totalPlugins + ' total ' + config.pluginText.toLowerCase() + 's', footUrl, true)} />
       )
     }
   }

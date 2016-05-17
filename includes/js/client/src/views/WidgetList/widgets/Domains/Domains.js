@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import config from 'config';
+import { actions } from 'redux/modules/widgetReducer';
 import Widget from '../../Widget';
 import DomainsWidget from './DomainsWidget';
 import DomainsPage from './DomainsPage';
+import DomainsLocalMode from './DomainsLocalMode';
 
 class Domains extends Component {
 
@@ -36,6 +40,13 @@ class Domains extends Component {
 
     let widget = this.props.widget;
     
+    // In local mode
+    if(this.props.mode === 'local') {
+      return (
+        <DomainsLocalMode />
+      );
+    }
+
     // Return loading if not set
     if(!widget || widget.status !== 'loaded') {
       return Widget.loadingDisplay();
@@ -77,4 +88,20 @@ class Domains extends Component {
 Domains.propTypes = Widget.propTypes();
 Domains.defaultProps = Widget.defaultProps();
 
-export default Widget.connect(Domains);
+const mapStateToProps = (state, ownProps) => {
+  return {
+    widget: state.widgetState.widgets[ownProps.widgetName],
+    mode: state.siteState.mode
+  };
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Domains);

@@ -96,7 +96,7 @@ class Widget {
       if(pageUrl && !absolute) {
         return (
           <div>
-            <Link className='title-text' to={`/section/${pageUrl}`}>
+            <Link className='title-text' to={`/dashboard/${pageUrl}`}>
               {text}
             </Link>
           </div>
@@ -135,7 +135,7 @@ class Widget {
     return (
       <div className='panel-footer'>
         {pageUrl && !absolute &&
-          <Link className='title-text' to={`/section/${pageUrl}`}>
+          <Link className='title-text' to={`/dashboard/${pageUrl}`}>
             {text} <i className='fa fa-chevron-right'></i>
           </Link>
         }

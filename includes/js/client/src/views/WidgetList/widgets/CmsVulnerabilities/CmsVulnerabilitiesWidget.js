@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
-import {Accordion, Panel} from 'react-bootstrap';
+import Accordion from 'react-bootstrap/lib/Accordion';
+import Panel from 'react-bootstrap/lib/Panel';
 
 class Vulnerability extends Component {
   render() {

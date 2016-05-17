@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
-import {Accordion, Panel} from 'react-bootstrap';
+import Accordion from 'react-bootstrap/lib/Accordion';
+import Panel from 'react-bootstrap/lib/Panel';
 
 class RecommendedWidget extends Component {
 
@@ -35,7 +36,7 @@ class RecommendedWidget extends Component {
               <p>{plugin.description}</p>
               <hr />
               <div>
-                <a href={'https://wordpress.org/plugins/' + plugin.namespace}>{this.props.plugText} page <i className="fa fa-chevron-right" /></a>
+                <a href={this.props.pluginUrl + plugin.namespace}>{this.props.pluginText} page <i className="fa fa-chevron-right" /></a>
               </div>
             </Panel>
           )
@@ -55,7 +56,8 @@ class RecommendedWidget extends Component {
 }
 
 RecommendedWidget.propTypes = {
-  plugText: PropTypes.string.isRequired,
+  pluginText: PropTypes.string.isRequired,
+  pluginUrl: PropTypes.string.isRequired,
   header: PropTypes.object,
   plugins: PropTypes.array.isRequired
 };

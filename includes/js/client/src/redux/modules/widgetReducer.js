@@ -53,9 +53,10 @@ export function widgetLoadData (widgetName: string, url: string, processData: Fu
     // Load data
     return fetch(url + '&method=GET', {
       method: 'get',
+      credentials: 'same-origin',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       }
     }).then((response: object) => {
       // Good?
@@ -99,7 +100,8 @@ export function widgetPostData (widgetName: string, url: string, method: string 
     // Load data
     return fetch(url + '&method=' + method, {
       method: 'post',
-      body: form_data
+      body: form_data,
+      credentials: 'same-origin'
     }).then((response: object) => {
       // Good?
       if (response.status >= 200 && response.status < 300) {

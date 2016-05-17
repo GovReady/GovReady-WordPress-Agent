@@ -28,9 +28,6 @@ class WidgetsListPage extends Component {
           <div className='col-sm-4 col-md-4'>
             {renderWidget('Accounts', {widgetType: 'default'})}
           </div>
-          <div className='col-sm-4 col-md-4'>
-            {false && renderWidget('Measures')}
-          </div>
         </div>
         <div className='row row-third'>
           <div className='col-sm-6'>
@@ -43,10 +40,10 @@ class WidgetsListPage extends Component {
         </div>
         <div className='row row-fourth'>
           <div className='col-sm-6'>
-            {renderWidget('Contacts')}
+            {renderWidget('Accounts', {widgetType: 'inactive'})}
           </div>
           <div className='col-sm-6'>
-            {renderWidget('Accounts', {widgetType: 'inactive'})}
+            {renderWidget('Contacts')}
           </div>
         </div>
       </div>

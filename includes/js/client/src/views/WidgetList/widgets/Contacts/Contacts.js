@@ -28,7 +28,7 @@ class Contacts extends Component {
       <div className="alert alert-warning">
         <span>No contact information completed. Please </span>
         {includeLink && (
-          <Link to='/section/Contacts'>add some!</Link>
+          <Link to='/dashboard/Contacts'>add some!</Link>
         )}
         {!includeLink && (
           <span>add some!</span>
@@ -120,7 +120,7 @@ class Contacts extends Component {
     else {
       const subHeader = () => {
         return (
-          <h5>Keep this handy list <Link to='/section/Contacts'>updated</Link> with important contacts to maintain your site</h5>
+          <h5>Keep this handy list <Link to='/dashboard/Contacts'>updated</Link> with important contacts to maintain your site</h5>
         )
       }
       return (

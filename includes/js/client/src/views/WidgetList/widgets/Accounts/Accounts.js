@@ -39,7 +39,7 @@ class Accounts extends Component {
         break;
       case 'drupal':
         adminRole = 'administrator'; 
-        userUrl = '/admin/users';
+        userUrl = '/admin/people';
         break;
     }
 

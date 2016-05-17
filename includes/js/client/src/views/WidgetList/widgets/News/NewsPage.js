@@ -7,7 +7,7 @@ class NewsItem extends Component {
     return (
       <div>
         <h4>
-          <Link to={'/section/News/' + this.props.index}>{item.title}</Link>
+          <Link to={'/dashboard/News/' + this.props.index}>{item.title}</Link>
         </h4>
         <ul className="list-inline">
           <li>{window.moment(item.published).format('MMMM Do YYYY')}</li>
