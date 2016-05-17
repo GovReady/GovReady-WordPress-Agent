@@ -129,7 +129,8 @@ class GovreadyDashboard extends Govready\Govready {
       wp_enqueue_script( 'govready-dashboard', $path . 'govready.js' );
       wp_localize_script( 'govready-dashboard', 'govready', array( 
         'siteId' => !is_null($options['siteId']) ? $options['siteId'] : null, 
-        'nonce' => wp_create_nonce( $this->key )
+        'nonce' => wp_create_nonce( $this->key ),
+        'mode' => !empty($options['mode']) ? $options['mode'] : 'remote'
       ) );
 
       // Enqueue react

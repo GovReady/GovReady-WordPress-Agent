@@ -60,7 +60,6 @@ class GovreadyAgent extends Govready\Govready {
     $out = array();
     $plugins = get_plugins();
     foreach ($plugins as $key => $plugin) {
-      $plugins[$key]['Active'] = is_plugin_active($key);
       $namespace = explode('/', $key);
       array_push( $out, array(
         'label' => $plugin['Name'],
@@ -121,6 +120,16 @@ class GovreadyAgent extends Govready\Govready {
   }
 
 
+  // Callback for ?action=govready_v1_trigger&key=changeMode
+  private function changeMode() {
+    
+    $options = get_option( 'govready_options', array() );
+    $options['mode'] = $_POST['mode'];
+    update_option( 'govready_options', $options );
+
+    return array( 'mode' => $options['mode'] );
+
+  }
 
 
   /**
