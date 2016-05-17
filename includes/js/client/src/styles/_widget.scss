@@ -5,21 +5,22 @@
   min-height: 100px;
 }
 
-
-.confirm-delete {
-  position: relative;
-  overflow: hidden;
-}
-
-.confirm-inner {
-  position: relative;
-  width: 200%;
-
-  > div {
-    float: left;
-    width: 50%;
+.title {
+  h2,h3 {
+    a {
+      color: #317eac;
+    }
   }
 }
+
+.widget-layout {
+  h4, h5 {
+    color: #555;
+  }
+}
+
+// vulnerability widget
+// ----------------------------
 
 .vulnerability {
   li a {
@@ -37,10 +38,40 @@
   }
 }
 
+// news widget
+// ----------------------------
+
 .news-item + .news-item {
   border-top: 1px solid #ddd;
   margin-top: 20px;
   padding-top: 10px;
+}
+
+
+// Contacts edit page
+// ----------------------------
+
+.contacts-edit {
+  &, & ~ div {
+    .btn + .btn {
+      margin-left: 6px;
+    }
+  }
+}
+
+.confirm-delete {
+  position: relative;
+  overflow: hidden;
+}
+
+.confirm-inner {
+  position: relative;
+  width: 200%;
+
+  > div {
+    float: left;
+    width: 50%;
+  }
 }
 
 fieldset + fieldset {
@@ -48,3 +79,6 @@ fieldset + fieldset {
   margin-top: 20px;
   padding-top: 20px;
 }
+
+// Domains page
+// ----------------------------

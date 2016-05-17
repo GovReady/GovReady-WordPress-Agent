@@ -9,9 +9,9 @@ class PluginsWidget extends Component {
           <h4>
             {this.props.updates}
             <br/>
-            <small>Plugin updates</small>
+            <small>{this.props.pluginText} updates</small>
             {this.props.coreUpdate &&
-              <small>including WP Core</small>
+              <small>including {this.props.cms} Core</small>
             }
           </h4>
         </div>
@@ -22,6 +22,8 @@ class PluginsWidget extends Component {
 }
 
 PluginsWidget.propTypes = {
+  cms: PropTypes.string.isRequired,
+  pluginText: PropTypes.string.isRequired,
   updates: PropTypes.number.isRequired,
   coreUpdate: PropTypes.bool,
   footer: PropTypes.object.isRequired

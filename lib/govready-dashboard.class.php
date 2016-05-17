@@ -93,8 +93,6 @@ class GovreadyDashboard extends Govready\Govready {
     $logo = plugins_url('/../images/logo.png', __FILE__);
 
     // Enqueue Bootstrap 
-    wp_enqueue_style( 'govready-bootstrap-style', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css' );
-    wp_enqueue_script( 'govready-bootstrap-script', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js', array(), true );
 
     // First time using app, need to set everything up
     if( empty($options['refresh_token']) ) {

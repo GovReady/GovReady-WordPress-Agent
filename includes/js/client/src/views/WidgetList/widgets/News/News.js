@@ -43,7 +43,7 @@ class News extends Component {
     else if(this.props.display === 'page') {
       return (
         <NewsPage
-          header={Widget.titleSection('Security News', false, 'h3')} 
+          header={Widget.titleSection('Security News', false, 'h2', false, true)} 
           items={widget.data} />
       )
     }

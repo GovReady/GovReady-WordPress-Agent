@@ -7,7 +7,7 @@ import Logs from './Logs';
 import Contacts from './Contacts';
 import Recommended from './Recommended';
 import CmsVulnerabilities from './CmsVulnerabilities';
-import News from './News';
+// import News from './News';
 
 const widgets = {
   Plugins,
@@ -18,8 +18,7 @@ const widgets = {
   Logs,
   Contacts,
   Recommended,
-  CmsVulnerabilities,
-  News
+  CmsVulnerabilities
 };
 
 export default widgets;

@@ -16,8 +16,26 @@ let testWidget = {
 }
 
 let testDataState = {
-  'widgets': testWidget
+  'widgets': {
+    'test': testWidget
+  }
 }
+
+const testState = (status, data = {}, error = false) => {
+  let returnVal = {
+    widgets: {
+      'test': {
+        name: 'test',
+        status: status,
+        data: data
+      }
+    }
+  }
+  if(error) {
+    returnVal['widgets']['test']['error'] = error;
+  }
+  return returnVal;
+} 
 
 describe('(Redux Module) widgetReducer', function () {
   it('Should export constants: WIDGET_IMPORTED, WIDGET_LOADING, WIDGET_LOADED, WIDGET_LOAD_FAILED, WIDGET_POSTING, WIDGET_POST_FAILED.', function () {
@@ -50,7 +68,7 @@ describe('(Redux Module) widgetReducer', function () {
     })
   })
 
-  describe('(Action Creators) widgetImported', function () {
+  describe('(Action) widgetImported', function () {
     it('Should create an action to init a widget', () => {
       const expectedAction = { 
         type: WIDGET_IMPORTED, 
@@ -59,9 +77,15 @@ describe('(Redux Module) widgetReducer', function () {
       };
      expect(actions.widgetImported('test', testWidget)).to.deep.equal(expectedAction);
     })
+
+    it('Should set widget init, init data.', function () {
+      let state = widgetReducer(undefined, {});
+      state = widgetReducer(state, actions.widgetImported('test'));
+      expect(state).to.deep.equal({widgets: {'test': testWidget}});
+    })
   })
 
-  describe('(Action Creators) widgetLoading', function () {
+  describe('(Action) widgetLoading', function () {
     it('Should create an action to set a widget to loading', () => {
       const expectedAction = { 
         type: WIDGET_LOADING, 
@@ -69,9 +93,16 @@ describe('(Redux Module) widgetReducer', function () {
       };
      expect(actions.widgetLoading('test')).to.deep.equal(expectedAction);
     })
+
+    it('Should set widget to loading.', function () {
+      let state = widgetReducer(undefined, {});
+      state = widgetReducer(state, actions.widgetImported('test'));
+      state = widgetReducer(state, actions.widgetLoading('test'));
+      expect(state).to.deep.equal(testState('loading'));
+    })
   })
 
-  describe('(Action Creators) widgetLoaded', function () {
+  describe('(Action) widgetLoaded', function () {
     it('Should create an action to set a widget with data', () => {
       const expectedAction = { 
         type: WIDGET_LOADED, 
@@ -80,9 +111,16 @@ describe('(Redux Module) widgetReducer', function () {
       };
      expect(actions.widgetLoaded('test', testWidget)).to.deep.equal(expectedAction);
     })
+
+    it('Should set widget to loaded, with data.', function () {
+      let state = widgetReducer(undefined, {});
+      state = widgetReducer(state, actions.widgetImported('test'));
+      state = widgetReducer(state, actions.widgetLoaded('test', {hi: 'ho'}));
+      expect(state).to.deep.equal(testState('loaded', {hi: 'ho'}));
+    })
   })
 
-  describe('(Action Creators) widgetLoadFailed', function () {
+  describe('(Action) widgetLoadFailed', function () {
     it('Should create an action to set a widget to loading failed', () => {
       const error = {
         error: 'failed'
@@ -94,9 +132,16 @@ describe('(Redux Module) widgetReducer', function () {
       };
      expect(actions.widgetLoadFailed('test', error)).to.deep.equal(expectedAction);
     })
+
+    it('Should set widget to load failed, with error.', function () {
+      let state = widgetReducer(undefined, {});
+      state = widgetReducer(state, actions.widgetImported('test'));
+      state = widgetReducer(state, actions.widgetLoadFailed('test', {error: 'failed'}));
+      expect(state).to.deep.equal(testState('load_failed', {}, {error: 'failed'}));
+    })
   })
 
-  describe('(Action Creators) widgetPosting', function () {
+  describe('(Action) widgetPosting', function () {
     it('Should create an action to set a widget to posting', () => {
       const expectedAction = { 
         type: WIDGET_POSTING, 
@@ -104,9 +149,16 @@ describe('(Redux Module) widgetReducer', function () {
       };
      expect(actions.widgetPosting('test')).to.deep.equal(expectedAction);
     })
+
+    it('Should set widget to posting.', function () {
+      let state = widgetReducer(undefined, {});
+      state = widgetReducer(state, actions.widgetImported('test'));
+      state = widgetReducer(state, actions.widgetPosting('test'));
+      expect(state).to.deep.equal(testState('posting'));
+    })
   })
 
-  describe('(Action Creators) widgetPostFailed', function () {
+  describe('(Action) widgetPostFailed', function () {
     it('Should create an action to set a widget to post failed', () => {
       const error = {
         error: 'failed'
@@ -118,9 +170,16 @@ describe('(Redux Module) widgetReducer', function () {
       };
      expect(actions.widgetPostFailed('test', error)).to.deep.equal(expectedAction);
     })
+
+    it('Should set widget to load failed, with error.', function () {
+      let state = widgetReducer(undefined, {});
+      state = widgetReducer(state, actions.widgetImported('test'));
+      state = widgetReducer(state, actions.widgetPostFailed('test', {error: 'failed'}));
+      expect(state).to.deep.equal(testState('post_failed', {}, {error: 'failed'}));
+    })
   })
 
-  describe('(Async Action Creators) widgetLoadData', function () {
+  describe('(Async Action) widgetLoadData', function () {
     it('Should create action to set widget to loading, call endpoint, set to loaded with data', () => {
 
       const expectedActions = [

@@ -28,7 +28,7 @@ class Contacts extends Component {
       <div className="alert alert-warning">
         <span>No contact information completed. Please </span>
         {includeLink && (
-          <Link to='/section/Contacts'>add some!</Link>
+          <Link to='/dashboard/Contacts'>add some!</Link>
         )}
         {!includeLink && (
           <span>add some!</span>
@@ -80,16 +80,21 @@ class Contacts extends Component {
 
   contactsDelete(contact) {
     // Launch all actions
-    let calls = [
-      {
-        method: 'DELETE',
-        url: config.apiUrl + 'contacts/' + contact._id,
-        data: contact
-      }
-    ];
-    this.props.actions.widgetPostAllData(this.props.widgetName, calls).then(
-      this.props.actions.widgetLoadData(this.props.widgetName, config.apiUrl + 'contacts', this.processData)
-    );
+    if(contact._id && contact._id.value) {
+      let calls = [
+        {
+          method: 'DELETE',
+          url: config.apiUrl + 'contacts/' + contact._id.value,
+          data: contact
+        }
+      ];
+      this.props.actions.widgetPostAllData(this.props.widgetName, calls).then(
+        this.props.actions.widgetLoadData(this.props.widgetName, config.apiUrl + 'contacts', this.processData)
+      );
+    }
+    else {
+      //error
+    }
   }
 
   render () {
@@ -113,9 +118,15 @@ class Contacts extends Component {
       )
     }
     else {
+      const subHeader = () => {
+        return (
+          <h5>Keep this handy list <Link to='/dashboard/Contacts'>updated</Link> with important contacts to maintain your site</h5>
+        )
+      }
       return (
         <ContactsWidget 
-          header={Widget.titleSection('Contact Matrix', this.props.widgetName)} 
+          header={Widget.titleSection('Points of Contact to Maintain your Site', this.props.widgetName)} 
+          subHeader={widget.data.contacts.length ? subHeader() : false}
           contacts={widget.data.contacts}
           emptyText={this.emptyText(true)} />
       )

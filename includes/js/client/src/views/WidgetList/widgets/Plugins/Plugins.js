@@ -48,9 +48,22 @@ class Plugins extends Component {
       coreUpdate = widget.data.core.status !== 'Current';
     }
 
+    let pluginText, footUrl;
+
+    // CMS Specific
+    switch(config.cms) {  
+      case 'wordpress':
+        footUrl = '/wp-admin/plugins.php';
+        break;
+      case 'drupal': 
+        footUrl = '/admin/modules';
+        break;
+    }
+
     if(this.props.display === 'page') {
       return (
         <PluginsPage 
+          cms={config.cmsNice}
           header={Widget.titleSection(this.props.widgetName, false, 'h2', false, true)} 
           updates={updates} 
           coreUpdate={coreUpdate} 
@@ -60,9 +73,11 @@ class Plugins extends Component {
     else {
       return (
         <PluginsWidget 
+          cms={config.cmsNice}
+          pluginText={config.pluginText}
           updates={updates} 
           coreUpdate={coreUpdate} 
-          footer={Widget.panelFooter(totalPlugins + ' total plugins', '/wp-admin/plugins.php', true)} />
+          footer={Widget.panelFooter(totalPlugins + ' total ' + config.pluginText.toLowerCase() + 's', footUrl, true)} />
       )
     }
   }

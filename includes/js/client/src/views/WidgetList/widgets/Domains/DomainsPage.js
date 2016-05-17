@@ -1,4 +1,6 @@
 import React, { Component, PropTypes } from 'react';
+import Accordion from 'react-bootstrap/lib/Accordion';
+import Panel from 'react-bootstrap/lib/Panel';
 
 class DomainsPage extends Component {
 
@@ -12,14 +14,13 @@ class DomainsPage extends Component {
             <div key={index}>
               <p><strong>Domain:</strong><span> {domain.domain}</span></p>
               <p><strong>Expires:</strong><span>  {domain.expires}</span></p>
-              <p>
-                <strong>Whois record:</strong>
-                <br/>
-                <span>{domain.whois}</span>
-              </p>
+              <Accordion>
+                <Panel header="Show whois record" eventKey={'whois-' + index}>
+                  <pre>{domain.whois}</pre>
+                </Panel>
+              </Accordion>
             </div>
           ))}
-          
         </div>
         <div>
           <h3>SSL</h3>

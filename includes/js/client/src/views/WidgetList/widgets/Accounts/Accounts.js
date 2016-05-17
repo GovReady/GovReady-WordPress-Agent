@@ -3,6 +3,7 @@ import config from 'config/';
 import Widget from '../../Widget';
 import AccountsWidget from './AccountsWidget';
 import InactiveAccountsWidget from './InactiveAccountsWidget';
+import { Link } from 'react-router';
 
 class Accounts extends Component {
 
@@ -29,6 +30,19 @@ class Accounts extends Component {
       return Widget.loadingDisplay();
     }
 
+    let userUrl, adminRole;
+    // CMS Specific
+    switch(config.cms) {  
+      case 'wordpress':
+        adminRole = 'administrator';
+        userUrl = '/wp-admin/users.php';
+        break;
+      case 'drupal':
+        adminRole = 'administrator'; 
+        userUrl = '/admin/people';
+        break;
+    }
+
     // Inactive
     if(this.props.widgetType === 'inactive') {
       // @ TODO?
@@ -38,9 +52,15 @@ class Accounts extends Component {
         )
       }
       else {
+        const subHeader = () => {
+          return (
+            <h5>Are these users still in your organization?  <a href={userUrl}>Edit them</a>.</h5>
+          );
+        }
         return (
           <InactiveAccountsWidget
-            header={Widget.titleSection('Inactive Accounts', '/wp-admin/users.php', 'h3', true)} 
+            header={Widget.titleSection('Inactive Accounts', userUrl, 'h3', true)} 
+            subHeader={subHeader()}
             accounts={widget.data.accounts} />
         )
       }
@@ -53,7 +73,7 @@ class Accounts extends Component {
       // Compile data
       if (widget.data && widget.data.accounts && widget.data.accounts.length) {
         widget.data.accounts.map((account) => {
-          if (account.roles && account.roles.administrator) {
+          if (account.roles && Object.values(account.roles).indexOf(adminRole)) {
             admins++;
           }
         });
@@ -71,7 +91,7 @@ class Accounts extends Component {
           <AccountsWidget
             admins={admins}
             totalAccounts={totalAccounts} 
-            footer={Widget.panelFooter(totalAccounts + ' total accounts', '/wp-admin/users.php', true)} />
+            footer={Widget.panelFooter(totalAccounts + ' total accounts', userUrl, true)} />
         )
       }
     }
