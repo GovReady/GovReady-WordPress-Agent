@@ -13,9 +13,20 @@ class WidgetPage extends Component {
       if(!widgets[this.props.routeParams.widget]) {
         return true;
       }
-      // Individual page param, but no component
-      if(this.props.routeParams.individual && !widgets[this.props.routeParams.widget].pageIndividual) {
-        return true;
+      // Individual page param
+      if(this.props.routeParams.individual) {
+        // null or empty param
+        if(!widgets[this.props.routeParams.widget].pageIndividual) {
+          return true;
+        }
+        // Is a "new" path, but this widget doesn't support new
+        if(this.props.routeParams.individual === 'new' && !widgets[this.props.routeParams.widget].pageIndividualNew) {
+          return true;
+        }
+        // Is has a view path, but this widget doesn't support new
+        if(this.props.routeParams.view && !widgets[this.props.routeParams.widget].pageIndividualView) {
+          return true;
+        }
       }
       // Page param, but no param
       if(!widgets[this.props.routeParams.widget].page) {
@@ -27,10 +38,22 @@ class WidgetPage extends Component {
     // Simple render function from widgetName
     const renderPage = (params = {}) => {
       params.widgetName = this.props.routeParams.widget;
-      // Special page route? or generic ?
+      // Special page route?
       if(this.props.routeParams.individual) {
-        params.display = 'pageIndividual';
-        params.individual = this.props.routeParams.individual;
+        // Create new
+        if(this.props.routeParams.individual === 'new') {
+          params.isNew = true;
+          params.display = 'pageIndividualEdit';
+          params.individual = 0;
+        }
+        // Edit or view?
+        else {
+          params.isNew = false;
+          params.display = this.props.routeParams.view && this.props.routeParams.view === 'edit'
+                         ? 'pageIndividualEdit'
+                         : 'pageIndividual';
+          params.individual = this.props.routeParams.individual;
+        }
       }
       else {
         params.display = 'page';

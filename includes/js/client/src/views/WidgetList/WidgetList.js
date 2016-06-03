@@ -26,16 +26,24 @@ class WidgetsListPage extends Component {
             {renderWidget('Domains')}
           </div>
           <div className='col-sm-4 col-md-4'>
+            
+          </div>
+          <div className='col-sm-4 col-md-4'>
             {renderWidget('Accounts', {widgetType: 'default'})}
           </div>
         </div>
-        <div className='row row-third'>
+        <div className='row row-seco'>
           <div className='col-sm-6'>
             {renderWidget('Stack')}
           </div>
           <div className='col-sm-6'>
             {renderWidget('Recommended')}
             {renderWidget('CmsVulnerabilities')}
+          </div>
+        </div>
+        <div className='row row-third'>
+          <div className='col-sm-12'>
+            {renderWidget('Measures')}
           </div>
         </div>
         <div className='row row-fourth'>

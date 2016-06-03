@@ -23,8 +23,8 @@ else if(window.Drupal && window.Drupal.settings.govready) {
   let url = '/govready/api?';
   config.apiTrigger = '/govready/trigger';
   if(process.env.NODE_ENV === 'development') {
-    url = 'http://localhost:80/govready/api?';
-    config.apiTrigger = 'http://localhost:80/govready/trigger';
+    url = 'http://alex-UX303UA:32771/govready/api?';
+    config.apiTrigger = 'http://localhost:32771/govready/trigger';
   }
   config.apiUrl = url + 'action=govready_proxy&endpoint=/sites/' + config.siteId + '/';
   config.apiUrlNoSite = url + 'action=govready_proxy&endpoint=';

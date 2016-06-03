@@ -1,6 +1,8 @@
 import React, { PropTypes, Component } from 'react';
 import { reduxForm, initialize, propTypes } from 'redux-form';
-import DatePicker from 'react-datepicker';
+import PureInput from 'components/PureInput';
+import DeleteConfirm from 'components/DeleteConfirm';
+import DatePickerWrap from 'components/DatePickerWrap';
 export const fields = [
   'contacts[].responsibility',
   'contacts[].name',
@@ -10,74 +12,6 @@ export const fields = [
   'contacts[]._id',
   'contacts[].confirmDelete'
 ];
-// Css
-require('react-datepicker/dist/react-datepicker.css');
-
-class DeleteConfirm extends Component {
-  shouldComponentUpdate(nextProps) {
-    return this.props.confirmDelete !== nextProps.confirmDelete
-  }
-
-  cancelClick(event) {
-    event.preventDefault();
-    this.props.deleteConfirm(false);
-  }
-
-  deleteClick(event) {
-    event.preventDefault();
-    this.props.deleteConfirm(true);
-  }
-
-  render() {
-    const style = {
-      marginLeft: this.props.confirmDelete ? '-100%' : 0
-    };
-    return (
-      <div className="confirm-delete">
-        <div className="confirm-inner" style={style}>
-          <div>
-            <button className="btn btn-danger" type="button" onClick={this.deleteClick.bind(this)}>
-              <i className="fa fa-trash"></i> <span className="sr-only">Remove</span>
-            </button>
-          </div>
-          <div>
-            <div>Are you sure?</div>
-            <button className="btn btn-danger" type="button" onClick={this.props.deleteFunc}>Yes</button>
-            <button className="btn btn-default" type="button" onClick={this.cancelClick.bind(this)}>No</button>
-          </div>
-        </div>
-      </div>
-    )
-  }
-}
-
-DeleteConfirm.propTypes = {
-  confirmDelete: PropTypes.bool,
-  index: PropTypes.number.isRequired,
-  deleteConfirm: PropTypes.func.isRequired,
-  deleteFunc: PropTypes.func.isRequired
-}
-
-DeleteConfirm.defaultProps = () => {
-  return {
-    confirmDelete: false
-  }
-}
-
-class PureInput extends Component {
-  shouldComponentUpdate(nextProps) {
-    return this.props.field !== nextProps.field
-  }
-
-  render() {
-    const { field, ...rest } = this.props
-    return <input className="form-control" {...field} {...rest}/>
-  }
-}
-
-PureInput.propTypes = {
-  field: PropTypes.object.isRequired
-}
 
 class ContactsEditPage extends Component {
 
@@ -91,27 +25,6 @@ class ContactsEditPage extends Component {
 
   contactArea(contacts,contactsDelete) {
     if(contacts && contacts.length) {
-      // Returns datePicker for a contact
-      const datePicker = (contact) => {
-        if(contact.lastConfirmed.value) {
-          return (
-            <DatePicker
-              {...contact.lastConfirmed}
-              dateFormat="MMMM Do YYYY"
-              className='form-control'
-              selected={window.moment(contact.lastConfirmed.value, 'MMMM Do YYYY')} />
-          )
-        }
-        else {
-          return (
-            <DatePicker
-              {...contact.lastConfirmed}
-              className='form-control'
-              dateFormat="MMMM Do YYYY"
-              placeholderText="Never Confirmed" />
-          )
-        }
-      }
       return (
         <div className="contacts-edit">
           {contacts.map((contact, index) => (
@@ -151,7 +64,7 @@ class ContactsEditPage extends Component {
                       <div className="form-group">
                           <label className="col-sm-5 col-md-4 control-label">Last Confirmed</label>
                           <div className="col-sm-7 col-md-8">
-                            {datePicker(contact)}
+                            <DatePickerWrap field={contact.lastConfirmed} placeholderText="Never Confirmed" />
                           </div>
                       </div>
                     </div>

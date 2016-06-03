@@ -17,5 +17,6 @@ export default (store) => (
     <Route path="/dashboard" component={WidgetList}/>
     <Route path="/dashboard/:widget" component={WidgetPage}/>
     <Route path="/dashboard/:widget/:individual" component={WidgetPage}/>
+    <Route path="/dashboard/:widget/:individual/:view" component={WidgetPage}/>
   </Route>
 );
