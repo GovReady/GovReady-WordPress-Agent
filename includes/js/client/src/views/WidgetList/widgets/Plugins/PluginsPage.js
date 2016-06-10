@@ -18,6 +18,7 @@ class PluginsPage extends Component {
     return (
       <div>
         {this.props.header}
+        {this.props.subHeader}
         <div className="alert-region">
           {this.props.updates && (
             <div className="alert alert-danger">
@@ -37,6 +38,7 @@ class PluginsPage extends Component {
 PluginsPage.propTypes = {
   cms: PT.string.isRequired,
   header: PT.object.isRequired,
+  subHeader: PT.object.isRequired,
   updates: PT.number.isRequired,
   coreUpdate: PT.bool,
   plugins: PT.array.isRequired

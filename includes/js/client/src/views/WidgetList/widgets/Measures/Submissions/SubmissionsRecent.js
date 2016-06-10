@@ -4,6 +4,7 @@ import { isoToDate } from 'utils/date';
 import Accordion from 'react-bootstrap/lib/Accordion';
 import Panel from 'react-bootstrap/lib/Panel';
 
+// Prints site wide recents
 class SubmissionsRecent extends Component {
 
   submissionsList (submissions) {
@@ -12,7 +13,7 @@ class SubmissionsRecent extends Component {
         return (
           <div className='row'>
             <div className="col-sm-6">
-              <label>By</label> {submission.name}
+              <strong>By</strong> {submission.name}
             </div>
             <div className="col-sm-6 text-right">
               {isoToDate(submission.datetime)}

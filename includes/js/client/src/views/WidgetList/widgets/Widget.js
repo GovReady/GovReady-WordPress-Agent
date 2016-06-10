@@ -70,7 +70,7 @@ class Widget {
     );
   }
 
-  static backLink (text= 'Back', classes = 'back', backUrl = '/') {
+  static backLink (text= 'Back', classes = 'back', backUrl = '/dashboard') {
     const backClick = (event) => {
       event.preventDefault();
       //@TODO currently no way to do this????
@@ -78,7 +78,7 @@ class Widget {
       hashHistory.goBack();
       setTimeout(() => {
         if(currentHash === window.location.hash) {
-          hashHistory.push('/');
+          hashHistory.push(backUrl);
         }
       }, 0);
     }

@@ -32,7 +32,7 @@ class MeasuresWidget extends Component {
     return (
       <div>
         {this.props.header}
-        <h5>Track your manual steps here</h5>
+        {this.props.subHeader}
         <div className="row">
           <div className="col-sm-6">
             <h4>Upcoming / Past Due Measures</h4>

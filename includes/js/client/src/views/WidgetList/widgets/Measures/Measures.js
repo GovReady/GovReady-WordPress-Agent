@@ -29,9 +29,9 @@ class Measures extends Component {
     }
   }
 
-  createNewLink(text, to = 'new') {
+  createNewLink(text, to = 'new', classes) {
     return (
-      <Link to={'/dashboard/Measures/' + to} >{text}</Link>
+      <Link className={classes} to={'/dashboard/Measures/' + to} >{text}</Link>
     );
   }
 
@@ -207,9 +207,16 @@ class Measures extends Component {
     }
     // Widget
     else {
+      
+      const subHeader = () => {
+        return (
+          <h5>Track your manual steps here. <Link to='/dashboard/Measures'>See all.</Link></h5>
+        )
+      }
       return (
         <MeasuresWidget 
-          header={Widget.titleSection('Manual Measures', this.props.widgetName)} 
+          header={Widget.titleSection('Manual Measures', this.props.widgetName)}
+          subHeader={measures && measures.length ? subHeader() : false}
           createNewLink={this.createNewLink.bind(this)}
           nextSubmissionDue={this.nextSubmissionDue.bind(this)}
           measures={this.getMeasuresByDueDate()} />

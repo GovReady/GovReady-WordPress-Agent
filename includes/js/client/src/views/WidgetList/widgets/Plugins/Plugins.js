@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import config from 'config';
 import Widget from '../Widget';
+import { Link } from 'react-router';
 import PluginsWidget from './PluginsWidget';
 import PluginsPage from './PluginsPage';
 
@@ -49,23 +50,29 @@ class Plugins extends Component {
       coreUpdate = widget.data.core.status !== 'Current';
     }
 
-    let pluginText, footUrl;
+    let pluginText, pluginUrl;
 
     // CMS Specific
     switch(config.cms) {  
       case 'wordpress':
-        footUrl = '/wp-admin/plugins.php';
+        pluginUrl = '/wp-admin/plugins.php';
         break;
       case 'drupal': 
-        footUrl = '/admin/modules';
+        pluginUrl = '/admin/modules';
         break;
     }
 
     if(display === 'page') {
+      const subHeader = () => {
+        return (
+          <h4>Site {config.pluginText + 's'}. Go to <a href={pluginUrl}>CMS page.</a></h4>
+        )
+      }
       return (
         <PluginsPage 
           cms={config.cmsNice}
-          header={Widget.titleSection(widgetName, false, 'h2', false, true)} 
+          header={Widget.titleSection(config.pluginText + 's', false, 'h2', false, true)} 
+          subHeader={subHeader()}
           updates={updates} 
           coreUpdate={coreUpdate} 
           plugins={widget.data.plugins} />

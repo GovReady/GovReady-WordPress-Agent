@@ -1,6 +1,7 @@
 import React, { PropTypes as PT, Component } from 'react';
 import { isoToDate } from 'utils/date';
 
+// Prints measure specific submissions
 class SubmissionsList extends Component {
 
   submissionsList (submissions) {

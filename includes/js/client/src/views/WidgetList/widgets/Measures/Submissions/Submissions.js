@@ -126,11 +126,11 @@ class Submissions extends Component {
           backLink={Widget.backLink('Cancel', 'btn btn-default')} />
       )
     }
-    if(display === 'page') {
-      return (
-        <SubmissionsPage />
-      )
-    }
+    // if(display === 'page') {
+    //   return (
+    //     <SubmissionsPage />
+    //   )
+    // }
     if(display === 'list') {
       // Individual measure
       if(measureId) {
