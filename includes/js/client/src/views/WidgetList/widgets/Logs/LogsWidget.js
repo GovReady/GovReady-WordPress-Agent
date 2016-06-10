@@ -1,16 +1,17 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes as PT } from 'react';
 import config from 'config/';
-import Widget from '../../Widget';
+import Widget from '../Widget';
 
 class LogsWidget extends Component {
-  
-  constructor(props) {
-    super(props);
-    Widget.registerWidget(this);
-  }
 
   componentWillMount () {
-    Widget.getPayload(this, config.apiUrl + 'logs');
+    Widget.registerWidget(
+      this, 
+      {
+        url: config.apiUrl + 'logs',
+        process: this.processData
+      }
+    );
   }
 
   processData (data) {
@@ -62,7 +63,7 @@ class LogsWidget extends Component {
 }
 
 LogsWidget.propTypes = Widget.propTypes({
-  logType: PropTypes.string.isRequired
+  logType: PT.string.isRequired
 });
 LogsWidget.defaultProps = Widget.defaultProps();
 

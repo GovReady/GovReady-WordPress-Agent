@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes as PT } from 'react';
 
 class StackWidget extends Component {
 
@@ -44,9 +44,9 @@ class StackWidget extends Component {
 }
 
 StackWidget.propTypes = {
-  header: PropTypes.object,
-  systemData: PropTypes.object.isRequired,
-  assessmentState: PropTypes.object.isRequired
+  header: PT.object,
+  systemData: PT.object.isRequired,
+  assessmentState: PT.object.isRequired
 };
 
 export default StackWidget;

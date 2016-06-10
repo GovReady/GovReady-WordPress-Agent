@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes as PT } from 'react';
 
 class InactiveAccountsWidget extends Component {
 
@@ -65,9 +65,9 @@ class InactiveAccountsWidget extends Component {
 }
 
 InactiveAccountsWidget.propTypes = {
-  header: PropTypes.object,
-  subHeader: PropTypes.object,
-  accounts: PropTypes.array.isRequired
+  header: PT.object,
+  subHeader: PT.object,
+  accounts: PT.array.isRequired
 };
 
 export default InactiveAccountsWidget;

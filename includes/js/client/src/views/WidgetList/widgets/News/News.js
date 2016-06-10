@@ -1,6 +1,6 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes as PT } from 'react';
 import config from 'config';
-import Widget from '../../Widget';
+import Widget from '../Widget';
 import EmptyPage from 'components/EmptyPage';
 import NewsWidget from './NewsWidget';
 import NewsPage from './NewsPage';
@@ -8,13 +8,14 @@ import NewsPageIndividual from './NewsPageIndividual';
 
 class News extends Component {
 
-  constructor(props) {
-    super(props);
-    Widget.registerWidget(this, props);
-  }
-
   componentWillMount () {
-    Widget.getPayload(this, config.apiUrlNoSite + '/applications/wordpress/news');
+    Widget.registerWidget(
+      this, 
+      {
+        url: config.apiUrl + 'news',
+        process: this.processData
+      }
+    );
   }
 
   render () {
@@ -58,7 +59,7 @@ class News extends Component {
 }
 
 News.propTypes = Widget.propTypes({
-  individual: PropTypes.number
+  individual: PT.number
 });
 News.defaultProps = Widget.defaultProps();
 

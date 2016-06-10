@@ -1,4 +1,5 @@
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes as PT, Component } from 'react';
+import Submissions from './Submissions/Submissions';
 
 class MeasuresWidget extends Component {
 
@@ -7,8 +8,13 @@ class MeasuresWidget extends Component {
       return (
         <div>
           {measures.map((measure, index) => (
-            <div key={index} className='measure'>
-              <h4>{this.props.createNewLink(measure.title, measure._id)}</h4>
+            <div key={index} className='measure row'>
+              <div className="col-sm-8">
+                <p>{this.props.createNewLink(measure.title, measure._id)}</p>
+              </div>
+              <div className="col-sm-4">
+                {this.props.nextSubmissionDue(measure)}
+              </div>
             </div>
           ))}
         </div>
@@ -34,8 +40,7 @@ class MeasuresWidget extends Component {
           </div>
           <div className="col-sm-6">
             <h4>Recent Submissions</h4>
-            <div>
-            </div>
+            <Submissions display="recent" />
           </div>
         </div>
       </div>
@@ -44,10 +49,11 @@ class MeasuresWidget extends Component {
 }
 
 MeasuresWidget.propTypes = {
-  header: PropTypes.object,
-  subHeader: PropTypes.object,
-  createNewLink: PropTypes.func.isRequired,
-  measures: PropTypes.array.isRequired
+  header: PT.object,
+  subHeader: PT.object,
+  createNewLink: PT.func.isRequired,
+  measures: PT.array.isRequired,
+  nextSubmissionDue: PT.func.isRequired,
 };
 
 export default MeasuresWidget;

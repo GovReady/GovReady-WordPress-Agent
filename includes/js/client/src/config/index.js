@@ -1,6 +1,6 @@
 let config = {};
 
-// Wordpress
+// CMS specific
 if(window.govready) {
   config = window.govready;
   config.cms = 'wordpress';
@@ -33,5 +33,8 @@ else if(window.Drupal && window.Drupal.settings.govready) {
 else {
   config = {};
 }
+
+// Date format
+config.dateFormat = 'MMMM Do YYYY';
 
 export default config;

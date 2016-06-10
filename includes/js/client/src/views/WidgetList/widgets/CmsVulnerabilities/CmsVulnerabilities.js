@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import config from 'config';
-import Widget from '../../Widget';
+import Widget from '../Widget';
 import CmsVulnerabilitiesWidget from './CmsVulnerabilitiesWidget';
 
 class CmsVulnerabilities extends Component {
 
-  constructor(props) {
-    super(props);
-    Widget.registerWidget(this, props);
-  }
-
   componentWillMount () {
-    Widget.getPayload(this, config.apiUrl + 'vulnerabilities', this.processData);
+    Widget.registerWidget(
+      this, 
+      {
+        url: config.apiUrl + 'vulnerabilities',
+        process: this.processData
+      }
+    );
   }
 
   processData (data) {

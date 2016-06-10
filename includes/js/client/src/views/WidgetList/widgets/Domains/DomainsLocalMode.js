@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes as PT } from 'react';
 
 class DomainsWidget extends Component {
 
@@ -16,8 +16,7 @@ class DomainsWidget extends Component {
 }
 
 DomainsWidget.propTypes = {
-  nextExpires: PropTypes.string.isRequired,
-  footer: PropTypes.object.isRequired
+  nextExpires: PT.string.isRequired
 };
 
 

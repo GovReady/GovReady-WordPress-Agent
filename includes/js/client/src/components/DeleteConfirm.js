@@ -1,4 +1,4 @@
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes as PT, Component } from 'react';
 
 class DeleteConfirm extends Component {
   shouldComponentUpdate(nextProps) {
@@ -39,10 +39,10 @@ class DeleteConfirm extends Component {
 }
 
 DeleteConfirm.propTypes = {
-  confirmDelete: PropTypes.bool,
-  index: PropTypes.number.isRequired,
-  deleteConfirm: PropTypes.func.isRequired,
-  deleteFunc: PropTypes.func.isRequired
+  confirmDelete: PT.bool,
+  index: PT.number.isRequired,
+  deleteConfirm: PT.func.isRequired,
+  deleteFunc: PT.func.isRequired
 }
 
 DeleteConfirm.defaultProps = () => {

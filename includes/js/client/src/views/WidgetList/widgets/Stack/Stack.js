@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
 import config from 'config';
-import Widget from '../../Widget';
+import Widget from '../Widget';
 import StackWidget from './StackWidget';
 // import StackPage from './StackPage';
 
 class Stack extends Component {
 
-  constructor(props) {
-    super(props);
-    Widget.registerWidget(this, props);
-  }
-
   componentWillMount () {
-    Widget.getPayload(this, config.apiUrl + 'stack', this.processData);
+    Widget.registerWidget(
+      this, 
+      {
+        url: config.apiUrl + 'stack',
+        process: this.processData
+      }
+    );
   }
 
   processData (data) {

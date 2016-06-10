@@ -1,4 +1,4 @@
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes as PT, Component } from 'react';
 
 class PluginsPage extends Component {
 
@@ -35,11 +35,11 @@ class PluginsPage extends Component {
 }
 
 PluginsPage.propTypes = {
-  cms: PropTypes.string.isRequired,
-  header: PropTypes.object.isRequired,
-  updates: PropTypes.number.isRequired,
-  coreUpdate: PropTypes.bool,
-  plugins: PropTypes.array.isRequired
+  cms: PT.string.isRequired,
+  header: PT.object.isRequired,
+  updates: PT.number.isRequired,
+  coreUpdate: PT.bool,
+  plugins: PT.array.isRequired
 };
 
 export default PluginsPage;

@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React, { PropTypes as PT } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { hashHistory, RouterContext, Link } from 'react-router';
@@ -8,27 +8,24 @@ import objectAssign from 'object-assign';
 
 class Widget {
 
-  static registerWidget(widget, props) {
+  static registerWidget(widget, payload = false) {
     // Do we need to register initial state info?
     if(!widget.props.widget || !widget.props.widget.status) {
-      widget.props.actions.widgetImported(props.widgetName, null);
+      widget.props.actions.widgetImported(widget.props.widgetName);
     }
-  }
-
-  static getPayload (widget, url, processData = (data) => { return data; }) {
-    // Need to load data from api?
-    if(!widget.props.widget || widget.props.widget.status !== 'loaded') {
-      widget.props.actions.widgetLoadData(widget.props.widgetName, url, processData);
+    // Do we need to get payload?
+    if(payload && (!widget.props.widget || widget.props.widget.status !== 'loaded')) {
+      widget.props.actions.widgetLoadData(widget.props.widgetName, payload.url, payload.process);
     }
   }
 
   static propTypes (props = {}) {
     return objectAssign(props, {
-      widgetType: PropTypes.string,
-      display: PropTypes.string.isRequired,
-      widget: PropTypes.object.isRequired,
-      widgetName: PropTypes.string.isRequired,
-      actions: PropTypes.object.isRequired
+      widgetType: PT.string,
+      display: PT.string.isRequired,
+      widget: PT.object.isRequired,
+      widgetName: PT.string.isRequired,
+      actions: PT.object.isRequired
     });
   }
 

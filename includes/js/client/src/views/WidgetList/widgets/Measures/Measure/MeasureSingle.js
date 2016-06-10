@@ -1,37 +1,36 @@
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes as PT, Component } from 'react';
+import Submissions from '../Submissions/Submissions';
 
 class MeasureSingle extends Component {
-
-  recentSubmissions() {
-    if(!this.props.submissions || !this.props.submissions.length) {
-      return (
-        <p>No submissions yet</p>
-      )
-    } 
-    
-    return this.props.submissions;
-  }
-
   render () {
+    let {header, due, measure} = this.props;
     return (
       <div>
-        {this.props.header}
-        {this.props.due}
-        <h4>Submit a manual measure</h4>
-
+        {header}
+        <h4>{due}</h4>
+        <div>
+          <label>Template:</label>
+          <pre>
+            {measure.body}
+          </pre>
+        </div>
+        <hr/>
         <h4>Recent Submissions</h4>
-        {this.recentSubmissions()}
+        <Submissions display="list" measureId={measure._id} />
+        <hr/>
+        <h4>Submit new</h4>
+        <Submissions display="form" bodyTemplate={measure.body} isNew="true" measureId={measure._id} />
       </div>
     );
   }
 }
 
 MeasureSingle.propTypes = {
-  header: PropTypes.object.isRequired,
-  createNewLink: PropTypes.func.isRequired,
-  measure: PropTypes.object.isRequired,
-  due: PropTypes.object.isRequired,
-  submissions: PropTypes.array.isRequired
+  header: PT.object.isRequired,
+  createNewLink: PT.func.isRequired,
+  measure: PT.object.isRequired,
+  due: PT.object.isRequired,
+  submissions: PT.array.isRequired
 };
 
 export default MeasureSingle;

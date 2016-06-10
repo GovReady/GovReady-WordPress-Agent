@@ -1,21 +1,26 @@
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes as PT, Component } from 'react';
 import config from 'config';
-import Widget from '../../Widget';
+import Widget from '../Widget';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import objectAssign from 'object-assign';
+import { Link } from 'react-router';
+import { actions } from 'redux/modules/widgetReducer';
+import { actions as crudActions } from 'redux/modules/measuresReducer';
+import {isoToDate, dateToIso} from 'utils/date';
 import MeasuresWidget from './MeasuresWidget';
 import MeasuresPage from './MeasuresPage';
 import MeasureSingle from './Measure/MeasureSingle';
 import MeasureEditPage from './Measure/MeasureEditPage';
-import { Link } from 'react-router';
 
 class Measures extends Component {
-  
-  constructor(props) {
-    super(props);
-    Widget.registerWidget(this, props);
-  }
 
   componentWillMount () {
-    Widget.getPayload(this, config.apiUrl + 'measures', this.processData);
+    Widget.registerWidget(
+      this, 
+      false
+    );
+    this.props.crudActions.fetchRemote(config.apiUrl + 'measures');
   }
 
   processData (data) {
@@ -30,30 +35,27 @@ class Measures extends Component {
     );
   }
 
-  nextSubmissionDue(measure) {
-    const datetime = window.moment(measure.datetime).add(measure.frequency, 'seconds');
-    const now = window.moment();
-    let isPast = false;
-    if(now.diff(datetime, 'days') < 0) {
-      isPast = true;
-    }
-    return (
-      <div>
-        {isPast && (
-          <div className="alert alert-warning">
-            <p>This measure is past due!</p>
-          </div>
-        )}
-        <p>
-          Due {datetime.toNow()}
-        </p>
-      </div>
-    )
+  // Returns start plus frequency
+  dueDateCompounded(measure, string=false) {
+    return string ? this.pdue.toISOString() : due;
   }
 
-  // Gets a single measure or empty
-  getRecentSubmissions(measure) {
-    return [];
+
+  // Returns markup for next due
+  nextSubmissionDue(measure) {
+    console.log(measure.due);
+    const due = window.moment(measure.due);//this.dueDateCompounded(measure);
+    const now = window.moment();
+    let isPast = false;
+    if(due.diff(now) < 0) {
+      isPast = true;
+    }
+    const classes = () => isPast ? 'label label-warning' : 'label label-info';
+    return (
+      <div className={classes()}>
+        Due {due.fromNow()}
+      </div>
+    )
   }
 
   // Gets a single measure or empty
@@ -71,9 +73,16 @@ class Measures extends Component {
       'title': '',
       'body': '',
       'frequency': '',
-      'datetime': '',
+      'due': '',
       'confirmDelete': ''
     };
+  }
+
+  // Gets list of submissions by due date
+  getMeasuresByDueDate(count = 3) {
+    return this.props.measures.filter((measure) => measure.due).sort((a, b) => {
+      return b.due < a.due
+    }).slice(0, count);
   }
 
   handleSubmit(data) {
@@ -88,46 +97,54 @@ class Measures extends Component {
     }
 
     if(widget && widget.status !== 'posting') {
-      let calls = [];
+      console.log(data);
+      // Convert to server time format
+      if(data.due) {
+        data.due = dateToIso(data.due);
+        
+      }
       // Existing record
       if(data._id) {
-        let measureData = objectAssign({}, widget.data.measures[index]);
-        calls.push({
-          method: 'PATCH',
-          url: config.apiUrl + 'measures/' + data._id,
-          data: assignProps({}, data)
-        });
+        this.props.crudActions.updateRemote(
+          config.apiUrl + 'measures/' + data._id, 
+          data,
+          '/dashboard/Measures/',
+          true
+        );
       } 
       // New item
       else {
-        calls.push({
-          method: 'POST',
-          url: config.apiUrl + 'measures',
-          data: assignProps({}, data)
-        });
+        this.props.crudActions.createRemote(
+          config.apiUrl + 'measures', 
+          assignProps({}, data),
+          '/dashboard/Measures/',
+          true
+        );
       }
-      // Launch post
-      this.props.actions.widgetPostAllData(this.props.widgetName, calls).then(
-        this.props.actions.widgetLoadData(this.props.widgetName, config.apiUrl + 'measures', this.processData)
-      );
     }
   }
 
   measureDelete(measure) {
-    console.log(measure);
+    // Launch all actions
+    if(measure._id && measure._id.value) {
+      this.props.crudActions.deleteRemote(config.apiUrl + 'measures/' + measure._id.value, measure);
+    }
+    else {
+      //error
+    }
   }
 
   render () {
 
-    let widget = this.props.widget;
+    let {widget, measures} = this.props;
     
     // Return loading if not set
-    if(!widget || widget.status !== 'loaded') {
+    if(!widget || !widget.status) {
       return Widget.loadingDisplay();
     }
     // Measure page
     if(this.props.display === 'pageIndividual') {
-      const measure = this.getSingle(this.props.individual, widget.data.measures);
+      const measure = this.getSingle(this.props.individual, measures);
        // Measure loading failed
       if(!measure) {
         return (
@@ -142,8 +159,7 @@ class Measures extends Component {
           header={Widget.titleSection(measure.title, false, 'h2', false, true)} 
           createNewLink={this.createNewLink.bind(this)}
           due={this.nextSubmissionDue(measure)}
-          measure={measure}
-          submissions={this.getRecentSubmissions(measure)} />
+          measure={measure} />
       );
     }
     // Measure edit page
@@ -157,7 +173,7 @@ class Measures extends Component {
       }
       // not a new measure, so filter
       else if(this.props.individual) {
-        measure = this.getSingle(this.props.individual, widget.data.measures);
+        measure = this.getSingle(this.props.individual, measures);
         headerText = measure.title;
       }
       // Measure loading failed
@@ -185,41 +201,53 @@ class Measures extends Component {
         <MeasuresPage
           header={Widget.titleSection('Measures', false, 'h2', false, true)} 
           createNewLink={this.createNewLink.bind(this)}
-          measures={widget.data.measures} />
+          nextSubmissionDue={this.nextSubmissionDue.bind(this)}
+          measures={measures} />
       )
     }
     // Widget
     else {
-      // let lastRun = 'Never';
-      // let totalMeasures = 0;
-      // // Compile data
-      // if (widget.data && widget.status === 'loaded') {
-      //   if(widget.data.measures && widget.data.measures.length) {
-      //     lastRun = widget.data.last_checked;
-      //     totalMeasures = widget.data.measures.length;
-      //   }
-      // }
       return (
         <MeasuresWidget 
           header={Widget.titleSection('Manual Measures', this.props.widgetName)} 
           createNewLink={this.createNewLink.bind(this)}
-          measures={widget.data.measures} />
+          nextSubmissionDue={this.nextSubmissionDue.bind(this)}
+          measures={this.getMeasuresByDueDate()} />
       )
     }
   }
 }
 
 Measures.propTypes = Widget.propTypes({
-  individual: PropTypes.number,
-  isNew: PropTypes.bool
+  individual: PT.number,
+  isNew: PT.bool
 });
 Measures.defaultProps = Widget.defaultProps({
   submitFields: [
     'title',
-    'process',
+    'body',
     'frequency',
-    'datetime'
+    'due'
   ]
 });
 
-export default Widget.connect(Measures);
+// Hooked up to multiple reducers, so dont use stock Widget methods
+
+function mapStateToProps (state, ownProps) {
+  return {
+    widget: state.widgetState.widgets[ownProps.widgetName],
+    measures: state.measuresState
+  };
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    actions: bindActionCreators(actions, dispatch),
+    crudActions: bindActionCreators(crudActions, dispatch)
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Measures);

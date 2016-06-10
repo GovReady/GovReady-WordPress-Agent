@@ -16,8 +16,8 @@ export const WIDGET_POST_FAILED = 'WIDGET_POST_FAILED';
 // ------------------------------------
 
 // Fired when widgets are ready
-export function widgetImported (widgetName: string, widgetInit: object): Action {
-  return { type: WIDGET_IMPORTED, widgetName: widgetName, widgetInit: widgetInit };
+export function widgetImported (widgetName: string): Action {
+  return { type: WIDGET_IMPORTED, widgetName: widgetName };
 }
 
 // Fired when individual widget fetching data
@@ -163,14 +163,10 @@ const assignWidgetState = (state, widgetName, widget) => {
 
 const ACTION_HANDLERS = {
   [WIDGET_IMPORTED]: (state: object, action: {widgetName: string, widgetInit: object}): object => {
-    let widget = action.widgetInit;
-    // If nothing is passed, just do default
-    if(!widget) {
-      widget = {
-        name: action.widgetName,
-        status: 'init',
-        data: {}
-      }
+    const widget = {
+      name: action.widgetName,
+      status: 'init',
+      data: {}
     }
     return assignWidgetState(state, action.widgetName, widget);
   },

@@ -1,4 +1,4 @@
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes as PT, Component } from 'react';
 import { Link } from 'react-router';
 
 class NewsPageIndividual extends Component {
@@ -21,8 +21,8 @@ class NewsPageIndividual extends Component {
 }
 
 NewsPageIndividual.propTypes = {
-  header: PropTypes.object,
-  item: PropTypes.object.isRequired
+  header: PT.object,
+  item: PT.object.isRequired
 };
 
 export default NewsPageIndividual;

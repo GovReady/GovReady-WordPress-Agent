@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes as PT } from 'react';
 import Accordion from 'react-bootstrap/lib/Accordion';
 import Panel from 'react-bootstrap/lib/Panel';
 
@@ -35,7 +35,7 @@ class Vulnerability extends Component {
 }
 
 Vulnerability.propTypes = {
-  data: PropTypes.object.isRequired
+  data: PT.object.isRequired
 }
 
 class CmsVulnerabilitiesWidget extends Component {
@@ -82,10 +82,10 @@ class CmsVulnerabilitiesWidget extends Component {
 }
 
 CmsVulnerabilitiesWidget.propTypes = {
-  cms: PropTypes.string.isRequired,
-  header: PropTypes.object,
-  core: PropTypes.object.isRequired,
-  plugins: PropTypes.array.isRequired
+  cms: PT.string.isRequired,
+  header: PT.object,
+  core: PT.object.isRequired,
+  plugins: PT.array.isRequired
 };
 
 export default CmsVulnerabilitiesWidget;

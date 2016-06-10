@@ -110,7 +110,7 @@ class Govready {
     
     // @todo: nonce this call
     $options = get_option( 'govready_options' );
-    if ( $_REQUEST['refresh_token'] ) {
+    if ( !empty( $_REQUEST['refresh_token'] ) ) {
       // Validate the nonce
       if (check_ajax_referer( $this->key, '_ajax_nonce' )) {
         //return;

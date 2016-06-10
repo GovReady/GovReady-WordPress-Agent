@@ -1,4 +1,4 @@
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes as PT, Component } from 'react';
 
 class PureInput extends Component {
   shouldComponentUpdate(nextProps) {
@@ -12,7 +12,7 @@ class PureInput extends Component {
 }
 
 PureInput.propTypes = {
-  field: PropTypes.object.isRequired
+  field: PT.object.isRequired
 }
 
 export default PureInput;

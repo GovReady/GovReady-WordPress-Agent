@@ -1,4 +1,4 @@
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes as PT, Component } from 'react';
 
 class AccountsWidget extends Component {
   render () {
@@ -18,9 +18,9 @@ class AccountsWidget extends Component {
 }
 
 AccountsWidget.propTypes = {
-  admins: PropTypes.number.isRequired,
-  totalAccounts: PropTypes.number.isRequired,
-  footer: PropTypes.object.isRequired
+  admins: PT.number.isRequired,
+  totalAccounts: PT.number.isRequired,
+  footer: PT.object.isRequired
 };
 
 export default AccountsWidget;

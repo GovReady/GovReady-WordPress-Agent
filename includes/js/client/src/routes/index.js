@@ -6,17 +6,45 @@ import { Route, IndexRoute } from 'react-router';
 // they were from the root of the ~/src directory. This makes it
 // very easy to navigate to files regardless of how deeply nested
 // your current file is.
+import EmptyPage from 'components/EmptyPage'; 
 import CoreLayout from 'layouts/CoreLayout/CoreLayout';
 import SiteState from 'views/SiteState';
 import WidgetList from 'views/WidgetList/WidgetList';
 import WidgetPage from 'views/WidgetList/WidgetPage';
+import { SITE_LOADED, sitePreCheck, isSiteLoaded } from 'redux/modules/siteReducer';
 
-export default (store) => (
-  <Route path='/' component={CoreLayout}>
-    <IndexRoute component={SiteState} />
-    <Route path="/dashboard" component={WidgetList}/>
-    <Route path="/dashboard/:widget" component={WidgetPage}/>
-    <Route path="/dashboard/:widget/:individual" component={WidgetPage}/>
-    <Route path="/dashboard/:widget/:individual/:view" component={WidgetPage}/>
-  </Route>
-);
+export default (store) => {
+
+  const requireSiteInit = (nextState, replace, cb) => {
+    function checkInit() {
+      // Still not working, so redirect
+      if (!isSiteLoaded(store.getState())) {
+        replace('/');
+      }
+      cb();
+    }
+    // Not loaded, try to dispatch before redirect
+    if(!isSiteLoaded(store.getState())) {
+      store.dispatch(sitePreCheck()).then(checkInit);
+    }
+    else{
+      cb();
+    }
+  };
+
+  return (
+    <Route path='/' component={CoreLayout}>
+      <IndexRoute component={SiteState} />
+      { /* Routes requiring init */ }
+      <Route onEnter={requireSiteInit}>
+        <Route path="/dashboard" component={WidgetList}/>
+        <Route path="/dashboard/:widget" component={WidgetPage}/>
+        <Route path="/dashboard/:widget/:individual" component={WidgetPage}/>
+        <Route path="/dashboard/:widget/:individual/:view" component={WidgetPage}/>
+      </Route>
+
+      { /* Catch all route */ }
+      <Route path="*" component={EmptyPage} status={404} />
+    </Route>
+  )
+};

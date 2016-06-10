@@ -1,49 +1,181 @@
-import React, { Component } from 'react';
+import React, { PropTypes as PT, Component } from 'react';
 import config from 'config';
 import Widget from '../../Widget';
-import SubmissionForm from './SubmissionForm';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import objectAssign from 'object-assign';
+import { actions as crudActions } from 'redux/modules/submissionsReducer';
+import SubmissionsList from './SubmissionsList';
+import SubmissionsRecent from './SubmissionsRecent';
+import SubmissionEditPage from './SubmissionEditPage';
 
 class Submissions extends Component {
 
+  componentWillMount() {
+    console.log();
+    if(this.props.measureId) {
+      this.fetchSubmissionsByMeasure(this.props.measureId);
+    }
+    else if(this.props.display === 'recent') {
+      this.fetchSubmissionsRecent();
+    }
+  }
+
+  // Fetches submissions by measureID
+  fetchSubmissionsByMeasure(measureId) {
+    this.props.crudActions.fetchRemote(config.apiUrl + 'measures/' + measureId + '/submissions');
+  }
+
+  // Gets most recent
+  fetchSubmissionsRecent() {
+    this.props.crudActions.fetchRemote(config.apiUrl + 'submissions');
+  }
+
+  // Gets a single submission or empty
+  getSingle(_id, submissions = []) {
+    let submission;
+    if(_id) {
+      submission = submissions.find((item) => {
+        return item._id === _id;
+      });
+      if(submission) {
+        return submission;
+      }
+    }
+    // Init default
+    submission = this.props.submitFields;
+    submission.measureId = this.props.measureId;
+    if(!submission.body) {
+      submission.body = this.props.bodyTemplate;
+    }
+    return submission;
+  }
+
+  // Gets list of submissions by measureId
+  getSubmissionsRecent(count = 3) {
+    return this.props.submissions.sort((a, b) => {
+      return b.datetime < a.datetime
+    }).slice(0, count);
+  }
+
+  // Gets list of submissions by measureId
+  getSubmissionsByMeasure(measureId, count = 3) {
+    return this.props.submissions.filter((submission) => submission.measureId === measureId).sort((a, b) => {
+      return b.datetime < a.datetime
+    }).slice(0, count);
+  }
+
+  handleSubmit(data) {
+    const assignProps = (toSet, setData) => {
+      this.props.submitFields.map((field) => {
+        if(setData[field] || setData[field] === false) {
+          toSet[field] = setData[field];
+        }
+      });
+      return toSet;
+    }
+    // Existing record
+    if(data._id) {
+      this.props.crudActions.updateRemote(
+        config.apiUrl + 'measures/' + data.measureId + '/submissions', 
+        data,
+        '/dashboard/Measures/' + data.measureId,
+        false
+      );
+    } 
+    // New item
+    else {
+      this.props.crudActions.createRemote(
+        config.apiUrl + 'measures/' + data.measureId + '/submissions', 
+        assignProps({}, data),
+        '/dashboard/Measures/' + data.measureId,
+        false
+      );
+    }
+  }
+
   render () {
 
-    // let widget = this.props.widget;
-    
-    // Return loading if not set
-    // if(!widget || widget.status === 'loading') {
-    //   return Widget.loadingDisplay();
-    // }
-    // else if(widget.status === 'load_failed') {
-    //   // return Widget.loadFailed(widget.widgetName, true);
-    //   return (
-    //     <div className="panel panel-default"><div className="panel-body">
-    //       <p>Sorry no measures at the moment</p>
-    //     </div></div>
-    //   )
-    // }
+    let { display, measureId, isNew, bodyTemplate, count } = this.props;
 
-    if(this.props.display === 'form') {
+    if(display === 'form' || display === 'pageIndividualEdit') {
+      let submission, headerText;
+
+      // Creating new submission
+      if(isNew && measureId){
+        submission = this.getSingle(null);
+      }
+      // not a new submission, so filter
+      else if(measureId) {
+        submission = this.getSingle(measureId, submissions);
+        headerText = submission.title;
+      }
+      // Submission loading failed
+      if(!submission) {
+        return (
+          <div>
+            <h2>Sorry there was an issue editing the submission.</h2>
+            {Widget.backLink('Go back', 'btn btn-default')}
+          </div>
+        )
+      }
       return (
-        <SubmissionEditPage />
+        <SubmissionEditPage
+          submission={submission}
+          submissionSubmit={this.handleSubmit.bind(this)}
+          backLink={Widget.backLink('Cancel', 'btn btn-default')} />
       )
     }
-    if(this.props.display === 'page') {
+    if(display === 'page') {
       return (
         <SubmissionsPage />
       )
     }
-    else {
-      return (
-        <SubmissionsWidget 
-          lastRun={lastRun} 
-          totalSubmissions={totalSubmissions} 
-          footer={Widget.panelFooter(totalSubmissions + ' total measures', this.props.widgetName)} />
-      )
+    if(display === 'list') {
+      // Individual measure
+      if(measureId) {
+        return (
+          <SubmissionsList 
+            submissions={this.getSubmissionsByMeasure(measureId, count)} />
+        )
+      }
     }
+    return (
+      <SubmissionsRecent 
+        submissions={this.getSubmissionsRecent(count)} />
+    )
   }
 }
 
-Submissions.propTypes = Widget.propTypes();
-Submissions.defaultProps = Widget.defaultProps();
+Submissions.propTypes = {
+  individual: PT.number,
+  isNew: PT.bool,
+  measureId: PT.string,
+  bodyTemplate: PT.string
+};
+Submissions.defaultProps = Widget.defaultProps({
+  submitFields: [
+    'measureId',
+    'name',
+    'body'
+  ]
+});
 
-export default Submissions;
+// Hooked up to multiple reducers, so dont use stock Widget methods
+
+function mapStateToProps (state, ownProps) {
+  return {
+    submissions: state.submissionsState
+  };
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    crudActions: bindActionCreators(crudActions, dispatch)
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Submissions);

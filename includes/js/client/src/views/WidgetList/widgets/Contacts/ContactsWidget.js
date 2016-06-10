@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes as PT } from 'react';
+import {isoToDate} from 'utils/date';
 
 class ContactsWidget extends Component {
 
@@ -29,7 +30,7 @@ class ContactsWidget extends Component {
                   <td>{contact.responsibility}</td>
                   <td>{contact.email}</td>
                   <td>{contact.phone}</td>
-                  <td>{contact.lastConfirmed ? contact.lastConfirmed : "Never"}</td>
+                  <td>{contact.lastConfirmed ? isoToDate(contact.lastConfirmed) : "Never"}</td>
                 </tr>
               ))}
             </tbody>
@@ -53,11 +54,11 @@ class ContactsWidget extends Component {
 }
 
 ContactsWidget.propTypes = {
-  header: PropTypes.object,
-  subHeader: PropTypes.object,
-  contacts: PropTypes.array.isRequired,
-  emptyText: PropTypes.object.isRequired,
-  footer: PropTypes.object
+  header: PT.object,
+  subHeader: PT.object,
+  contacts: PT.array.isRequired,
+  emptyText: PT.object.isRequired,
+  footer: PT.object
 };
 
 export default ContactsWidget;

@@ -1,4 +1,4 @@
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes as PT, Component } from 'react';
 import { reduxForm, initialize, propTypes } from 'redux-form';
 import PureInput from 'components/PureInput';
 import DeleteConfirm from 'components/DeleteConfirm';
@@ -9,7 +9,7 @@ export const fields = [
   'title',
   'body',
   'frequency',
-  'datetime',
+  'due',
   'confirmDelete'
 ];
 // Date options
@@ -49,50 +49,52 @@ class MeasuresEditPage extends Component {
       title,
       body,
       frequency,
-      datetime,
+      due,
       confirmDelete 
-    }, handleSubmit, measureSubmit, measureDelete, submitting } = this.props;
-
+    }, handleSubmit, measureSubmit, measureDelete, submitting, measure } = this.props;
+    console.log(submitting);
     return (
       <form onSubmit={handleSubmit(measureSubmit)}>
-        <div className="row">
-          <div className="col-md-9">
-            <div className="form-group">
-              <label className="control-label">Title</label>
-              <PureInput type="text" field={title}/>
+        <fieldset disabled={submitting}>
+          <div className="row">
+            <div className="col-md-9">
+              <div className="form-group">
+                <label className="control-label">Title</label>
+                <PureInput type="text" field={title}/>
+              </div>
             </div>
-          </div>
-          <div className="col-sm-6">
-            <div className="form-group">
-              <label className="control-label">Frequency</label>
-              <select className="form-control" {...frequency}>
-                {freqOptions.map(freqOption => <option value={freqOption.time} key={freqOption.time}>{freqOption.label}</option>)}
-              </select>
+            <div className="col-sm-6">
+              <div className="form-group">
+                <label className="control-label">Frequency</label>
+                <select className="form-control" {...frequency}>
+                  {freqOptions.map(freqOption => <option value={freqOption.time} key={freqOption.time}>{freqOption.label}</option>)}
+                </select>
+              </div>
             </div>
-          </div>
-          <div className="col-sm-6">
-            <div className="form-group">
-              <label className="control-label">Start Date</label>
-              <div><DatePickerWrap field={datetime} placeholderText="Choose a start date" /></div>
-            </div>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-md-12">
-            <div className="form-group">
-              <label className="control-label">Description</label>
-              <textarea rows="10" className="form-control" {...body}/>
-              <div className="help-block">
-                <p>This field will become the "template" for submissions on this measure ex:</p>
-                <pre>
-                  <div>Successfully located backup: (yes / no)</div>
-                  <div>Backup copied off site: (yes / no)</div>
-                  <div>Url of S3 bucket:</div>
-                </pre>
+            <div className="col-sm-6">
+              <div className="form-group">
+                <label className="control-label">Start Date</label>
+                <div><DatePickerWrap field={due} placeholderText="Choose a start date" /></div>
               </div>
             </div>
           </div>
-        </div>
+          <div className="row">
+            <div className="col-md-12">
+              <div className="form-group">
+                <label className="control-label">Description</label>
+                <textarea rows="10" className="form-control" {...body}/>
+                <div className="help-block">
+                  <p>This field will become the "template" for submissions on this measure ex:</p>
+                  <pre>
+                    <div>Successfully located backup: (yes / no)</div>
+                    <div>Backup copied off site: (yes / no)</div>
+                    <div>Url of S3 bucket:</div>
+                  </pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </fieldset>
         <div className="clearfix">
           <div className="pull-left">
             <button className="btn btn-primary" type="submit" disabled={submitting}>
@@ -128,12 +130,12 @@ class MeasuresEditPage extends Component {
 
 MeasuresEditPage.propTypes = {
   ...propTypes,
-  header: PropTypes.object.isRequired,
-  measure: PropTypes.object.isRequired,
-  createNewLink: PropTypes.func.isRequired,
-  measureSubmit: PropTypes.func.isRequired,
-  measureDelete: PropTypes.func.isRequired,
-  backLink: PropTypes.object.isRequired
+  header: PT.object.isRequired,
+  measure: PT.object.isRequired,
+  createNewLink: PT.func.isRequired,
+  measureSubmit: PT.func.isRequired,
+  measureDelete: PT.func.isRequired,
+  backLink: PT.object.isRequired
 };
 
 export default reduxForm({

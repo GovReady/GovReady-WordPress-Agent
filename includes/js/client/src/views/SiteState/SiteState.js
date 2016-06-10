@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes as PT } from 'react';
 import { connect } from 'react-redux';
 import { hashHistory } from 'react-router';
 import { WidgetList } from '../WidgetList';
@@ -67,8 +67,8 @@ class SiteState extends Component {
 }
 
 SiteState.propTypes = {
-  actions: PropTypes.object.isRequired,
-  siteState: PropTypes.string.isRequired
+  actions: PT.object.isRequired,
+  siteState: PT.string.isRequired
 };
 
 function mapStateToProps (state) {

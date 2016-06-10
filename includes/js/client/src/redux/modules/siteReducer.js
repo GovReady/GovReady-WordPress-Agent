@@ -115,7 +115,7 @@ export function siteCheckPost (url: string, appendUrl: boolean, isLocal: boolean
 export function sitePreCheck(calls: Array, isLocal: boolean ): Function {
   return (dispatch: Function) => {
     dispatch(sitePreChecking());
-    dispatch(siteCheckPost('/sites/' + config.siteId, true, false, {}, 'GET')
+    return dispatch(siteCheckPost('/sites/' + config.siteId, true, false, {}, 'GET')
     ).then((res) => {
       if(!(res instanceof Error)) {
         // @TODO Cache all these endpoints
@@ -157,7 +157,7 @@ export function sitePreCheck(calls: Array, isLocal: boolean ): Function {
 export function sitePingCheck(calls: Array, isLocal: boolean ): Function {
   return (dispatch: Function) => {
     dispatch(sitePingChecking());
-    dispatch(siteCheckPost('/monitor/' + config.siteId + '/ping', true, false, {}, 'POST')
+    return dispatch(siteCheckPost('/monitor/' + config.siteId + '/ping', true, false, {}, 'POST')
     ).then((res) => {
       // We have an error
       if(true || res instanceof Error) {
@@ -361,6 +361,14 @@ const ACTION_HANDLERS = {
   }
 
 };
+
+// ------------------------------------
+// Helper
+// ------------------------------------
+
+export function isSiteLoaded(globalState) {
+  return globalState.siteState && globalState.siteState.status === SITE_LOADED;
+}
 
 // ------------------------------------
 // Reducer

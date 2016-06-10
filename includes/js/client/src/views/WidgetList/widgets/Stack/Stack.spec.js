@@ -2,7 +2,7 @@ import React from 'react';
 import TestUtils from 'react-addons-test-utils';
 import { bindActionCreators } from 'redux';
 import { actions, widgetReducer } from 'redux/modules/widgetReducer';
-import Widget from '../../Widget';
+import Widget from '../Widget';
 import Stack from './Stack';
 import { mount } from 'enzyme';
 

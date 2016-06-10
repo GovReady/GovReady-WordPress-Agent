@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import config from 'config';
-import Widget from '../../Widget';
+import Widget from '../Widget';
 import RecommendedWidget from './RecommendedWidget';
 
 class Recommended extends Component {
 
-  constructor(props) {
-    super(props);
-    Widget.registerWidget(this, props);
-  }
-
   componentWillMount () {
-    Widget.getPayload(this, config.apiUrl + 'recommended', this.processData);
+    Widget.registerWidget(
+      this, 
+      {
+        url: config.apiUrl + 'recommended',
+        process: this.processData
+      }
+    );
   }
 
   processData (data) {

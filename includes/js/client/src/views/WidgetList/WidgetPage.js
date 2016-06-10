@@ -1,7 +1,4 @@
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { actions } from '../../redux/modules/widgetReducer';
+import React, { Component, PropTypes as PT } from 'react';
 import EmptyPage from 'components/EmptyPage';
 import widgets from './widgets';
 
@@ -76,25 +73,4 @@ class WidgetPage extends Component {
   }
 }
 
-WidgetPage.propTypes = {
-  actions: PropTypes.object.isRequired,
-  appState: PropTypes.object.isRequired
-};
-
-function mapStateToProps (state, ownProps) {
-  return {
-    appState: state.widgetState,
-    filter: ownProps.location.query.filter
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    actions: bindActionCreators(actions, dispatch)
-  };
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(WidgetPage);
+export default WidgetPage;

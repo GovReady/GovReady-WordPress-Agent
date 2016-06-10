@@ -1,19 +1,20 @@
 import React, { Component } from 'react';
 import config from 'config/';
-import Widget from '../../Widget';
+import Widget from '../Widget';
 import AccountsWidget from './AccountsWidget';
 import InactiveAccountsWidget from './InactiveAccountsWidget';
 import { Link } from 'react-router';
 
 class Accounts extends Component {
 
-  constructor(props) {
-    super(props);
-    Widget.registerWidget(this, props);
-  }
-
   componentWillMount () {
-    Widget.getPayload(this, config.apiUrl + 'accounts', this.processData);
+    Widget.registerWidget(
+      this, 
+      {
+        url: config.apiUrl + 'accounts',
+        process: this.processData
+      }
+    );
   }
 
   processData (data) {

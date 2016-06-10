@@ -1,4 +1,4 @@
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes as PT, Component } from 'react';
 import { reduxForm, initialize, propTypes } from 'redux-form';
 import PureInput from 'components/PureInput';
 import DeleteConfirm from 'components/DeleteConfirm';
@@ -6,11 +6,9 @@ import DatePickerWrap from 'components/DatePickerWrap';
 // Form fields
 export const fields = [
   '_id',
-  'measure_id',
+  'measureId',
   'name',
-  'datetime',
   'body',
-  'data',
   'confirmDelete'
 ];
 
@@ -20,48 +18,29 @@ class SubmissionEditPage extends Component {
     // Extract props
     const { fields: { 
       _id,
-      measure_id,
+      measureId,
       name,
       datetime,
       body,
       data,
       confirmDelete 
-    }, handleSubmit, submissionSubmit, submissionDelete, submitting } = this.props;
+    }, handleSubmit, submissionSubmit, submitting } = this.props;
 
     return (
       <form onSubmit={handleSubmit(submissionSubmit)}>
         <div className="row">
-          <div className="col-md-9">
+          <div className="col-md-6">
             <div className="form-group">
-              <label className="control-label">Title</label>
-              <PureInput type="text" field={title}/>
-            </div>
-          </div>
-          <div className="col-sm-6">
-            <div className="form-group">
-              <label className="control-label">Frequency</label>
-              <select className="form-control" {...frequency}>
-                {freqOptions.map(freqOption => <option value={freqOption.time} key={freqOption.time}>{freqOption.label}</option>)}
-              </select>
-            </div>
-          </div>
-          <div className="col-sm-6">
-            <div className="form-group">
-              <label className="control-label">Start Date</label>
-              <div><DatePickerWrap field={datetime} placeholderText="Choose a start date" /></div>
+              <label className="control-label">Name</label>
+              <PureInput type="text" field={name}/>
             </div>
           </div>
           <div className="col-md-12">
             <div className="form-group">
               <label className="control-label">Description</label>
-              <textarea rows="10" className="form-control" {...description}/>
+              <textarea rows="10" className="form-control" {...body}/>
               <div className="help-block">
-                <p>This field will become the "template" for submissions on this submission ex:</p>
-                <pre>
-                  <div>Successfully located backup: (yes / no)</div>
-                  <div>Backup copied off site: (yes / no)</div>
-                  <div>Url of S3 bucket:</div>
-                </pre>
+                Use the template provided in the field to log the measure completion
               </div>
             </div>
           </div>
@@ -73,17 +52,6 @@ class SubmissionEditPage extends Component {
             </button>
             {this.props.backLink}
           </div>
-          <div className="pull-left">
-            {_id.value && (
-              <DeleteConfirm 
-                index={_id.value} 
-                confirmDelete={Boolean(confirmDelete.value)}
-                deleteConfirm={confirmDelete.onChange}
-                deleteFunc={() => { 
-                  submissionsDelete(this.props.fields);
-                }} />
-            )}
-          </div>
         </div>
       </form>
     )
@@ -92,7 +60,9 @@ class SubmissionEditPage extends Component {
   render () {
     return (
       <div>
-        {this.props.header && this.props.header}
+        {this.props.header && (
+          <div>{this.props.header}</div>
+        )}
         {this.editForm()}
       </div>
     );
@@ -101,11 +71,10 @@ class SubmissionEditPage extends Component {
 
 SubmissionEditPage.propTypes = {
   ...propTypes,
-  header: PropTypes.object,
-  submission: PropTypes.object.isRequired,
-  submissionSubmit: PropTypes.func.isRequired,
-  submissionDelete: PropTypes.func.isRequired,
-  backLink: PropTypes.object.isRequired
+  header: PT.object,
+  submission: PT.object.isRequired,
+  submissionSubmit: PT.func.isRequired,
+  backLink: PT.object.isRequired
 };
 
 export default reduxForm({

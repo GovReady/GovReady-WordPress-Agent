@@ -1,4 +1,4 @@
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes as PT, Component } from 'react';
 import { reduxForm, initialize, propTypes } from 'redux-form';
 import PureInput from 'components/PureInput';
 import DeleteConfirm from 'components/DeleteConfirm';
@@ -24,11 +24,30 @@ class ContactsEditPage extends Component {
   }
 
   contactArea(contacts,contactsDelete) {
+    const fieldClasses = (index) => {
+      if(this.props.contactsData[index]) { 
+        let classes = '';
+        if(this.props.contactsData[index].unsaved) {
+          classes += 'unsaved ';
+        }
+        if(this.props.contactsData[index].error) {
+          classes += 'save-error';
+        }
+        return classes;
+      }
+    }
+    const disabled = (index) => {
+      if(this.props.contactsData[index] && this.props.contactsData[index].busy) {
+        return true;
+      }
+      return false;
+    }
+
     if(contacts && contacts.length) {
       return (
         <div className="contacts-edit">
           {contacts.map((contact, index) => (
-            <fieldset key={index}>
+            <fieldset key={index} disabled={disabled(index)} className={fieldClasses(index)}>
               <div className="row">
                 <div className="col-sm-9 col-md-10">
                   <div className="row">
@@ -99,7 +118,6 @@ class ContactsEditPage extends Component {
         {this.contactArea(contacts, contactsDelete)}
         <div>
           <button className="btn btn-info" type="button" onClick={() => {
-            console.log(contacts);
             contacts.addField({
               responsibility: '',
               email: '',
@@ -129,12 +147,12 @@ class ContactsEditPage extends Component {
 
 ContactsEditPage.propTypes = {
   ...propTypes,
-  header: PropTypes.object.isRequired,
-  contactsData: PropTypes.array.isRequired,
-  emptyText: PropTypes.object.isRequired,
-  contactsSubmit: PropTypes.func.isRequired,
-  contactsDelete: PropTypes.func.isRequired,
-  backLink: PropTypes.object.isRequired
+  header: PT.object.isRequired,
+  contactsData: PT.array.isRequired,
+  emptyText: PT.object.isRequired,
+  contactsSubmit: PT.func.isRequired,
+  contactsDelete: PT.func.isRequired,
+  backLink: PT.object.isRequired
 };
 
 export default reduxForm({

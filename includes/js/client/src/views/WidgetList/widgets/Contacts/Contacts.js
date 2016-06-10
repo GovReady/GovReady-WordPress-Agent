@@ -1,26 +1,25 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes as PT } from 'react';
 import config from 'config';
-import Widget from '../../Widget';
-import ContactsWidget from './ContactsWidget';
-import ContactsEditPage from './ContactsEditPage';
+import Widget from '../Widget';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import objectAssign from 'object-assign';
 import { Link } from 'react-router';
+import { actions } from 'redux/modules/widgetReducer';
+import { actions as crudActions } from 'redux/modules/contactsReducer';
+import {isoToDate, dateToIso} from 'utils/date';
+import ContactsWidget from './ContactsWidget';
+import ContactsEditPage from './ContactsEditPage';
+
 
 class Contacts extends Component {
-  
-  constructor(props) {
-    super(props);
-    Widget.registerWidget(this, props);
-  }
 
   componentWillMount () {
-    Widget.getPayload(this, config.apiUrl + 'contacts', this.processData);
-  }
-
-  processData (data) {
-    return {
-      contacts: data
-    };
+    Widget.registerWidget(
+      this, 
+      false
+    );
+    this.props.crudActions.fetchRemote(config.apiUrl + 'contacts');
   }
 
   emptyText(includeLink) {
@@ -52,28 +51,19 @@ class Contacts extends Component {
     if(widget && widget.status !== 'posting') {
       let calls = [];
       data.contacts.map((contact, index) => {
+        // Convert to server time format
+        if(contact.lastConfirmed) {
+          contact.lastConfirmed = dateToIso(contact.lastConfirmed);
+        }
         // Existing record
         if(contact._id) {
-          let contactData = objectAssign({}, widget.data.contacts[index]);
-          calls.push({
-            method: 'PATCH',
-            url: config.apiUrl + 'contacts/' + contact._id,
-            data: assignProps({}, contact)
-          });
+          this.props.crudActions.updateRemote(config.apiUrl + 'contacts/' + contact._id, contact);
         } 
         // New item
         else {
-          calls.push({
-            method: 'POST',
-            url: config.apiUrl + 'contacts',
-            data: assignProps({}, contact)
-          });
+          this.props.crudActions.createRemote(config.apiUrl + 'contacts', assignProps({}, contact));
         }
       });
-      // Launch all actions
-      this.props.actions.widgetPostAllData(this.props.widgetName, calls).then(
-        this.props.actions.widgetLoadData(this.props.widgetName, config.apiUrl + 'contacts', this.processData)
-      );
     }
     
   }
@@ -81,16 +71,7 @@ class Contacts extends Component {
   contactsDelete(contact) {
     // Launch all actions
     if(contact._id && contact._id.value) {
-      let calls = [
-        {
-          method: 'DELETE',
-          url: config.apiUrl + 'contacts/' + contact._id.value,
-          data: contact
-        }
-      ];
-      this.props.actions.widgetPostAllData(this.props.widgetName, calls).then(
-        this.props.actions.widgetLoadData(this.props.widgetName, config.apiUrl + 'contacts', this.processData)
-      );
+      this.props.crudActions.deleteRemote(config.apiUrl + 'contacts/' + contact._id.value, contact);
     }
     else {
       //error
@@ -100,17 +81,14 @@ class Contacts extends Component {
   render () {
 
     let widget = this.props.widget;
-    
-    // Return loading if not set
-    if(!widget || !(widget.status === 'loaded' || widget.status === 'posting')) {
-      return Widget.loadingDisplay();
-    }
+    let contacts = this.props.contacts;
+    console.log();
 
     if(this.props.display === 'page') {
       return (
         <ContactsEditPage 
           header={Widget.titleSection('Edit contacts', false, 'h2', false, true)} 
-          contactsData={widget.data.contacts}
+          contactsData={contacts}
           contactsSubmit={this.handleSubmit.bind(this)}
           contactsDelete={this.contactsDelete.bind(this)}
           emptyText={this.emptyText()}
@@ -126,8 +104,8 @@ class Contacts extends Component {
       return (
         <ContactsWidget 
           header={Widget.titleSection('Points of Contact to Maintain your Site', this.props.widgetName)} 
-          subHeader={widget.data.contacts.length ? subHeader() : false}
-          contacts={widget.data.contacts}
+          subHeader={contacts && contacts.length ? subHeader() : false}
+          contacts={contacts}
           emptyText={this.emptyText(true)} />
       )
     }
@@ -135,15 +113,35 @@ class Contacts extends Component {
 }
 
 Contacts.propTypes = Widget.propTypes({
-  submitFields: PropTypes.array
+  submitFields: PT.array
 });
 Contacts.defaultProps = Widget.defaultProps({
   submitFields: [
     'name',
     'email',
     'responsibility',
-    'phone'
+    'phone',
+    'lastConfirmed'
   ]
 });
 
-export default Widget.connect(Contacts);
+// Hooked up to multiple reducers, so dont use stock Widget methods
+
+function mapStateToProps (state, ownProps) {
+  return {
+    widget: state.widgetState.widgets[ownProps.widgetName],
+    contacts: state.contactsState
+  };
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    actions: bindActionCreators(actions, dispatch),
+    crudActions: bindActionCreators(crudActions, dispatch)
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Contacts);

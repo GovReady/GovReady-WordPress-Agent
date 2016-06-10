@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
 import config from 'config';
-import Widget from '../../Widget';
+import Widget from '../Widget';
 import PluginsWidget from './PluginsWidget';
 import PluginsPage from './PluginsPage';
 
 class Plugins extends Component {
 
-  constructor(props) {
-    super(props);
-    Widget.registerWidget(this, props);
-  }
-
   componentWillMount () {
-    Widget.getPayload(this, config.apiUrl + 'plugins', this.processData);
+    Widget.registerWidget(
+      this, 
+      {
+        url: config.apiUrl + 'plugins',
+        process: this.processData
+      }
+    );
   }
 
   processData (data) {
@@ -26,7 +27,7 @@ class Plugins extends Component {
 
   render () {
 
-    let widget = this.props.widget;
+    let { widget, widgetName, display } = this.props;
     
     // Return loading if not set
     if(!widget || widget.status !== 'loaded') {
@@ -60,11 +61,11 @@ class Plugins extends Component {
         break;
     }
 
-    if(this.props.display === 'page') {
+    if(display === 'page') {
       return (
         <PluginsPage 
           cms={config.cmsNice}
-          header={Widget.titleSection(this.props.widgetName, false, 'h2', false, true)} 
+          header={Widget.titleSection(widgetName, false, 'h2', false, true)} 
           updates={updates} 
           coreUpdate={coreUpdate} 
           plugins={widget.data.plugins} />
@@ -77,7 +78,7 @@ class Plugins extends Component {
           pluginText={config.pluginText}
           updates={updates} 
           coreUpdate={coreUpdate} 
-          footer={Widget.panelFooter(totalPlugins + ' total ' + config.pluginText.toLowerCase() + 's', footUrl, true)} />
+          footer={Widget.panelFooter(totalPlugins + ' total ' + config.pluginText.toLowerCase() + 's', widgetName, false)} />
       )
     }
   }

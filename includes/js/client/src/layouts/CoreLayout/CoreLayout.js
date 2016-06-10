@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React, { PropTypes as PT } from 'react';
 import config from 'config';
 import '../../styles/bootstrap-partial.scss';
 import '../../styles/core.scss';
@@ -30,7 +30,7 @@ function CoreLayout ({ children }) {
 }
 
 CoreLayout.propTypes = {
-  children: PropTypes.element
+  children: PT.element
 };
 
 export default CoreLayout;

@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes as PT } from 'react';
 import Accordion from 'react-bootstrap/lib/Accordion';
 import Panel from 'react-bootstrap/lib/Panel';
 
@@ -41,9 +41,9 @@ class DomainsPage extends Component {
 }
 
 DomainsPage.propTypes = {
-  header: PropTypes.object.isRequired,
-  domains: PropTypes.array.isRequired,
-  ssl: PropTypes.object.isRequired
+  header: PT.object.isRequired,
+  domains: PT.array.isRequired,
+  ssl: PT.object.isRequired
 };
 
 export default DomainsPage;

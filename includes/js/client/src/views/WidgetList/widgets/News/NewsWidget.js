@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes as PT } from 'react';
 import { Link } from 'react-router';
 
 class NewsItem extends Component {
@@ -19,8 +19,8 @@ class NewsItem extends Component {
 }
 
 NewsItem.propTypes = {
-  item: PropTypes.object.isRequired,
-  index: PropTypes.number.isRequired
+  item: PT.object.isRequired,
+  index: PT.number.isRequired
 }
 
 class NewsWidget extends Component {
@@ -39,8 +39,8 @@ class NewsWidget extends Component {
 }
 
 NewsWidget.propTypes = {
-  header: PropTypes.object,
-  items: PropTypes.array.isRequired
+  header: PT.object,
+  items: PT.array.isRequired
 };
 
 export default NewsWidget;

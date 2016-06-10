@@ -1,4 +1,4 @@
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes as PT, Component } from 'react';
 
 class PluginsWidget extends Component {
 
@@ -22,11 +22,11 @@ class PluginsWidget extends Component {
 }
 
 PluginsWidget.propTypes = {
-  cms: PropTypes.string.isRequired,
-  pluginText: PropTypes.string.isRequired,
-  updates: PropTypes.number.isRequired,
-  coreUpdate: PropTypes.bool,
-  footer: PropTypes.object.isRequired
+  cms: PT.string.isRequired,
+  pluginText: PT.string.isRequired,
+  updates: PT.number.isRequired,
+  coreUpdate: PT.bool,
+  footer: PT.object.isRequired
 };
 
 export default PluginsWidget;

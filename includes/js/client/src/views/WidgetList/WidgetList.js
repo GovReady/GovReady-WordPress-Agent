@@ -1,10 +1,5 @@
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { actions } from '../../redux/modules/widgetReducer';
+import React, { Component, PropTypes as PT } from 'react';
 import widgets from './widgets';
-
-console.log(widgets);
 
 class WidgetsListPage extends Component {
   
@@ -59,24 +54,4 @@ class WidgetsListPage extends Component {
   }
 }
 
-WidgetsListPage.propTypes = {
-  actions: PropTypes.object.isRequired,
-  appState: PropTypes.object.isRequired
-};
-
-function mapStateToProps (state) {
-  return {
-    appState: state.widgetState
-  };
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    actions: bindActionCreators(actions, dispatch)
-  };
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(WidgetsListPage);
+export default WidgetsListPage;

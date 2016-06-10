@@ -3,20 +3,21 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import config from 'config';
 import { actions } from 'redux/modules/widgetReducer';
-import Widget from '../../Widget';
+import Widget from '../Widget';
 import DomainsWidget from './DomainsWidget';
 import DomainsPage from './DomainsPage';
 import DomainsLocalMode from './DomainsLocalMode';
 
 class Domains extends Component {
 
-  constructor(props) {
-    super(props);
-    Widget.registerWidget(this, props);
-  }
-
   componentWillMount () {
-    Widget.getPayload(this, config.apiUrl + 'domain');
+    Widget.registerWidget(
+      this, 
+      {
+        url: config.apiUrl + 'domain',
+        process: this.processData
+      }
+    );
   }
 
   nextDomainsRenew (widget) {
