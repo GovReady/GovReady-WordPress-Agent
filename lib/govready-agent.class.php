@@ -14,7 +14,7 @@ class GovreadyAgent extends Govready\Govready {
     parent::__construct();
 
     // Define the ping trigger endpoint
-    add_action( 'wp_ajax_govready_v1_trigger', array($this, 'api_proxy') );
+    add_action( 'wp_ajax_govready_v1_trigger', array($this, 'ping') );
     add_action( 'wp_ajax_nopriv_govready_v1_trigger', array($this, 'ping') );
 
     // Save the user's last login timestamp
