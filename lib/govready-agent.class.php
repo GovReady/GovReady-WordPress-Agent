@@ -14,6 +14,7 @@ class GovreadyAgent extends Govready\Govready {
     parent::__construct();
 
     // Define the ping trigger endpoint
+    add_action( 'wp_ajax_govready_v1_trigger', array($this, 'api_proxy') );
     add_action( 'wp_ajax_nopriv_govready_v1_trigger', array($this, 'ping') );
 
     // Save the user's last login timestamp
@@ -29,21 +30,22 @@ class GovreadyAgent extends Govready\Govready {
    * ?action=govready_v1_trigger&key=stack&endpoint=stack/phpinfo&siteId=xxx
    */
   public function ping() {
-    print_r($_POST);
+    // print_r($_POST);
 
     $options = get_option( 'govready_options' );
     // @todo: check that request is coming from plugin.govready.com, or is properly nonced (for manual refreshes)
     if ($_POST['siteId'] == $options['siteId']) {
 
       $key = $_POST['key'];
-      if ( !empty($key) ) { 
-        $data = call_user_func( array($this, $key) );
-        if (!empty($data)) {
-          //print_r($data);return;
-          $endpoint = '/sites/' . $options['siteId'] . '/' . $_POST['endpoint'];
-          $return = parent::api( $endpoint, 'POST', $data );
+      if ( !empty( $key ) ) { 
+        $data = call_user_func( array( $this, $key ) );
+        if ( !empty( $data ) ) {
           print_r($data);
-          print_r($return); // @todo: comment this out, also don't return data in API
+          if( !empty( $_POST['endpoint'] ) ) {
+            $endpoint = '/sites/' . $options['siteId'] . '/' . $_POST['endpoint'];
+            $return = parent::api( $endpoint, 'POST', $data );
+            print_r($return); // @todo: comment this out, also don't return data in API
+          }
         }
       }
 

@@ -222,7 +222,7 @@ export function siteLocalCheckPostAll(): Function {
   return (dispatch: Function) => {
     let calls = [
       {
-        url: config.apiTrigger,
+        url: config.apiTrigger + '&key=changeMode',
         data: {
           key: 'changeMode',
           mode: 'local',
@@ -230,7 +230,7 @@ export function siteLocalCheckPostAll(): Function {
         }
       },
       {
-        url: config.apiTrigger,
+        url: config.apiTrigger + 'plugins&key=plugins&siteId=' + config.siteId,
         data: {
           key: 'plugins',
           endpoint: 'plugins',
@@ -238,7 +238,7 @@ export function siteLocalCheckPostAll(): Function {
         }
       },
       {
-        url: config.apiTrigger,
+        url: config.apiTrigger+ 'accounts&key=accounts&siteId=' + config.siteId,
         data: {
           key: 'accounts',
           endpoint: 'accounts',
@@ -246,7 +246,7 @@ export function siteLocalCheckPostAll(): Function {
         }
       },
       {
-        url: config.apiTrigger,
+        url: config.apiTrigger+ 'stack&key=stack&siteId=' + config.siteId,
         data: {
           key: 'stack',
           endpoint: 'stack',

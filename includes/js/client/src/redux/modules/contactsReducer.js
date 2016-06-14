@@ -1,5 +1,7 @@
 import objectAssign from 'object-assign';
+import { hashHistory } from 'react-router';
 import cuid from 'cuid';
+import {default as uniqueArr} from 'utils/unique';
 
 // ------------------------------------
 // Constants
@@ -152,10 +154,9 @@ export function fetchRemote (url: string): Function {
 }
 
 // Fired when widget should get data
-export function createRemote (url: string, record: object): Function {
+export function createRemote (url: string, record: object, redirect: string = false, appendId: boolean = false): Function {
   return (dispatch: Function) => {
     const genId = cuid();
-    console.log(genId);
     dispatch(createStart(record, genId));
     // Compile post
     let form_data = new FormData();
@@ -180,9 +181,12 @@ export function createRemote (url: string, record: object): Function {
         return error;
       }
     }).then((json: object) => {
-      console.log(json);
       if(json && !json.error) {
         dispatch(createSuccess(json, genId));
+        if(redirect) {
+          // Redirect
+          hashHistory.push(appendId ? redirect + json._id : redirect);
+        }
       }
       else {
         dispatch(createError(json, record, genId));
@@ -291,6 +295,12 @@ const ACTION_HANDLERS = {
     return state;
   },
   [CONTACTS_FETCH_SUCCESS]: (state: object, action: {records: Array}): object => {
+    let records = action.records;
+    // Try to combine
+    if(state && state.length) {
+      return uniqueArr(state.concat(records), '_id');
+    }
+    // just return
     return action.records;
   },
   [CONTACTS_FETCH_ERROR]: (state: object, action: {error: object}): object => {

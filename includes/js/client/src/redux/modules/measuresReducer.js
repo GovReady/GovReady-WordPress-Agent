@@ -1,6 +1,7 @@
 import objectAssign from 'object-assign';
 import { hashHistory } from 'react-router';
 import cuid from 'cuid';
+import {default as uniqueArr} from 'utils/unique';
 
 // ------------------------------------
 // Constants
@@ -300,6 +301,12 @@ const ACTION_HANDLERS = {
     return state;
   },
   [MEASURES_FETCH_SUCCESS]: (state: object, action: {records: Array}): object => {
+    let records = action.records;
+    // Try to combine
+    if(state && state.length) {
+      return uniqueArr(state.concat(records), '_id');
+    }
+    // just return
     return action.records;
   },
   [MEASURES_FETCH_ERROR]: (state: object, action: {error: object}): object => {
