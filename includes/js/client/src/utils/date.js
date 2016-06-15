@@ -11,6 +11,9 @@ export function dateToIso(date: string) {
   if(moment.isValid()) {
     return moment.toISOString();
   }
+  else {
+    return window.moment().toISOString();
+  }
   return null;
 }
 
@@ -20,5 +23,14 @@ export function dateToMoment(date: string) {
   if(moment.isValid()) {
     return moment;
   }
+  else {
+    return window.moment();
+  }
   return null;
+}
+
+export function isoSort(collection, field = 'datetime') {
+  return collection.sort((a, b) => {
+    return (a[field] < b[field]) ? -1 : ((a[field] > b[field]) ? 1 : 0);
+  })
 }

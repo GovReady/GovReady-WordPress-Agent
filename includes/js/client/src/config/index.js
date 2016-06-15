@@ -21,10 +21,10 @@ else if(window.Drupal && window.Drupal.settings.govready) {
   config.pluginText = 'Module';
   config.cmsNice = 'Drupal';
   let url = '/govready/api?';
-  config.apiTrigger = '/govready/trigger';
+  config.apiTrigger = '/govready/trigger?endpoint=/sites/' + config.siteId + '/';
   if(process.env.NODE_ENV === 'development') {
-    url = 'http://alex-UX303UA:32771/govready/api?';
-    config.apiTrigger = 'http://localhost:32771/govready/trigger';
+    url = 'http://alex-UX303UA:32777/govready/api?';
+    config.apiTrigger = 'http://localhost:32777/govready/trigger?endpoint=/sites/' + config.siteId + '/';
   }
   config.apiUrl = url + 'action=govready_proxy&endpoint=/sites/' + config.siteId + '/';
   config.apiUrlNoSite = url + 'action=govready_proxy&endpoint=';

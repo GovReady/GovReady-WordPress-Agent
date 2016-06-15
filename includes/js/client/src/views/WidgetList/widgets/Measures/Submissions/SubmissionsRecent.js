@@ -40,7 +40,7 @@ class SubmissionsRecent extends Component {
     // No submissions, return empty
     return (
       <div className="alert alert-warning">
-        <span>No submissions added.</span>
+        <span>No task reports made.</span>
       </div>
     );
   }

@@ -112,7 +112,7 @@ export function siteCheckPost (url: string, appendUrl: boolean, isLocal: boolean
   };
 }
 
-export function sitePreCheck(calls: Array, isLocal: boolean ): Function {
+export function sitePreCheck( forceDispatch:boolean = false ): Function {
   return (dispatch: Function) => {
     dispatch(sitePreChecking());
     return dispatch(siteCheckPost('/sites/' + config.siteId, true, false, {}, 'GET')
@@ -136,7 +136,7 @@ export function sitePreCheck(calls: Array, isLocal: boolean ): Function {
             allSet = false;
           }
         })
-        if(allSet) {
+        if(allSet || forceDispatch) {
           dispatch(siteLoaded(config.mode ? config.mode : 'remote'));
           return;
         }

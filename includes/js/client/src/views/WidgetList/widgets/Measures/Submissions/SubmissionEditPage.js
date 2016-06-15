@@ -31,16 +31,20 @@ class SubmissionEditPage extends Component {
         <div className="row">
           <div className="col-md-6">
             <div className="form-group">
-              <label className="control-label">Name</label>
-              <PureInput type="text" field={name}/>
+              <div>
+                <label className="control-label">Name (completed by)</label>
+                <PureInput type="text" field={name}/>
+              </div>
             </div>
           </div>
           <div className="col-md-12">
             <div className="form-group">
-              <label className="control-label">Description</label>
-              <textarea rows="10" className="form-control" {...body}/>
-              <div className="help-block">
-                Use the template provided in the field to log the measure completion
+              <div>
+                <label className="control-label">Task Report</label>
+                <textarea rows="10" className="form-control" {...body}/>
+                <div className="help-block">
+                  Use the template provided in the field to log the measure completion
+                </div>
               </div>
             </div>
           </div>

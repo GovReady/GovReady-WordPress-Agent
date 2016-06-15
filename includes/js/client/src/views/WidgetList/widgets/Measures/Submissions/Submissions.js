@@ -4,6 +4,7 @@ import Widget from '../../Widget';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import objectAssign from 'object-assign';
+import { reset as formReset } from 'redux-form';
 import { actions as crudActions } from 'redux/modules/submissionsReducer';
 import SubmissionsList from './SubmissionsList';
 import SubmissionsRecent from './SubmissionsRecent';
@@ -12,7 +13,6 @@ import SubmissionEditPage from './SubmissionEditPage';
 class Submissions extends Component {
 
   componentWillMount() {
-    console.log();
     if(this.props.measureId) {
       this.fetchSubmissionsByMeasure(this.props.measureId);
     }
@@ -43,25 +43,25 @@ class Submissions extends Component {
       }
     }
     // Init default
-    submission = this.props.submitFields;
-    submission.measureId = this.props.measureId;
-    if(!submission.body) {
-      submission.body = this.props.bodyTemplate;
-    }
-    return submission;
+    return {
+      '_id': '',
+      'measureId': this.props.measureId,
+      'name': '',
+      'body': this.props.bodyTemplate
+    };
   }
 
   // Gets list of submissions by measureId
   getSubmissionsRecent(count = 3) {
     return this.props.submissions.sort((a, b) => {
-      return b.datetime < a.datetime
+      return b.datetime > a.datetime
     }).slice(0, count);
   }
 
   // Gets list of submissions by measureId
   getSubmissionsByMeasure(measureId, count = 3) {
     return this.props.submissions.filter((submission) => submission.measureId === measureId).sort((a, b) => {
-      return b.datetime < a.datetime
+      return b.datetime > a.datetime
     }).slice(0, count);
   }
 
@@ -74,23 +74,24 @@ class Submissions extends Component {
       });
       return toSet;
     }
+    let { crudActions, formActions } = this.props;
     // Existing record
     if(data._id) {
-      this.props.crudActions.updateRemote(
+      crudActions.updateRemote(
         config.apiUrl + 'measures/' + data.measureId + '/submissions', 
         data,
         '/dashboard/Measures/' + data.measureId,
         false
-      );
+      ).then(formActions.reset('submissionEdit'));
     } 
     // New item
     else {
-      this.props.crudActions.createRemote(
+      crudActions.createRemote(
         config.apiUrl + 'measures/' + data.measureId + '/submissions', 
         assignProps({}, data),
         '/dashboard/Measures/' + data.measureId,
         false
-      );
+      ).then(formActions.reset('submissionEdit'));
     }
   }
 
@@ -123,7 +124,7 @@ class Submissions extends Component {
         <SubmissionEditPage
           submission={submission}
           submissionSubmit={this.handleSubmit.bind(this)}
-          backLink={Widget.backLink('Cancel', 'btn btn-default')} />
+          backLink="" />
       )
     }
     // if(display === 'page') {
@@ -171,6 +172,9 @@ function mapStateToProps (state, ownProps) {
 
 function mapDispatchToProps (dispatch) {
   return {
+    formActions: {
+      reset: bindActionCreators(formReset, dispatch)
+    },
     crudActions: bindActionCreators(crudActions, dispatch)
   };
 }

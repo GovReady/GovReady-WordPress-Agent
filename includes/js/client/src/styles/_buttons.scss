@@ -1,0 +1,11 @@
+
+.govready-container {
+  .btn + .btn,
+  button + button {
+    margin-left: 6px;
+  }
+
+  .confirm-delete {
+    padding-left: 6px;
+  } 
+}

@@ -13,10 +13,63 @@
   }
 }
 
+// .refresh-data{
+//   position: absolute;
+//   top: 20px;
+//   right: 0;
+// }
+
 .widget-layout {
+  // position: relative;
+  // padding-top: 50px;
+
   h4, h5 {
     color: #555;
   }
+}
+
+// Teasers / borders
+
+$teaser-padding: 20px;
+
+.list-border + .list-border {
+  border-top: 1px solid #ccc;
+  margin-top: $teaser-padding;
+  padding-top: $teaser-padding;
+
+  &.list-border-small {
+    margin-top: $teaser-padding/2;
+    padding-top: $teaser-padding/2;
+  }
+}
+
+.list-border.row + .list-border.row {
+  border-top: 0;
+  padding-top: 0px;
+
+  &:before {
+    border-top: 1px solid #ccc;
+    content: "";
+    display: block;
+    margin-right: 15px;
+    margin-left: 15px; 
+    margin-bottom: $teaser-padding;
+  }
+
+  &.list-border-small {
+    padding-top: 0;
+
+    &:before {
+      margin-bottom: $teaser-padding/2;
+    } 
+  }
+}
+
+
+fieldset + fieldset {
+  border-top: 1px solid #ddd;
+  margin-top: 20px;
+  padding-top: 20px;
 }
 
 // vulnerability widget
@@ -51,14 +104,6 @@
 // Contacts edit page
 // ----------------------------
 
-.contacts-edit {
-  &, & ~ div {
-    .btn + .btn {
-      margin-left: 6px;
-    }
-  }
-}
-
 .confirm-delete {
   position: relative;
   overflow: hidden;
@@ -72,12 +117,6 @@
     float: left;
     width: 50%;
   }
-}
-
-fieldset + fieldset {
-  border-top: 1px solid #ddd;
-  margin-top: 20px;
-  padding-top: 20px;
 }
 
 // Domains page

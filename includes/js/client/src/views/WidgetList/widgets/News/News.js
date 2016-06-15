@@ -37,7 +37,7 @@ class News extends Component {
       }
       return (
         <NewsPageIndividual
-          header={Widget.titleSection(item.title, false, 'h2', false, true)} 
+          header={Widget.titleSection(item.title, false, 'h2', false, true, '/dashboard/Measures')} 
           item={item} />
       )
     }

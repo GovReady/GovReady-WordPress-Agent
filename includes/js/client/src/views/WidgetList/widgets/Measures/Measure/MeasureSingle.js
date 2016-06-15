@@ -11,6 +11,13 @@ class MeasureSingle extends Component {
       });
       return freq ? freq.label : 'Unknown';
     };
+    if(!measure || !measure._id) {
+      return (
+        <div className='loading'>
+          <i className='fa fa-spinner fa-2x fa-spin'></i><span className='sr-only'>Loading</span>
+        </div>
+      )
+    }
     return (
       <div>
         {header}
@@ -27,17 +34,17 @@ class MeasureSingle extends Component {
           </div>
         </div>
         <div>
-          <label>Template:</label>
+          <label>Task Template:</label>
           <pre>
             {measure.body}
           </pre>
         </div>
         <hr/>
-        <h4>Recent Submissions</h4>
-        <Submissions display="list" measureId={measure._id} />
+        <h4>Submit New Task Report</h4>
+        <Submissions display="form" bodyTemplate={measure.body} isNew={true} measureId={measure._id} />
         <hr/>
-        <h4>Submit new</h4>
-        <Submissions display="form" bodyTemplate={measure.body} isNew="true" measureId={measure._id} />
+        <h4>Recent Task Reports</h4>
+        <Submissions display="list" measureId={measure._id} />
       </div>
     );
   }

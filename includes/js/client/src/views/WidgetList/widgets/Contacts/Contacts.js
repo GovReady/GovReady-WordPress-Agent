@@ -37,10 +37,9 @@ class Contacts extends Component {
   }
 
   handleSubmit(data) {
-    // Widget.submitPayload(this, config.apiUrl + 'contacts', data.contacts);
-    let widget = this.props.widget;
+    let { widget, submitFields, crudActions } = this.props
     const assignProps = (toSet, setData) => {
-      this.props.submitFields.map((field) => {
+      submitFields.map((field) => {
         if(setData[field] || setData[field] === false) {
           toSet[field] = setData[field];
         }
@@ -52,16 +51,14 @@ class Contacts extends Component {
       let calls = [];
       data.contacts.map((contact, index) => {
         // Convert to server time format
-        if(contact.lastConfirmed) {
-          contact.lastConfirmed = dateToIso(contact.lastConfirmed);
-        }
+        contact.lastConfirmed = dateToIso(contact.lastConfirmed);
         // Existing record
         if(contact._id) {
-          this.props.crudActions.updateRemote(config.apiUrl + 'contacts/' + contact._id, contact);
+          crudActions.updateRemote(config.apiUrl + 'contacts/' + contact._id, contact);
         } 
         // New item
         else {
-          this.props.crudActions.createRemote(config.apiUrl + 'contacts', assignProps({}, contact));
+          crudActions.createRemote(config.apiUrl + 'contacts', assignProps({}, contact));
         }
       });
     }
@@ -80,11 +77,9 @@ class Contacts extends Component {
 
   render () {
 
-    let widget = this.props.widget;
-    let contacts = this.props.contacts;
-    console.log();
+    let { widget, contacts, display, widgetName } = this.props;
 
-    if(this.props.display === 'page') {
+    if(display === 'page') {
       return (
         <ContactsEditPage 
           header={Widget.titleSection('Edit contacts', false, 'h2', false, true)} 
@@ -103,8 +98,8 @@ class Contacts extends Component {
       }
       return (
         <ContactsWidget 
-          header={Widget.titleSection('Points of Contact to Maintain your Site', this.props.widgetName)} 
-          subHeader={contacts && contacts.length ? subHeader() : false}
+          header={Widget.titleSection('Points of Contact to Maintain your Site', widgetName)} 
+          subHeader={subHeader()}
           contacts={contacts}
           emptyText={this.emptyText(true)} />
       )

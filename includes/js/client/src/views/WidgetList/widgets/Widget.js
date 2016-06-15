@@ -70,25 +70,39 @@ class Widget {
     );
   }
 
-  static backLink (text= 'Back', classes = 'back', backUrl = '/dashboard') {
+  static setHtml(text) {
+    return {
+      dangerouslySetInnerHTML: {
+        __html: text
+      }
+    }
+  }
+
+  static backLink (text= 'Back', classes = 'back', backUrl = false) {
     const backClick = (event) => {
       event.preventDefault();
       //@TODO currently no way to do this????
-      const currentHash = window.location.hash;
-      hashHistory.goBack();
-      setTimeout(() => {
-        if(currentHash === window.location.hash) {
-          hashHistory.push(backUrl);
-        }
-      }, 0);
+      // Just override with back url
+      if(backUrl) {
+        hashHistory.push(backUrl);
+      }
+      // Attempt a "smart back"
+      else {
+        const currentHash = window.location.hash;
+        hashHistory.goBack();
+        setTimeout(() => {
+          if(currentHash === window.location.hash) {
+            hashHistory.push(backUrl);
+          }
+        }, 0);
+      }
     }
     return (
       <a href="#" className={classes} onClick={backClick}>{text}</a>
     );
   }
 
-  static titleSection (text, pageUrl, header = 'h3', absolute = false, backlink = false) {
-    
+  static titleSection (text, pageUrl, header = 'h3', absolute = false, backlink = false, overrideUrl = '/dashboard') {
     const headerInner = () => {
       if(pageUrl && !absolute) {
         return (
@@ -112,7 +126,7 @@ class Widget {
         return (
           <span>
             <span>{text}</span>
-            {this.backLink('Back', 'back btn btn-primary pull-right')}
+            {this.backLink('Back', 'back btn btn-primary pull-right', overrideUrl)}
           </span>
         )
       }

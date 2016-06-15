@@ -198,7 +198,7 @@ export function createRemote (url: string, record: object, redirect: string = fa
 }
 
 // Fired when widget should get data
-export function updateRemote (url: string, record: object): Function {
+export function updateRemote (url: string, record: object, redirect: string = false, appendId: boolean = false): Function {
   return (dispatch: Function) => {
     dispatch(updateStart(record));
     // Compile post
@@ -225,6 +225,10 @@ export function updateRemote (url: string, record: object): Function {
     }).then((json: object) => {
       if(json && !json.error) {
         dispatch(updateSuccess(json));
+        if(redirect) {
+          // Redirect
+          hashHistory.push(appendId ? redirect + json._id : redirect);
+        }
       }
       else {
         dispatch(updateError(json, record));
@@ -236,7 +240,7 @@ export function updateRemote (url: string, record: object): Function {
 }
 
 // Fired when widget should get data
-export function deleteRemote (url: string, record: object): Function {
+export function deleteRemote (url: string, record: object, redirect: string = false): Function {
   return (dispatch: Function) => {
     dispatch(deleteStart(record));
     // Load data
@@ -257,6 +261,10 @@ export function deleteRemote (url: string, record: object): Function {
     }).then((json: object) => {
       if(json && !json.error) {
         dispatch(deleteSuccess(json));
+        if(redirect) {
+          // Redirect
+          hashHistory.push(redirect);
+        }
       }
       else {
         dispatch(deleteError(json, record));

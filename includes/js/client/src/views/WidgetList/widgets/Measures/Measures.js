@@ -7,11 +7,12 @@ import objectAssign from 'object-assign';
 import { Link } from 'react-router';
 import { actions } from 'redux/modules/widgetReducer';
 import { actions as crudActions } from 'redux/modules/measuresReducer';
-import {isoToDate, dateToIso} from 'utils/date';
+import { isoToDate, dateToIso, isoSort } from 'utils/date';
 import MeasuresWidget from './MeasuresWidget';
 import MeasuresPage from './MeasuresPage';
 import MeasureSingle from './Measure/MeasureSingle';
 import MeasureEditPage from './Measure/MeasureEditPage';
+import { freqOptions } from './Measure/MeasureEditPage';
 
 class Measures extends Component {
 
@@ -29,22 +30,25 @@ class Measures extends Component {
     }
   }
 
+  importDefaultMeasures(e) {
+    e.preventDefault();
+    this.props.crudActions.importDefault(config.apiUrl + 'measures/load/default');
+  }
+
+  createDefault(text, classes) {
+    console.log(this);
+  }
+
   createNewLink(text, to = 'new', classes) {
     return (
       <Link className={classes} to={'/dashboard/Measures/' + to} >{text}</Link>
     );
   }
 
-  // Returns start plus frequency
-  dueDateCompounded(measure, string=false) {
-    return string ? this.pdue.toISOString() : due;
-  }
-
 
   // Returns markup for next due
   nextSubmissionDue(measure) {
-    console.log(measure.due);
-    const due = window.moment(measure.due);//this.dueDateCompounded(measure);
+    const due = window.moment(measure.due);
     const now = window.moment();
     let isPast = false;
     if(due.diff(now) < 0) {
@@ -80,15 +84,15 @@ class Measures extends Component {
 
   // Gets list of submissions by due date
   getMeasuresByDueDate(count = 3) {
-    return this.props.measures.filter((measure) => measure.due).sort((a, b) => {
-      return b.due < a.due
-    }).slice(0, count);
+    return isoSort(this.props.measures.filter((measure) => measure.due), 'due').slice(0, count);
   }
 
   handleSubmit(data) {
-    let widget = this.props.widget;
+
+    let { widget, submitFields, crudActions }  = this.props;
+
     const assignProps = (toSet, setData) => {
-      this.props.submitFields.map((field) => {
+      submitFields.map((field) => {
         if(setData[field] || setData[field] === false) {
           toSet[field] = setData[field];
         }
@@ -97,15 +101,13 @@ class Measures extends Component {
     }
 
     if(widget && widget.status !== 'posting') {
-      console.log(data);
       // Convert to server time format
-      if(data.due) {
-        data.due = dateToIso(data.due);
-        
-      }
+      data.due = dateToIso(data.due);
+      // Make sure frequency is set
+      data.frequency = data.frequency || freqOptions[0].time;
       // Existing record
       if(data._id) {
-        this.props.crudActions.updateRemote(
+        crudActions.updateRemote(
           config.apiUrl + 'measures/' + data._id, 
           data,
           '/dashboard/Measures/',
@@ -114,7 +116,7 @@ class Measures extends Component {
       } 
       // New item
       else {
-        this.props.crudActions.createRemote(
+        crudActions.createRemote(
           config.apiUrl + 'measures', 
           assignProps({}, data),
           '/dashboard/Measures/',
@@ -127,7 +129,7 @@ class Measures extends Component {
   measureDelete(measure) {
     // Launch all actions
     if(measure._id && measure._id.value) {
-      this.props.crudActions.deleteRemote(config.apiUrl + 'measures/' + measure._id.value, measure);
+      this.props.crudActions.deleteRemote(config.apiUrl + 'measures/' + measure._id.value, measure, '/dashboard/Measures');
     }
     else {
       //error
@@ -136,15 +138,15 @@ class Measures extends Component {
 
   render () {
 
-    let {widget, measures} = this.props;
+    let { widget, widgetName, measures, display, isNew, individual } = this.props;
     
     // Return loading if not set
     if(!widget || !widget.status) {
       return Widget.loadingDisplay();
     }
     // Measure page
-    if(this.props.display === 'pageIndividual') {
-      const measure = this.getSingle(this.props.individual, measures);
+    if(display === 'pageIndividual') {
+      const measure = this.getSingle(individual, measures);
        // Measure loading failed
       if(!measure) {
         return (
@@ -156,24 +158,24 @@ class Measures extends Component {
       }
       return (
         <MeasureSingle
-          header={Widget.titleSection(measure.title, false, 'h2', false, true)} 
+          header={Widget.titleSection(measure.title, false, 'h2', false, true, '/dashboard/Measures')} 
           createNewLink={this.createNewLink.bind(this)}
           due={this.nextSubmissionDue(measure)}
           measure={measure} />
       );
     }
     // Measure edit page
-    else if(this.props.display === 'pageIndividualEdit') {
+    else if(display === 'pageIndividualEdit') {
       let measure, headerText;
 
       // Creating new measure
-      if(this.props.isNew){
+      if(isNew){
         headerText = 'New manual measure';
         measure = this.getSingle(null);
       }
       // not a new measure, so filter
-      else if(this.props.individual) {
-        measure = this.getSingle(this.props.individual, measures);
+      else if(individual) {
+        measure = this.getSingle(individual, measures);
         headerText = measure.title;
       }
       // Measure loading failed
@@ -187,22 +189,23 @@ class Measures extends Component {
       }
       return (
         <MeasureEditPage 
-          header={Widget.titleSection(headerText, false, 'h2', false, true)} 
+          header={Widget.titleSection(headerText, false, 'h2', false, true, '/dashboard/Measures')} 
           measure={measure}
           measureSubmit={this.handleSubmit.bind(this)}
           measureDelete={this.measureDelete.bind(this)}
+          createDefault={this.importDefaultMeasures.bind(this)}
           createNewLink={this.createNewLink.bind(this)}
           backLink={Widget.backLink('Cancel', 'btn btn-default')} />
       )
     }
     // Measures list page
-    else if(this.props.display === 'page') {
+    else if(display === 'page') {
       return (
         <MeasuresPage
-          header={Widget.titleSection('Measures', false, 'h2', false, true)} 
+          header={Widget.titleSection('Manual Tasks', false, 'h2', false, true)} 
           createNewLink={this.createNewLink.bind(this)}
           nextSubmissionDue={this.nextSubmissionDue.bind(this)}
-          measures={measures} />
+          measures={isoSort(measures, 'due')} />
       )
     }
     // Widget
@@ -210,13 +213,14 @@ class Measures extends Component {
       
       const subHeader = () => {
         return (
-          <h5>Track your manual steps here. <Link to='/dashboard/Measures'>See all.</Link></h5>
+          <h5>Track your manual tasks here. <Link to='/dashboard/Measures'>See all.</Link></h5>
         )
       }
       return (
         <MeasuresWidget 
-          header={Widget.titleSection('Manual Measures', this.props.widgetName)}
-          subHeader={measures && measures.length ? subHeader() : false}
+          header={Widget.titleSection('Manual Tasks', widgetName)}
+          subHeader={subHeader()}
+          createDefault={this.importDefaultMeasures.bind(this)}
           createNewLink={this.createNewLink.bind(this)}
           nextSubmissionDue={this.nextSubmissionDue.bind(this)}
           measures={this.getMeasuresByDueDate()} />

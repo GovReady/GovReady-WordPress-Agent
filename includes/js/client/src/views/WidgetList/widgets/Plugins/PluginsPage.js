@@ -1,35 +1,40 @@
 import React, { PropTypes as PT, Component } from 'react';
+import config from 'config';
 
 class PluginsPage extends Component {
 
-  pluginsList(plugins) {
-    return (
-      <ul className="list-group">
-        {plugins.map((plugin) => (
-          <li key={plugin.namespace} className={'list-group-item' + (plugin.status ? ' list-group-item-warning' : '')}>
-            <span className="badge">{plugin.version}</span>{plugin.label}
-          </li>
-        ))}
-      </ul>
-    )
-  }
-
   render () {
+    let {header, pluginText, cmsUrl, updates, coreUpdate, cms, plugins} = this.props;
     return (
       <div>
-        {this.props.header}
-        {this.props.subHeader}
+        {header}
+        <hr/>
+        <p>{pluginText + 's'} displayed below represent a heads-up-display of your site health. Those marked in yellow are behind the most current version, and should probably be updated.</p> 
+        <p><a className="btn btn-default btn-sml" href={cmsUrl}>Go to CMS page</a></p>
+        <hr/>
         <div className="alert-region">
-          {this.props.updates && (
+          {updates && (
             <div className="alert alert-danger">
-              {this.props.updates} <small>Plugin updates</small>
-              {this.props.coreUpdate && (
-                <small>including {this.props.cms} Core</small>
+              {updates} <small>Plugin updates</small>
+              {coreUpdate && (
+                <small>including {cms} Core</small>
               )}
             </div>
           )}
         </div>
-        {this.pluginsList(this.props.plugins)}
+        <ul className="list-group">
+          {plugins.map((plugin) => (
+            <li key={plugin.namespace} className={'list-group-item' + (plugin.status ? ' list-group-item-warning' : '')}>
+              <h4 className="list-group-item-heading">{plugin.label}</h4>
+              <p className="list-group-item-text clearfix">
+                <span className="pull-left">Version: <span className="badge">{plugin.version}</span></span>
+                <span className="pull-right">
+                  <a className="btn btn-default btn-xs" target="_blank" href={this.props.pluginUrl + plugin.namespace}>{pluginText} page</a>
+                </span>
+              </p>
+            </li>
+          ))}
+        </ul>
       </div>
     );
   }
@@ -37,8 +42,10 @@ class PluginsPage extends Component {
 
 PluginsPage.propTypes = {
   cms: PT.string.isRequired,
+  pluginText: PT.string.isRequired,
   header: PT.object.isRequired,
-  subHeader: PT.object.isRequired,
+  cmsUrl: PT.string.isRequired,
+  pluginUrl: PT.string.isRequired,
   updates: PT.number.isRequired,
   coreUpdate: PT.bool,
   plugins: PT.array.isRequired

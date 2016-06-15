@@ -52,44 +52,51 @@ class MeasuresEditPage extends Component {
       due,
       confirmDelete 
     }, handleSubmit, measureSubmit, measureDelete, submitting, measure } = this.props;
-    console.log(submitting);
     return (
       <form onSubmit={handleSubmit(measureSubmit)}>
         <fieldset disabled={submitting}>
           <div className="row">
             <div className="col-md-9">
               <div className="form-group">
-                <label className="control-label">Title</label>
-                <PureInput type="text" field={title}/>
+                <div>
+                  <label className="control-label">Title</label>
+                  <PureInput type="text" field={title}/>
+                </div>
               </div>
             </div>
             <div className="col-sm-6">
               <div className="form-group">
-                <label className="control-label">Frequency</label>
-                <select className="form-control" {...frequency}>
-                  {freqOptions.map(freqOption => <option value={freqOption.time} key={freqOption.time}>{freqOption.label}</option>)}
-                </select>
+                <div>
+                  <label className="control-label">Frequency</label>
+                  <select className="form-control" {...frequency}>
+                    {freqOptions.map(freqOption => <option value={freqOption.time} key={freqOption.time}>{freqOption.label}</option>)}
+                  </select>
+                </div>
               </div>
             </div>
             <div className="col-sm-6">
               <div className="form-group">
-                <label className="control-label">Start Date</label>
-                <div><DatePickerWrap field={due} placeholderText="Choose a start date" /></div>
+                <div>
+                  <label className="control-label">Start Date</label>
+                  <div><DatePickerWrap field={due} placeholderText="Choose a start date" /></div>
+                </div>
               </div>
             </div>
           </div>
           <div className="row">
             <div className="col-md-12">
               <div className="form-group">
-                <label className="control-label">Description</label>
-                <textarea rows="10" className="form-control" {...body}/>
-                <div className="help-block">
-                  <p>This field will become the "template" for submissions on this measure ex:</p>
-                  <pre>
-                    <div>Successfully located backup: (yes / no)</div>
-                    <div>Backup copied off site: (yes / no)</div>
-                    <div>Url of S3 bucket:</div>
-                  </pre>
+                <div>
+                  <label className="control-label">Task Template</label>
+                  <textarea rows="10" className="form-control" {...body}/>
+                  <div className="help-block">
+                    <p>This field will become the "template" for submissions on this measure ex:</p>
+                    <pre>
+                      <div>Successfully located backup: (yes / no)</div>
+                      <div>Backup copied off site: (yes / no)</div>
+                      <div>Url of S3 bucket:</div>
+                    </pre>
+                  </div>
                 </div>
               </div>
             </div>
@@ -109,7 +116,7 @@ class MeasuresEditPage extends Component {
                 confirmDelete={Boolean(confirmDelete.value)}
                 deleteConfirm={confirmDelete.onChange}
                 deleteFunc={() => { 
-                  measuresDelete(this.props.fields);
+                  measureDelete(this.props.fields);
                 }} />
             )}
           </div>
