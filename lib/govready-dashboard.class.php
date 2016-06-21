@@ -124,7 +124,6 @@ class GovreadyDashboard extends Govready\Govready {
     else {
     
       // Save some JS variables (available at govready.siteId, etc)
-      wp_enqueue_script( 'govready-dashboard', $path . 'govready.js' );
       wp_localize_script( 'govready-dashboard', 'govready', array( 
         'siteId' => !is_null($options['siteId']) ? $options['siteId'] : null, 
         'nonce' => wp_create_nonce( $this->key ),
