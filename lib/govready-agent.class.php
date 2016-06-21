@@ -35,9 +35,8 @@ class GovreadyAgent extends Govready\Govready {
     $options = get_option( 'govready_options' );
     // @todo: check that request is coming from plugin.govready.com, or is properly nonced (for manual refreshes)
     if ($_POST['siteId'] == $options['siteId']) {
-
-      $key = $_POST['key'];
-      if ( !empty( $key ) ) { 
+      if ( !empty( $_POST['key'] ) ) { 
+        $key = $_POST['key'];
         $data = call_user_func( array( $this, $key ) );
         if ( !empty( $data ) ) {
           print_r($data);
@@ -48,7 +47,6 @@ class GovreadyAgent extends Govready\Govready {
           }
         }
       }
-
     }
     else {
       print_r('Invalid siteId');
@@ -68,9 +66,9 @@ class GovreadyAgent extends Govready\Govready {
         'namespace' => $namespace[0],
         'status' => is_plugin_active($key),  // @todo: this is always returning FALSE
         'version' => $plugin['Version'],
+        'project_link' => !empty( $plugin['PluginURI'] ) ? $plugin['PluginURI'] : ''
       ) );
     }
-
     return array( 'plugins' => $out, 'forceDelete' => true );
 
   }
