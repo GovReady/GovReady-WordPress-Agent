@@ -13,7 +13,7 @@ class SubmissionsRecent extends Component {
         return (
           <div className='row'>
             <div className="col-sm-6">
-              <strong>By</strong> {submission.name}
+              {submission.title}
             </div>
             <div className="col-sm-6 text-right">
               {isoToDate(submission.datetime)}
@@ -25,6 +25,9 @@ class SubmissionsRecent extends Component {
         <Accordion>
           {submissions.map((submission, index) => (
             <Panel header={header(submission)} eventKey={index} key={index}>
+              <p>
+                <span>By:</span> <strong>{submission.name}</strong>
+              </p>
               <pre>
                 {submission.body}
               </pre>

@@ -5,6 +5,7 @@ class PluginsPage extends Component {
 
   render () {
     let {header, pluginText, cmsUrl, updates, coreUpdate, cms, plugins} = this.props;
+    console.log(updates ? 'updates' : 'noupdates');
     return (
       <div>
         {header}
@@ -13,7 +14,7 @@ class PluginsPage extends Component {
         <p><a className="btn btn-default btn-sml" href={cmsUrl}>Go to CMS page</a></p>
         <hr/>
         <div className="alert-region">
-          {updates && (
+          {updates > 0 && (
             <div className="alert alert-danger">
               {updates} <small>Plugin updates</small>
               {coreUpdate && (
@@ -21,16 +22,21 @@ class PluginsPage extends Component {
               )}
             </div>
           )}
+          {!updates && (
+            <div className="alert alert-success">Plugins up to date</div>
+          )}
         </div>
         <ul className="list-group">
           {plugins.map((plugin) => (
-            <li key={plugin.namespace} className={'list-group-item' + (plugin.status ? ' list-group-item-warning' : '')}>
+            <li key={plugin.namespace} className={'list-group-item' + (plugin.update ? ' list-group-item-warning' : '')}>
               <h4 className="list-group-item-heading">{plugin.label}</h4>
               <p className="list-group-item-text clearfix">
                 <span className="pull-left">Version: <span className="badge">{plugin.version}</span></span>
-                <span className="pull-right">
-                  <a className="btn btn-default btn-xs" target="_blank" href={this.props.pluginUrl + plugin.namespace}>{pluginText} page</a>
-                </span>
+                {plugin.project_link && (  
+                  <span className="pull-right">
+                    <a className="btn btn-default btn-xs" target="_blank" href={plugin.project_link}>{pluginText} page</a>
+                  </span>
+                )}
               </p>
             </li>
           ))}

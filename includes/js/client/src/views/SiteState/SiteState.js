@@ -18,6 +18,9 @@ class SiteState extends Component {
     if(this.props.siteState === 'init') {
       this.props.actions.sitePreCheck();
     }
+    else if (this.props.siteState === SITE_LOADED) {
+      hashHistory.push('/dashboard');
+    }
   }
 
   componentWillReceiveProps (nextProps) {

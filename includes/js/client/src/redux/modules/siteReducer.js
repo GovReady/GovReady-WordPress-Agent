@@ -160,7 +160,7 @@ export function sitePingCheck(calls: Array, isLocal: boolean ): Function {
     return dispatch(siteCheckPost('/monitor/' + config.siteId + '/ping', true, false, {}, 'POST')
     ).then((res) => {
       // We have an error
-      if(true || res instanceof Error) {
+      if(res instanceof Error) {
         // Dispatch to local mode
         dispatch(sitePingCheckFailed());
         return;
