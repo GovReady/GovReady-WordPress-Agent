@@ -101,8 +101,6 @@ class GovreadyAgent extends Govready\Govready {
         'lastLogin' => strtotime( get_user_meta( $user->ID, 'govready_last_login', true ) ),
       ) );
     }
-    print_r($out);
-    die();
     
     return array( 'accounts' => $out, 'forceDelete' => true );
 
