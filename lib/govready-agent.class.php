@@ -39,11 +39,11 @@ class GovreadyAgent extends Govready\Govready {
         $key = $_POST['key'];
         $data = call_user_func( array( $this, $key ) );
         if ( !empty( $data ) ) {
-          print_r($data);
+          //print_r($data);
           if( !empty( $_POST['endpoint'] ) ) {
             $endpoint = '/sites/' . $options['siteId'] . '/' . $_POST['endpoint'];
             $return = parent::api( $endpoint, 'POST', $data );
-            print_r($return); // @todo: comment this out, also don't return data in API
+            //print_r($return); // @todo: comment this out, also don't return data in API
           }
         }
       }
@@ -91,7 +91,7 @@ class GovreadyAgent extends Govready\Govready {
         'name' => $user->user_nicename,
         'created' => $user->user_registered,
         'roles' => get_user_meta( $user->ID, 'wp_capabilities', true ),
-        'lastLogin' => get_user_meta( $user->ID, 'govready_last_login', true ),
+        'lastLogin' => strtotime( get_user_meta( $user->ID, 'govready_last_login', true ) ),
       ) );
     }
     
