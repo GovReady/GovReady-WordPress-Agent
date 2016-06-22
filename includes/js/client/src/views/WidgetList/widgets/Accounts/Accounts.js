@@ -23,6 +23,11 @@ class Accounts extends Component {
     };
   }
 
+  // Returns accounts filtered by if they have lastLogin or not
+  getInactiveAccounts() {
+    return this.props.widget.data.accounts.filter((user) => user.lastLogin)
+  }
+
   render () {
     let widget = this.props.widget;
 
@@ -62,7 +67,7 @@ class Accounts extends Component {
           <InactiveAccountsWidget
             header={Widget.titleSection('Inactive Accounts', userUrl, 'h3', true)} 
             subHeader={subHeader()}
-            accounts={widget.data.accounts} />
+            accounts={this.getInactiveAccounts()} />
         )
       }
     }

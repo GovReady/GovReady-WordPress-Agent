@@ -3,12 +3,21 @@ import React, { Component, PropTypes as PT } from 'react';
 class InactiveAccountsWidget extends Component {
 
   listUsersTable (users) {
+    // None
+    if(!users || !users.length) {
+      return (
+        <div className="alert alert-info">
+          <p>No inactive accounts</p>
+        </div>
+      )
+    }
+    // Joins roles
     const printRoles = (user) => {
       if(user.roles) {
         return Object.values(user.roles).join(', ');
       }
     }
-
+    // Last login
     const printLastLogin = (user) => {
       if(!user.lastLogin) {
         return 'Never';
