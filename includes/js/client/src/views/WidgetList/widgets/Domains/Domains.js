@@ -22,6 +22,10 @@ class Domains extends Component {
     );
   }
 
+  processData (data) {
+    return data;
+  }
+
   nextDomainsRenew (widget) {
     let nextDomain = 'Unknown';
     const moment = window.moment(widget.data.expires);
