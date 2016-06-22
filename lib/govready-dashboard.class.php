@@ -122,17 +122,16 @@ class GovreadyDashboard extends Govready\Govready {
 
     // Show me the dashboard!
     else {
-    
-      // Save some JS variables (available at govready.siteId, etc)
-      wp_localize_script( 'govready-dashboard', 'govready', array( 
-        'siteId' => !is_null($options['siteId']) ? $options['siteId'] : null, 
-        'nonce' => wp_create_nonce( $this->key ),
-        'mode' => !empty($options['mode']) ? $options['mode'] : 'remote'
-      ) );
 
       // Enqueue react
       wp_enqueue_script( 'govready-dashboard-app-vendor', $path . 'client/dist/vendor.dist.js' );
       wp_enqueue_script( 'govready-dashboard-app', $path . 'client/dist/app.dist.js', array('govready-dashboard-app-vendor') );
+      // Save some JS variables (available at govready.siteId, etc)
+      wp_localize_script( 'govready-dashboard-app', 'govready', array( 
+        'siteId' => !is_null($options['siteId']) ? $options['siteId'] : null, 
+        'nonce' => wp_create_nonce( $this->key ),
+        'mode' => !empty($options['mode']) ? $options['mode'] : 'remote'
+      ) );
       wp_enqueue_style ( 'govready-dashboard-app', $path . 'client/dist/app.dist.css' );
 
       require_once plugin_dir_path(__FILE__) . '../templates/govready-dashboard.php';

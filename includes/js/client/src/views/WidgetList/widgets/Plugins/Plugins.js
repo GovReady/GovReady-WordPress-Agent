@@ -22,7 +22,9 @@ class Plugins extends Component {
       core: {
         status: 'Current'
       },
-      plugins: data,
+      plugins: data.filter((plugin) => {
+        return plugin.status
+      })
     };
   }
   
@@ -42,7 +44,7 @@ class Plugins extends Component {
     // Compile data for display
     if (widget.data && widget.data.plugins && widget.data.plugins.length) {
       widget.data.plugins.map((plugin) => {
-        if (plugin.status) {
+        if (plugin.update) {
           updates++;
         }
       });
