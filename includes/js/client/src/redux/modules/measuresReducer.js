@@ -1,6 +1,8 @@
 import objectAssign from 'object-assign';
 import { hashHistory } from 'react-router';
+import config from 'config';
 import cuid from 'cuid';
+import {default as uniqueArr} from 'utils/unique';
 
 // ------------------------------------
 // Constants
@@ -168,7 +170,6 @@ export function createRemote (url: string, record: object, redirect: string = fa
       body: form_data,
       credentials: 'same-origin'
     }).then((response: object) => {
-      console.log(response);
       // Good?
       if (response.status >= 200 && response.status < 300) {
         return response.json();
@@ -224,8 +225,6 @@ export function updateRemote (url: string, record: object, redirect: string = fa
     }).then((json: object) => {
       if(json && !json.error) {
         dispatch(updateSuccess(json));
-        console.log(redirect);
-        console.log(appendId ? redirect + json._id : redirect);
         if(redirect) {
           // Redirect
           hashHistory.push(appendId ? redirect + json._id : redirect);
@@ -241,7 +240,7 @@ export function updateRemote (url: string, record: object, redirect: string = fa
 }
 
 // Fired when widget should get data
-export function deleteRemote (url: string, record: object): Function {
+export function deleteRemote (url: string, record: object, redirect: string = false): Function {
   return (dispatch: Function) => {
     dispatch(deleteStart(record));
     // Load data
@@ -262,6 +261,10 @@ export function deleteRemote (url: string, record: object): Function {
     }).then((json: object) => {
       if(json && !json.error) {
         dispatch(deleteSuccess(json));
+        if(redirect) {
+          // Redirect
+          hashHistory.push(redirect);
+        }
       }
       else {
         dispatch(deleteError(json, record));
@@ -271,6 +274,43 @@ export function deleteRemote (url: string, record: object): Function {
     });
   };
 }
+
+// Fired when widget should get data
+export function importDefault (url: string): Function {
+  return (dispatch: Function) => {
+    dispatch(fetchStart());
+    // Compile post
+    let form_data = new FormData();
+    form_data.append('siteId', config.siteId);
+    // Load data
+    return fetch(url + '&method=POST', {
+      method: 'post',
+      body: form_data,
+      credentials: 'same-origin'
+    }).then((response: object) => {
+      // Good?
+      if (response.status >= 200 && response.status < 300) {
+        return response.json();
+        // @TODO handle Error
+      } else {
+        let error = new Error(response.statusText);
+        error.response = response;
+        error.error = response.statusText;
+        return error;
+      }
+    }).then((json: object) => {
+      if(json && !json.error) {
+        dispatch(fetchRemote(config.apiUrl + 'measures'));
+      }
+      else {
+        dispatch(fetchError(json));
+      }
+    }).catch(function (error) {
+      dispatch(fetchError(error));
+    });
+  };
+}
+
 
 export const actions = {
   fetchStart,
@@ -289,6 +329,7 @@ export const actions = {
   createRemote,
   updateRemote,
   deleteRemote,
+  importDefault
 }
 
 // ------------------------------------
@@ -300,6 +341,12 @@ const ACTION_HANDLERS = {
     return state;
   },
   [MEASURES_FETCH_SUCCESS]: (state: object, action: {records: Array}): object => {
+    let records = action.records;
+    // Try to combine
+    if(state && state.length) {
+      return uniqueArr(state.concat(records), '_id');
+    }
+    // just return
     return action.records;
   },
   [MEASURES_FETCH_ERROR]: (state: object, action: {error: object}): object => {

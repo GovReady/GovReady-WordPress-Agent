@@ -14,6 +14,7 @@ class GovreadyAgent extends Govready\Govready {
     parent::__construct();
 
     // Define the ping trigger endpoint
+    add_action( 'wp_ajax_govready_v1_trigger', array($this, 'ping') );
     add_action( 'wp_ajax_nopriv_govready_v1_trigger', array($this, 'ping') );
 
     // Save the user's last login timestamp
@@ -29,24 +30,23 @@ class GovreadyAgent extends Govready\Govready {
    * ?action=govready_v1_trigger&key=stack&endpoint=stack/phpinfo&siteId=xxx
    */
   public function ping() {
-    print_r($_POST);
+    // print_r($_POST);
 
     $options = get_option( 'govready_options' );
     // @todo: check that request is coming from plugin.govready.com, or is properly nonced (for manual refreshes)
     if ($_POST['siteId'] == $options['siteId']) {
-
-      $key = $_POST['key'];
-      if ( !empty($key) ) { 
-        $data = call_user_func( array($this, $key) );
-        if (!empty($data)) {
-          //print_r($data);return;
-          $endpoint = '/sites/' . $options['siteId'] . '/' . $_POST['endpoint'];
-          $return = parent::api( $endpoint, 'POST', $data );
-          print_r($data);
-          print_r($return); // @todo: comment this out, also don't return data in API
+      if ( !empty( $_POST['key'] ) ) { 
+        $key = $_POST['key'];
+        $data = call_user_func( array( $this, $key ) );
+        if ( !empty( $data ) ) {
+          //print_r($data);
+          if( !empty( $_POST['endpoint'] ) ) {
+            $endpoint = '/sites/' . $options['siteId'] . '/' . $_POST['endpoint'];
+            $return = parent::api( $endpoint, 'POST', $data );
+            //print_r($return); // @todo: comment this out, also don't return data in API
+          }
         }
       }
-
     }
     else {
       print_r('Invalid siteId');
@@ -66,9 +66,9 @@ class GovreadyAgent extends Govready\Govready {
         'namespace' => $namespace[0],
         'status' => is_plugin_active($key),  // @todo: this is always returning FALSE
         'version' => $plugin['Version'],
+        'project_link' => !empty( $plugin['PluginURI'] ) ? $plugin['PluginURI'] : ''
       ) );
     }
-
     return array( 'plugins' => $out, 'forceDelete' => true );
 
   }
@@ -84,14 +84,21 @@ class GovreadyAgent extends Govready\Govready {
     ) );
 
     foreach ($users as $key => $user) {
+      $roles = array();
+      foreach (get_user_meta( $user->ID, 'wp_capabilities', true ) as $role => $value) {
+        if ($value) {
+          array_push($roles, $role);
+        }
+      }
       array_push( $out, array(
         'userId' => $user->ID,
         'username' => $user->user_login,
         'email' => $user->user_email,
         'name' => $user->user_nicename,
-        'created' => $user->user_registered,
-        'roles' => get_user_meta( $user->ID, 'wp_capabilities', true ),
-        'lastLogin' => get_user_meta( $user->ID, 'govready_last_login', true ),
+        'created' => strtotime( $user->user_registered ),
+        'roles' => $roles,
+        'superAdmin' => (bool)in_array('administrator', $roles),
+        'lastLogin' => strtotime( get_user_meta( $user->ID, 'govready_last_login', true ) ),
       ) );
     }
     
@@ -112,7 +119,7 @@ class GovreadyAgent extends Govready\Govready {
         'platform' => 'WordPress',
         'version' => $wp_version,
       ),
-      'database' => null,
+      'database' => function_exists('mysql_get_client_info') ? 'MySQL ' . mysql_get_client_info() : null,
     );
 
     return array( 'stack' => $stack );

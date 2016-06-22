@@ -18,6 +18,10 @@
     },
     device: 'govready-wordpress-' + govready_connect.siteId
   }, function (err, profile, id_token, access_token, state, refresh_token) {
+    if (err) {
+      return;
+    }
+    
     // Save the refresh token in WordPress
     jQuery.post(
       ajaxurl + '?action=govready_refresh_token', 
@@ -27,7 +31,6 @@
         '_ajax_nonce': govready_connect.nonce
       }, 
       function(response){
-        console.log(response);
         if (response.id_token != undefined) {
           // Ladies and gentlemen, start your engines
           // $('#signup-content').hide();

@@ -10,6 +10,11 @@ class DomainsWidget extends Component {
             {this.props.nextExpires}
             <br/>
             <small>Next domain renewal</small>
+            {!this.props.ssl.domain && (
+              <div>
+                <span className="label label-danger">No SSL active</span>
+              </div>
+            )}
           </h4>
         </div>
         {this.props.footer}
@@ -20,6 +25,7 @@ class DomainsWidget extends Component {
 
 DomainsWidget.propTypes = {
   nextExpires: PT.string.isRequired,
+  ssl: PT.object.isRequired,
   footer: PT.object.isRequired
 };
 

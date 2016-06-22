@@ -79,9 +79,6 @@ export function widgetLoadData (widgetName: string, url: string, processData: Fu
         dispatch(widgetLoadFailed(widgetName, json));
       }
     }).catch(function (error) {
-      console.log(url);
-      console.log(error);
-      console.log('post failed222', error);
       dispatch(widgetLoadFailed(widgetName, error));
     });
   };

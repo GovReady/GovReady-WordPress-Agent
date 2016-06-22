@@ -24,7 +24,7 @@ class StackWidget extends Component {
               <td>{systemData.server}</td>
             </tr>
             <tr>
-              <th>MySQL</th>
+              <th>Database</th>
               <td>{systemData.database}</td>
             </tr>
           </tbody>

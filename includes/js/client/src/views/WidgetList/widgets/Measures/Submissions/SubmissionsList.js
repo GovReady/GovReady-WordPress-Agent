@@ -9,15 +9,15 @@ class SubmissionsList extends Component {
       return (
         <div>
           {submissions.map((submission, index) => (
-            <div key={index} className='submission row'>
+            <div key={index} className="submission row list-border">
               <div className="col-sm-6">
                 <label>By</label> {submission.name}
               </div>
               <div className="col-sm-6 text-right">
-                {isoToDate(submission.datetime)}
+                <span className="label label-primary">{isoToDate(submission.datetime)}</span>
               </div>
               <div className="col-xs-12">
-                <label>Notes</label>
+                <label>Task Report</label>
                 <pre>
                   {submission.body}
                 </pre>

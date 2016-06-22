@@ -19,8 +19,38 @@ class Accounts extends Component {
 
   processData (data) {
     return {
-      accounts: data
+      accounts: data.map((user) => {
+        if( !user.lastLogin ) {
+          return user;
+        }
+        let loginInt = parseInt(user.lastLogin);    
+        // string   
+        if(isNaN(loginInt)) {   
+          user.lastLogin = false;
+          return user; 
+        }   
+        // php timestamp convert
+        let lastLogin = window.moment(loginInt*1000);
+        if(!lastLogin || !lastLogin._isAMomentObject) {
+          user.lastLogin = false;
+          return user; 
+        }
+        user.lastLogin = lastLogin.format('MMMM Do YYYY, h:mm:ss a');
+        return user;
+      })
     };
+  }
+
+  // Returns accounts filtered by if they have lastLogin or not
+  getInactiveAccounts() {
+    return this.props.widget.data.accounts.filter((user) => {
+      if( !user.lastLogin ) {
+        return false;
+      }      
+      const lastLogin = window.moment(user.lastLogin, 'MMMM Do YYYY, h:mm:ss a');
+      const days = window.moment().diff(lastLogin, 'days');
+      return days && days % 1 === 0 && days > 30;
+    });
   }
 
   render () {
@@ -62,7 +92,7 @@ class Accounts extends Component {
           <InactiveAccountsWidget
             header={Widget.titleSection('Inactive Accounts', userUrl, 'h3', true)} 
             subHeader={subHeader()}
-            accounts={widget.data.accounts} />
+            accounts={this.getInactiveAccounts()} />
         )
       }
     }
@@ -74,7 +104,7 @@ class Accounts extends Component {
       // Compile data
       if (widget.data && widget.data.accounts && widget.data.accounts.length) {
         widget.data.accounts.map((account) => {
-          if (account.roles && Object.values(account.roles).indexOf(adminRole)) {
+          if (account.superAdmin) {
             admins++;
           }
         });

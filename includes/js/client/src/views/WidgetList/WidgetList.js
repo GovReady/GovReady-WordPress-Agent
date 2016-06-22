@@ -1,7 +1,17 @@
 import React, { Component, PropTypes as PT } from 'react';
 import widgets from './widgets';
+import { Link } from 'react-router';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { actions } from '../../redux/modules/siteReducer';
 
 class WidgetsListPage extends Component {
+
+  refreshData (e) {
+    e.preventDefault();
+    this.props.actions.sitePingCheck();
+    console.log('refreshing data');
+  }
   
   render () {
     // Simple render function from widgetName
@@ -10,6 +20,8 @@ class WidgetsListPage extends Component {
       params.display = 'widget';
       return React.createElement(widgets[name].component, params);
     }
+    //<div className="refresh-data"><Link to="/" onClick={this.refreshData.bind(this)}><i className="fa fa-refresh"></i> Refresh Data</Link></div>
+
 
     return (
       <div className='widget-layout'>
@@ -54,4 +66,21 @@ class WidgetsListPage extends Component {
   }
 }
 
-export default WidgetsListPage;
+// Hooked up to multiple reducers, so dont use stock Widget methods
+
+function mapStateToProps (state, ownProps) {
+  return {
+    siteState: state.siteState
+  };
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(WidgetsListPage);

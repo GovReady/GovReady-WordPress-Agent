@@ -1,6 +1,7 @@
 import objectAssign from 'object-assign';
-import {default as uniqueArr} from 'utils/unique';
+import { hashHistory } from 'react-router';
 import cuid from 'cuid';
+import {default as uniqueArr} from 'utils/unique';
 
 // ------------------------------------
 // Constants
@@ -153,10 +154,9 @@ export function fetchRemote (url: string): Function {
 }
 
 // Fired when widget should get data
-export function createRemote (url: string, record: object): Function {
+export function createRemote (url: string, record: object, redirect: string = false, appendId: boolean = false): Function {
   return (dispatch: Function) => {
     const genId = cuid();
-    console.log(genId);
     dispatch(createStart(record, genId));
     // Compile post
     let form_data = new FormData();
@@ -169,7 +169,6 @@ export function createRemote (url: string, record: object): Function {
       body: form_data,
       credentials: 'same-origin'
     }).then((response: object) => {
-      console.log(response);
       // Good?
       if (response.status >= 200 && response.status < 300) {
         return response.json();
@@ -181,9 +180,12 @@ export function createRemote (url: string, record: object): Function {
         return error;
       }
     }).then((json: object) => {
-      console.log(json);
       if(json && !json.error) {
         dispatch(createSuccess(json, genId));
+        if(redirect) {
+          // Redirect
+          hashHistory.push(appendId ? redirect + json._id : redirect);
+        }
       }
       else {
         dispatch(createError(json, record, genId));
@@ -195,7 +197,7 @@ export function createRemote (url: string, record: object): Function {
 }
 
 // Fired when widget should get data
-export function updateRemote (url: string, record: object): Function {
+export function updateRemote (url: string, record: object, redirect: string = false, appendId: boolean = false): Function {
   return (dispatch: Function) => {
     dispatch(updateStart(record));
     // Compile post
@@ -222,6 +224,10 @@ export function updateRemote (url: string, record: object): Function {
     }).then((json: object) => {
       if(json && !json.error) {
         dispatch(updateSuccess(json));
+        if(redirect) {
+          // Redirect
+          hashHistory.push(appendId ? redirect + json._id : redirect);
+        }
       }
       else {
         dispatch(updateError(json, record));
@@ -233,7 +239,7 @@ export function updateRemote (url: string, record: object): Function {
 }
 
 // Fired when widget should get data
-export function deleteRemote (url: string, record: object): Function {
+export function deleteRemote (url: string, record: object, redirect: string = false): Function {
   return (dispatch: Function) => {
     dispatch(deleteStart(record));
     // Load data
@@ -254,6 +260,10 @@ export function deleteRemote (url: string, record: object): Function {
     }).then((json: object) => {
       if(json && !json.error) {
         dispatch(deleteSuccess(json));
+        if(redirect) {
+          // Redirect
+          hashHistory.push(redirect);
+        }
       }
       else {
         dispatch(deleteError(json, record));

@@ -9,6 +9,7 @@ class DomainsWidget extends Component {
           <p>
             This site is operating in local mode, so no domain information is available.
           </p>
+          <p><a href="#" onClick={this.props.exitLocalMode} className="btn btn-primary">Leave local</a></p>
         </div>
       </div>
     );
@@ -16,7 +17,7 @@ class DomainsWidget extends Component {
 }
 
 DomainsWidget.propTypes = {
-  nextExpires: PT.string.isRequired
+  exitLocalMode: PT.func.isRequired
 };
 
 

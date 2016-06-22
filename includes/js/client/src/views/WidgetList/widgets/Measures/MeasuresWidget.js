@@ -8,11 +8,11 @@ class MeasuresWidget extends Component {
       return (
         <div>
           {measures.map((measure, index) => (
-            <div key={index} className='measure row'>
+            <div key={index} className='measure row list-border list-border-small'>
               <div className="col-sm-8">
-                <p>{this.props.createNewLink(measure.title, measure._id)}</p>
+                <p className="margin-bottom-none">{this.props.createNewLink(measure.title, measure._id)}</p>
               </div>
-              <div className="col-sm-4">
+              <div className="col-sm-4 text-right">
                 {this.props.nextSubmissionDue(measure)}
               </div>
             </div>
@@ -23,7 +23,7 @@ class MeasuresWidget extends Component {
     // No measures, return empty
     return (
       <div className="alert alert-warning">
-        <span>No measures added. Please {this.props.createNewLink('add some')}!</span>
+        <span>No measures added. <a href="#" onClick={this.props.createDefault}>Import default measures</a> or {this.props.createNewLink('add some')}!</span>
       </div>
     );
   }
@@ -35,11 +35,11 @@ class MeasuresWidget extends Component {
         {this.props.subHeader}
         <div className="row">
           <div className="col-sm-6">
-            <h4>Upcoming / Past Due Measures</h4>
+            <h4>Upcoming / Past-due</h4>
             {this.measuresList(this.props.measures)}
           </div>
           <div className="col-sm-6">
-            <h4>Recent Submissions</h4>
+            <h4>Recent Task Reports</h4>
             <Submissions display="recent" />
           </div>
         </div>
@@ -51,6 +51,7 @@ class MeasuresWidget extends Component {
 MeasuresWidget.propTypes = {
   header: PT.object,
   subHeader: PT.object,
+  createDefault: PT.func.isRequired,
   createNewLink: PT.func.isRequired,
   measures: PT.array.isRequired,
   nextSubmissionDue: PT.func.isRequired,

@@ -22,10 +22,12 @@ class Plugins extends Component {
       core: {
         status: 'Current'
       },
-      plugins: data,
+      plugins: data.filter((plugin) => {
+        return plugin.status
+      })
     };
   }
-
+  
   render () {
 
     let { widget, widgetName, display } = this.props;
@@ -42,7 +44,7 @@ class Plugins extends Component {
     // Compile data for display
     if (widget.data && widget.data.plugins && widget.data.plugins.length) {
       widget.data.plugins.map((plugin) => {
-        if (plugin.status) {
+        if (plugin.update) {
           updates++;
         }
       });
@@ -50,29 +52,26 @@ class Plugins extends Component {
       coreUpdate = widget.data.core.status !== 'Current';
     }
 
-    let pluginText, pluginUrl;
+    let pluginText, cmsUrl;
 
     // CMS Specific
     switch(config.cms) {  
       case 'wordpress':
-        pluginUrl = '/wp-admin/plugins.php';
+        cmsUrl = '/wp-admin/plugins.php';
         break;
       case 'drupal': 
-        pluginUrl = '/admin/modules';
+        cmsUrl = '/admin/modules';
         break;
     }
 
     if(display === 'page') {
-      const subHeader = () => {
-        return (
-          <h4>Site {config.pluginText + 's'}. Go to <a href={pluginUrl}>CMS page.</a></h4>
-        )
-      }
       return (
         <PluginsPage 
           cms={config.cmsNice}
+          pluginText={config.pluginText}
+          cmsUrl={cmsUrl}
+          pluginUrl={config.pluginUrl}
           header={Widget.titleSection(config.pluginText + 's', false, 'h2', false, true)} 
-          subHeader={subHeader()}
           updates={updates} 
           coreUpdate={coreUpdate} 
           plugins={widget.data.plugins} />

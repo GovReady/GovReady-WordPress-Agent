@@ -5,7 +5,8 @@ import { WidgetList } from '../WidgetList';
 import { bindActionCreators } from 'redux';
 import config from 'config';
 import { 
-  actions, 
+  actions,
+  SITE_INIT,
   SITE_CHECK_FAILED, 
   SITE_PING_CHECK_FAILED,
   SITE_LOCAL_CHECK_FAILED, 
@@ -14,14 +15,18 @@ import {
 
 class SiteState extends Component {
   componentWillMount () {
+    let { siteState } = this.props; 
     // Need to check site availability
-    if(this.props.siteState === 'init') {
-      this.props.actions.sitePreCheck();
+    if(siteState.status === SITE_INIT) {
+      this.props.actions.sitePreCheck(siteState.mode);
+    }
+    else if (siteState.status === SITE_LOADED) {
+      hashHistory.push('/dashboard');
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    if(nextProps.siteState && nextProps.siteState === SITE_LOADED) {
+    if(nextProps.siteState && nextProps.siteState.status === SITE_LOADED) {
       hashHistory.push('/dashboard');
     }
   } 
@@ -32,7 +37,8 @@ class SiteState extends Component {
   }
 
   render () {
-    switch(this.props.siteState) {
+     let { siteState } = this.props;
+    switch(siteState.status) {
       
       case SITE_CHECK_FAILED:
       case SITE_PING_CHECK_FAILED:
@@ -68,12 +74,12 @@ class SiteState extends Component {
 
 SiteState.propTypes = {
   actions: PT.object.isRequired,
-  siteState: PT.string.isRequired
+  siteState: PT.object.isRequired
 };
 
 function mapStateToProps (state) {
   return {
-    siteState: state.siteState.status
+    siteState: state.siteState
   };
 }
 

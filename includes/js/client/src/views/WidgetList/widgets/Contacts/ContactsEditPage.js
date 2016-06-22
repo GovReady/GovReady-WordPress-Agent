@@ -15,29 +15,24 @@ export const fields = [
 
 class ContactsEditPage extends Component {
 
-  componentWillMount() {
-    console.log('contactsssss');
-    console.log(this.props.contactsData);
-    // this.props.dispatch(initialize('contactsEdit', {
-    //   contacts: this.props.contacts
-    // }, ['contacts']));
-  }
-
   contactArea(contacts,contactsDelete) {
+
+    let { contactsData, emptyText } = this.props;
+
     const fieldClasses = (index) => {
-      if(this.props.contactsData[index]) { 
+      if(contactsData[index]) { 
         let classes = '';
-        if(this.props.contactsData[index].unsaved) {
+        if(contactsData[index].unsaved) {
           classes += 'unsaved ';
         }
-        if(this.props.contactsData[index].error) {
+        if(contactsData[index].error) {
           classes += 'save-error';
         }
         return classes;
       }
     }
     const disabled = (index) => {
-      if(this.props.contactsData[index] && this.props.contactsData[index].busy) {
+      if(contactsData[index] && contactsData[index].busy) {
         return true;
       }
       return false;
@@ -107,17 +102,17 @@ class ContactsEditPage extends Component {
         </div>
       );
     }
-    return this.props.emptyText;
+    return emptyText;
   }
 
   editForm() {
     // Extract props
-    const { fields: { contacts }, handleSubmit, contactsSubmit, contactsDelete, submitting } = this.props;
+    const { fields: { contacts }, handleSubmit, contactsSubmit, contactsDelete, submitting, backLink } = this.props;
     return (
       <form className="form-horizontal" onSubmit={handleSubmit(contactsSubmit)}>
         {this.contactArea(contacts, contactsDelete)}
         <div>
-          <button className="btn btn-info" type="button" onClick={() => {
+          <button className="btn btn-success" type="button" onClick={() => {
             contacts.addField({
               responsibility: '',
               email: '',
@@ -129,7 +124,7 @@ class ContactsEditPage extends Component {
           <button className="btn btn-primary" type="submit" disabled={submitting}>
             {submitting ? <i/> : <i/>} Submit
           </button>
-          {this.props.backLink}
+          {backLink}
         </div>
       </form>
     )
@@ -139,6 +134,10 @@ class ContactsEditPage extends Component {
     return (
       <div>
         {this.props.header}
+        <hr/>
+        <p>Points of contact track those responsible for areas of your organization, and when that information was last verified.  Who has the login information for your domain provider?  Who is in charge of hosting requests?</p>
+        <p>Keeping track of this type of information will allow your organization to better respond to issues, and help faciliate personnel transitions.</p> 
+        <hr/>
         {this.editForm()}
       </div>
     );

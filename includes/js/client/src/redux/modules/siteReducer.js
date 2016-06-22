@@ -1,14 +1,20 @@
 import objectAssign from 'object-assign';
+import { hashHistory } from 'react-router';
 import config from 'config';
 
 // ------------------------------------
 // Constants
 // ------------------------------------
 
+export const SITE_INIT = 'SITE_INIT';
+export const SITE_RESET = 'SITE_RESET';
 export const SITE_PRE_CHECKING = 'SITE_PRE_CHECKING';
 export const SITE_PRE_CHECK_FAILED = 'SITE_PRE_CHECK_FAILED';
 export const SITE_PING_CHECKING = 'SITE_PING_CHECKING';
 export const SITE_PING_CHECK_FAILED = 'SITE_PING_CHECK_FAILED';
+export const SITE_MODE_CHANGE_START = 'SITE_MODE_CHANGE_START';
+export const SITE_MODE_CHANGE_SUCCESS = 'SITE_MODE_CHANGE_SUCCESS';
+export const SITE_MODE_CHANGE_FAILED = 'SITE_MODE_CHANGE_FAILED';
 export const SITE_CHECKING = 'SITE_CHECKING';
 export const SITE_CHECK_FAILED = 'SITE_CHECK_FAILED';
 export const SITE_LOCAL_CHECKING = 'SITE_LOCAL_CHECKING';
@@ -18,6 +24,11 @@ export const SITE_LOADED = 'SITE_LOADED';
 // ------------------------------------
 // Actions
 // ------------------------------------
+
+// Changes site status
+export function siteReset (): Action {
+  return { type: SITE_RESET };
+}
 
 // Changes site status
 export function sitePreChecking (): Action {
@@ -37,6 +48,21 @@ export function sitePingChecking (): Action {
 // Changes site status
 export function sitePingCheckFailed (error: object): Action {
   return { type: SITE_PING_CHECK_FAILED, error: error };
+}
+
+// Changes site mode
+export function siteModeChangeStart (mode: string): Action {
+  return { type: SITE_MODE_CHANGE_START, mode: mode };
+}
+
+// Changes site mode
+export function siteModeChangeSuccess (mode: string): Action {
+  return { type: SITE_MODE_CHANGE_SUCCESS, mode: mode };
+}
+
+// Changes site status
+export function siteModeChangeFailed (mode: string, error: object): Action {
+  return { type: SITE_MODE_CHANGE_FAILED, mode: mode, error: error };
 }
 
 // Changes site status
@@ -65,7 +91,7 @@ export function siteLoaded (mode: string): Action {
 }
 
 // Calls endpoint
-export function siteCheckPost (url: string, appendUrl: boolean, isLocal: boolean, data: object, method: string): Function {
+export function siteCheckPost (url: string, appendUrl: boolean, data: object, method: string): Function {
   return (dispatch: Function) => {
     // Build post data
     let form_data = new FormData();
@@ -112,10 +138,10 @@ export function siteCheckPost (url: string, appendUrl: boolean, isLocal: boolean
   };
 }
 
-export function sitePreCheck(calls: Array, isLocal: boolean ): Function {
+export function sitePreCheck( mode: string = config.mode ): Function {
   return (dispatch: Function) => {
     dispatch(sitePreChecking());
-    return dispatch(siteCheckPost('/sites/' + config.siteId, true, false, {}, 'GET')
+    return dispatch(siteCheckPost('/sites/' + config.siteId, true, {}, 'GET')
     ).then((res) => {
       if(!(res instanceof Error)) {
         // @TODO Cache all these endpoints
@@ -126,8 +152,8 @@ export function sitePreCheck(calls: Array, isLocal: boolean ): Function {
           'plugins'
         ]; 
         // If we're not in local, check domains
-        if(config.mode !== 'local') {
-          endpoints.push('domains');
+        if(mode !== 'local') {
+          endpoints.push('domain');
         }
         endpoints.map((endpoint) => {
           if(res[endpoint]) {
@@ -136,7 +162,7 @@ export function sitePreCheck(calls: Array, isLocal: boolean ): Function {
             allSet = false;
           }
         })
-        if(allSet) {
+        if(allSet || forceDispatch) {
           dispatch(siteLoaded(config.mode ? config.mode : 'remote'));
           return;
         }
@@ -157,10 +183,10 @@ export function sitePreCheck(calls: Array, isLocal: boolean ): Function {
 export function sitePingCheck(calls: Array, isLocal: boolean ): Function {
   return (dispatch: Function) => {
     dispatch(sitePingChecking());
-    return dispatch(siteCheckPost('/monitor/' + config.siteId + '/ping', true, false, {}, 'POST')
+    return dispatch(siteCheckPost('/monitor/' + config.siteId + '/ping', true, {}, 'POST')
     ).then((res) => {
       // We have an error
-      if(true || res instanceof Error) {
+      if(res instanceof Error) {
         // Dispatch to local mode
         dispatch(sitePingCheckFailed());
         return;
@@ -174,25 +200,69 @@ export function sitePingCheck(calls: Array, isLocal: boolean ): Function {
   }
 }
 
+export function siteModeChange(mode: string, reset: boolean = '', redirect: string = '') {
+  return (dispatch: Function) => {
+    dispatch(siteModeChangeStart(mode));
+    return dispatch(
+      siteCheckPost(config.apiTrigger + '&key=changeMode', false, {
+          key: 'changeMode',
+          mode: mode,
+          siteId: config.siteId
+      })
+    ).then((res) => {
+      // We have an error
+      if(res instanceof Error) {
+        // Dispatch to local mode
+        dispatch(siteModeChangeFailed(mode, res));
+        return;
+      }
+      // Dispatch post all to get data
+      dispatch(siteModeChangeSuccess(mode));
+      if(reset) {
+        dispatch(siteReset());
+      }
+      if(redirect) {
+        hashHistory.push(redirect);
+      }
+    }).catch((error) => {
+      // Dispatch to local mode
+      dispatch(siteModeChangeFailed(mode, error));
+    });
+  }
+}
+
+
 export function siteCheckPostAll(): Function {
   return (dispatch: Function) => {
     let calls = [
       {
-        url:  '/monitor/' + config.siteId + '/domain'
+        url: config.apiTrigger + '&key=changeMode',
+        data: {
+          key: 'changeMode',
+          mode: 'remote',
+          siteId: config.siteId
+        }
       },
       {
-        url: '/monitor/' + config.siteId + '/plugins'
+        url:  '/monitor/' + config.siteId + '/domain',
+        data: {}
       },
       {
-        url: '/monitor/' + config.siteId + '/accounts'
+        url: '/monitor/' + config.siteId + '/plugins',
+        data: {}
       },
       {
-        url: '/monitor/' + config.siteId + '/stack'
+        url: '/monitor/' + config.siteId + '/accounts',
+        data: {}
+      },
+      {
+        url: '/monitor/' + config.siteId + '/stack',
+        data: {}
       }
     ];
     dispatch(siteChecking());
     return Promise.all(calls.map((call) => {
-      return dispatch(siteCheckPost(call.url, true, false, {}));
+      return dispatch(siteCheckPost(call.url, true, call.data));
     })).then((returns) => {
       let error;
       // Check results for errors
@@ -222,7 +292,7 @@ export function siteLocalCheckPostAll(): Function {
   return (dispatch: Function) => {
     let calls = [
       {
-        url: config.apiTrigger,
+        url: config.apiTrigger + '&key=changeMode',
         data: {
           key: 'changeMode',
           mode: 'local',
@@ -230,7 +300,7 @@ export function siteLocalCheckPostAll(): Function {
         }
       },
       {
-        url: config.apiTrigger,
+        url: config.apiTrigger + 'plugins&key=plugins&siteId=' + config.siteId,
         data: {
           key: 'plugins',
           endpoint: 'plugins',
@@ -238,7 +308,7 @@ export function siteLocalCheckPostAll(): Function {
         }
       },
       {
-        url: config.apiTrigger,
+        url: config.apiTrigger+ 'accounts&key=accounts&siteId=' + config.siteId,
         data: {
           key: 'accounts',
           endpoint: 'accounts',
@@ -246,7 +316,7 @@ export function siteLocalCheckPostAll(): Function {
         }
       },
       {
-        url: config.apiTrigger,
+        url: config.apiTrigger+ 'stack&key=stack&siteId=' + config.siteId,
         data: {
           key: 'stack',
           endpoint: 'stack',
@@ -256,7 +326,7 @@ export function siteLocalCheckPostAll(): Function {
     ];
     dispatch(siteLocalChecking());
     return Promise.all(calls.map((call) => {
-      return dispatch(siteCheckPost(call.url, false, true, call.data));
+      return dispatch(siteCheckPost(call.url, false, call.data));
     })).then((returns) => {
       let error;
       // Check results for errors
@@ -281,10 +351,14 @@ export function siteLocalCheckPostAll(): Function {
 }
 
 export const actions = {
+  siteReset,
   sitePreChecking,
   sitePreCheckFailed,
   sitePingChecking,
   sitePingCheckFailed,
+  siteModeChangeStart,
+  siteModeChangeSuccess,
+  siteModeChangeFailed,
   siteChecking,
   siteCheckFailed,
   siteLocalChecking,
@@ -293,6 +367,7 @@ export const actions = {
   siteCheckPost,
   sitePreCheck,
   sitePingCheck,
+  siteModeChange,
   siteCheckPostAll,
   siteLocalCheckPostAll
 }
@@ -301,60 +376,81 @@ export const actions = {
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
+  [SITE_RESET]: (state: object): object => {
+    return objectAssign({}, state, {
+      'status': SITE_INIT
+    });
+  },
   [SITE_PRE_CHECKING]: (state: object): object => {
-    return objectAssign({}, {
+    return objectAssign({}, state, {
       'status': SITE_PRE_CHECKING
     });
   },
   
   [SITE_PRE_CHECK_FAILED]: (state: object, action: {error: object}): object => {
-    return objectAssign({}, {
+    return objectAssign({}, state, {
       'status': SITE_PRE_CHECK_FAILED,
       'error': action.error
     });
   },
   
   [SITE_PING_CHECKING]: (state: object): object => {
-    return objectAssign({}, {
+    return objectAssign({}, state, {
       'status': SITE_PING_CHECKING
     });
   },
   
   [SITE_PING_CHECK_FAILED]: (state: object, action: {error: object}): object => {
-    return objectAssign({}, {
+    return objectAssign({}, state, {
       'status': SITE_PING_CHECK_FAILED,
       'error': action.error
     });
   },
 
+  [SITE_MODE_CHANGE_START]: (state: object, action: {mode: string}): object => {
+    return state;
+  },
+
+  [SITE_MODE_CHANGE_SUCCESS]: (state: object, action: {mode: string}): object => {
+    return objectAssign({}, state, {
+      'mode': action.mode
+    });
+  },
+  
+  [SITE_MODE_CHANGE_FAILED]: (state: object, action: {mode: string, error: object}): object => {
+    return objectAssign({}, state, {
+      'error': action.error
+    });
+  },
+
   [SITE_CHECKING]: (state: object): object => {
-    return objectAssign({}, {
+    return objectAssign({}, state, {
       'status': SITE_CHECKING
     });
   },
   
   [SITE_CHECK_FAILED]: (state: object, action: {error: object}): object => {
-    return objectAssign({}, {
+    return objectAssign({}, state, {
       'status': SITE_CHECK_FAILED,
       'error': action.error
     });
   },
   
   [SITE_LOCAL_CHECKING]: (state: object): object => {
-    return objectAssign({}, {
+    return objectAssign({}, state, {
       'status': SITE_LOCAL_CHECKING
     });
   },
   
   [SITE_LOCAL_CHECK_FAILED]: (state: object, action: {error: object}): object => {
-    return objectAssign({}, {
+    return objectAssign({}, state, {
       'status': SITE_LOCAL_CHECK_FAILED,
       'error': action.error
     });
   },
   
   [SITE_LOADED]: (state: object, action: {mode: string}): object => {
-    return objectAssign({}, {
+    return objectAssign({}, state, {
       'status': SITE_LOADED,
       'mode': action.mode
     });
@@ -375,7 +471,7 @@ export function isSiteLoaded(globalState) {
 // ------------------------------------
 
 const initialState = {
-  status: 'init',
+  status: SITE_INIT,
   mode: config.mode
 };
 
