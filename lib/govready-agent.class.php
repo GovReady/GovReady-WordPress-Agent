@@ -114,7 +114,7 @@ class GovreadyAgent extends Govready\Govready {
         'platform' => 'WordPress',
         'version' => $wp_version,
       ),
-      'database' => null,
+      'database' => function_exists('mysql_get_client_info') ? 'MySQL ' . mysql_get_client_info() : null,
     );
 
     return array( 'stack' => $stack );
