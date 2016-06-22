@@ -15,14 +15,14 @@ class PluginsPage extends Component {
         <div className="alert-region">
           {updates > 0 && (
             <div className="alert alert-danger">
-              {updates} <small>Plugin updates</small>
+              {updates} <small>{pluginText + 's'} updates</small>
               {coreUpdate && (
                 <small>including {cms} Core</small>
               )}
             </div>
           )}
           {!updates && (
-            <div className="alert alert-success">Plugins up to date</div>
+            <div className="alert alert-success">{pluginText + 's'} up to date</div>
           )}
         </div>
         <ul className="list-group">

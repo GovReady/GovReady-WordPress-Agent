@@ -38,7 +38,8 @@ class Domains extends Component {
       }
     }
     if (nextDomain !== 'Unknown') {
-      return nextDomain.toNow(true);
+      // return nextDomain.toNow(true);
+      return nextDomain.format('MMMM Do YYYY');
     }
     return nextDomain;
   }
@@ -65,6 +66,13 @@ class Domains extends Component {
       return Widget.loadingDisplay();
     }
 
+    let ssl = {};
+    if(widget.data.ssl.allowed) {
+      ssl.expires = window.moment(widget.data.ssl.expires).format('MMMM Do YYYY, h:mm:ss a');
+      ssl.domain = widget.data.ssl.cert.subject['CN'];
+      ssl.issuedBy = widget.data.ssl.cert.issuer['CN'];
+    }
+
     if(this.props.display === 'page') {
       let domains = [];
       // @todo handle multiple domains
@@ -73,13 +81,6 @@ class Domains extends Component {
         domain: widget.data.domain,
         whois: widget.data.whois
       });
-
-      let ssl = {};
-      if(widget.data.ssl.allowed) {
-        ssl.expires = window.moment(widget.data.ssl.expires).format('MMMM Do YYYY, h:mm:ss a');
-        ssl.domain = widget.data.ssl.cert.subject['CN'];
-        ssl.issuedBy = widget.data.ssl.cert.issuer['CN'];
-      }
 
       return (
         <DomainsPage 
@@ -92,6 +93,7 @@ class Domains extends Component {
       return (
         <DomainsWidget 
           nextExpires={this.nextDomainsRenew(widget)} 
+          ssl={ssl}
           footer={Widget.panelFooter('Domains + SSL', this.props.widgetName)} />
       )
     }

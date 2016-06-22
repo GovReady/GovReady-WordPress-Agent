@@ -25,7 +25,7 @@ class DomainsPage extends Component {
         <div>
           <h3>SSL</h3>
           {!this.props.ssl.domain && (
-            <p className="alert alert-warning">No SSL active</p>
+            <p className="alert alert-danger">No SSL active</p>
           )}
           {this.props.ssl.domain && (
             <div>

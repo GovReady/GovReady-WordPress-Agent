@@ -25,7 +25,13 @@ class Accounts extends Component {
 
   // Returns accounts filtered by if they have lastLogin or not
   getInactiveAccounts() {
-    return this.props.widget.data.accounts.filter((user) => user.lastLogin)
+    return this.props.widget.data.accounts.filter((user) => {
+      if( !user.lastLogin ) {
+        return false;
+      }      
+      let days = window.moment().diff(user.lastLogin, 'days');
+      return days && days % 1 === 0 && days > 30;
+    });
   }
 
   render () {
@@ -79,7 +85,7 @@ class Accounts extends Component {
       // Compile data
       if (widget.data && widget.data.accounts && widget.data.accounts.length) {
         widget.data.accounts.map((account) => {
-          if (account.roles && Object.values(account.roles).indexOf(adminRole)) {
+          if (account.superAdmin) {
             admins++;
           }
         });
