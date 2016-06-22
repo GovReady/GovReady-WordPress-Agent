@@ -95,7 +95,7 @@ class GovreadyAgent extends Govready\Govready {
         'username' => $user->user_login,
         'email' => $user->user_email,
         'name' => $user->user_nicename,
-        'created' => $user->user_registered,
+        'created' => strtotime( $user->user_registered ),
         'roles' => $roles,
         'superAdmin' => (bool)in_array('administrator', $roles),
         'lastLogin' => strtotime( get_user_meta( $user->ID, 'govready_last_login', true ) ),
