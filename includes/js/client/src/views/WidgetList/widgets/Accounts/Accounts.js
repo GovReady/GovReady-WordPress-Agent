@@ -19,7 +19,25 @@ class Accounts extends Component {
 
   processData (data) {
     return {
-      accounts: data
+      accounts: data.map((user) => {
+        if( !user.lastLogin ) {
+          return user;
+        }
+        let loginInt = parseInt(user.lastLogin);    
+        // string   
+        if(isNaN(loginInt)) {   
+          user.lastLogin = false;
+          return user; 
+        }   
+        // php timestamp convert
+        let lastLogin = window.moment(loginInt*1000);
+        if(!lastLogin || !lastLogin._isAMomentObject) {
+          user.lastLogin = false;
+          return user; 
+        }
+        user.lastLogin = lastLogin.format('MMMM Do YYYY, h:mm:ss a');
+        return user;
+      })
     };
   }
 
@@ -29,7 +47,8 @@ class Accounts extends Component {
       if( !user.lastLogin ) {
         return false;
       }      
-      let days = window.moment().diff(user.lastLogin, 'days');
+      const lastLogin = window.moment(user.lastLogin, 'MMMM Do YYYY, h:mm:ss a');
+      const days = window.moment().diff(lastLogin, 'days');
       return days && days % 1 === 0 && days > 30;
     });
   }
