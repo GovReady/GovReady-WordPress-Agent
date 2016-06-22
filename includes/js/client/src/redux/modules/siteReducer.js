@@ -91,7 +91,7 @@ export function siteLoaded (mode: string): Action {
 }
 
 // Calls endpoint
-export function siteCheckPost (url: string, appendUrl: boolean, isLocal: boolean, data: object, method: string): Function {
+export function siteCheckPost (url: string, appendUrl: boolean, data: object, method: string): Function {
   return (dispatch: Function) => {
     // Build post data
     let form_data = new FormData();
@@ -141,7 +141,7 @@ export function siteCheckPost (url: string, appendUrl: boolean, isLocal: boolean
 export function sitePreCheck( mode: string = config.mode ): Function {
   return (dispatch: Function) => {
     dispatch(sitePreChecking());
-    return dispatch(siteCheckPost('/sites/' + config.siteId, true, false, {}, 'GET')
+    return dispatch(siteCheckPost('/sites/' + config.siteId, true, {}, 'GET')
     ).then((res) => {
       if(!(res instanceof Error)) {
         // @TODO Cache all these endpoints
@@ -153,7 +153,7 @@ export function sitePreCheck( mode: string = config.mode ): Function {
         ]; 
         // If we're not in local, check domains
         if(mode !== 'local') {
-          endpoints.push('domains');
+          endpoints.push('domain');
         }
         endpoints.map((endpoint) => {
           if(res[endpoint]) {
@@ -183,7 +183,7 @@ export function sitePreCheck( mode: string = config.mode ): Function {
 export function sitePingCheck(calls: Array, isLocal: boolean ): Function {
   return (dispatch: Function) => {
     dispatch(sitePingChecking());
-    return dispatch(siteCheckPost('/monitor/' + config.siteId + '/ping', true, false, {}, 'POST')
+    return dispatch(siteCheckPost('/monitor/' + config.siteId + '/ping', true, {}, 'POST')
     ).then((res) => {
       // We have an error
       if(res instanceof Error) {
@@ -204,7 +204,7 @@ export function siteModeChange(mode: string, reset: boolean = '', redirect: stri
   return (dispatch: Function) => {
     dispatch(siteModeChangeStart(mode));
     return dispatch(
-      siteCheckPost(config.apiTrigger + '&key=changeMode', false, true, {
+      siteCheckPost(config.apiTrigger + '&key=changeMode', false, {
           key: 'changeMode',
           mode: mode,
           siteId: config.siteId
@@ -236,21 +236,33 @@ export function siteCheckPostAll(): Function {
   return (dispatch: Function) => {
     let calls = [
       {
-        url:  '/monitor/' + config.siteId + '/domain'
+        url: config.apiTrigger + '&key=changeMode',
+        data: {
+          key: 'changeMode',
+          mode: 'remote',
+          siteId: config.siteId
+        }
       },
       {
-        url: '/monitor/' + config.siteId + '/plugins'
+        url:  '/monitor/' + config.siteId + '/domain',
+        data: {}
       },
       {
-        url: '/monitor/' + config.siteId + '/accounts'
+        url: '/monitor/' + config.siteId + '/plugins',
+        data: {}
       },
       {
-        url: '/monitor/' + config.siteId + '/stack'
+        url: '/monitor/' + config.siteId + '/accounts',
+        data: {}
+      },
+      {
+        url: '/monitor/' + config.siteId + '/stack',
+        data: {}
       }
     ];
     dispatch(siteChecking());
     return Promise.all(calls.map((call) => {
-      return dispatch(siteCheckPost(call.url, true, false, {}));
+      return dispatch(siteCheckPost(call.url, true, call.data));
     })).then((returns) => {
       let error;
       // Check results for errors
@@ -314,7 +326,7 @@ export function siteLocalCheckPostAll(): Function {
     ];
     dispatch(siteLocalChecking());
     return Promise.all(calls.map((call) => {
-      return dispatch(siteCheckPost(call.url, false, true, call.data));
+      return dispatch(siteCheckPost(call.url, false, call.data));
     })).then((returns) => {
       let error;
       // Check results for errors
