@@ -84,13 +84,20 @@ class GovreadyAgent extends Govready\Govready {
     ) );
 
     foreach ($users as $key => $user) {
+      $roles = array();
+      foreach (get_user_meta( $user->ID, 'wp_capabilities', true ) as $role => $value) {
+        if ($value) {
+          array_push($roles, $role);
+        }
+      }
       array_push( $out, array(
         'userId' => $user->ID,
         'username' => $user->user_login,
         'email' => $user->user_email,
         'name' => $user->user_nicename,
         'created' => $user->user_registered,
-        'roles' => get_user_meta( $user->ID, 'wp_capabilities', true ),
+        'roles' => $roles,
+        'superAdmin' => (bool)in_array('administrator', $roles),
         'lastLogin' => strtotime( get_user_meta( $user->ID, 'govready_last_login', true ) ),
       ) );
     }
