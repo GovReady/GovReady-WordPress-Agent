@@ -169,7 +169,6 @@ export function createRemote (url: string, record: object, redirect: string = fa
       body: form_data,
       credentials: 'same-origin'
     }).then((response: object) => {
-      console.log(response);
       // Good?
       if (response.status >= 200 && response.status < 300) {
         return response.json();

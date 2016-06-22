@@ -5,7 +5,6 @@ class PluginsPage extends Component {
 
   render () {
     let {header, pluginText, cmsUrl, updates, coreUpdate, cms, plugins} = this.props;
-    console.log(updates ? 'updates' : 'noupdates');
     return (
       <div>
         {header}

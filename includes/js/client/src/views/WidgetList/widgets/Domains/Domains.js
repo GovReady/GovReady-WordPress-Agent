@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import config from 'config';
 import { actions } from 'redux/modules/widgetReducer';
+import { actions as siteActions } from 'redux/modules/siteReducer';
+import { hashHistory } from 'react-router';
 import Widget from '../Widget';
 import DomainsWidget from './DomainsWidget';
 import DomainsPage from './DomainsPage';
@@ -37,6 +39,11 @@ class Domains extends Component {
     return nextDomain;
   }
 
+  exitLocalMode(e) {
+    e.preventDefault();
+    this.props.siteActions.siteModeChange('init', true, '/');
+  }
+
   render () {
 
     let widget = this.props.widget;
@@ -44,7 +51,8 @@ class Domains extends Component {
     // In local mode
     if(this.props.mode === 'local') {
       return (
-        <DomainsLocalMode />
+        <DomainsLocalMode 
+         exitLocalMode={this.exitLocalMode.bind(this) }/>
       );
     }
 
@@ -98,7 +106,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    actions: bindActionCreators(actions, dispatch)
+    actions: bindActionCreators(actions, dispatch),
+    siteActions: bindActionCreators(siteActions, dispatch)
   };
 }
 
