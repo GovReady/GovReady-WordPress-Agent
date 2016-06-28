@@ -16,19 +16,10 @@ class CmsVulnerabilities extends Component {
   }
 
   processData (data) {
-    let returns = {
-      core: {},
-      plugins: []
+    return {
+      core: ( data.core && data.core.length ) ? data.core.pop() : {},
+      plugins: ( data.plugins && data.plugins.length ) ? data.plugins : []
     }
-    data.map((module) => {
-      if(module.type && module.type === 'application') {
-        returns['core'] = module;
-      }
-      else {
-        returns['plugins'].push(module);
-      }
-    });
-    return returns;
   }
 
   render () {

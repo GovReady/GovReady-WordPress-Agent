@@ -19,13 +19,9 @@ class Plugins extends Component {
 
   processData (data) {
     return {
-      core: {
-        status: 'Current'
-      },
-      plugins: data.filter((plugin) => {
-        return plugin.status
-      })
-    };
+      core: ( data.core && data.core.length ) ? data.core.pop() : {},
+      plugins: ( data.plugins && data.plugins.length ) ? data.plugins : []
+    }
   }
   
   render () {
@@ -44,12 +40,12 @@ class Plugins extends Component {
     // Compile data for display
     if (widget.data && widget.data.plugins && widget.data.plugins.length) {
       widget.data.plugins.map((plugin) => {
-        if (plugin.update) {
+        if (plugin.updates) {
           updates++;
         }
       });
       totalPlugins = widget.data.plugins.length;
-      coreUpdate = widget.data.core.status !== 'Current';
+      coreUpdate = widget.data.core.updates;
     }
 
     let pluginText, cmsUrl;
@@ -73,7 +69,7 @@ class Plugins extends Component {
           pluginUrl={config.pluginUrl}
           header={Widget.titleSection(config.pluginText + 's', false, 'h2', false, true)} 
           updates={updates} 
-          coreUpdate={coreUpdate} 
+          core={widget.data.core} 
           plugins={widget.data.plugins} />
       )
     }
