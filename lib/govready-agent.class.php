@@ -64,7 +64,7 @@ class GovreadyAgent extends Govready\Govready {
       array_push( $out, array(
         'label' => $plugin['Name'],
         'namespace' => $namespace[0],
-        'status' => is_plugin_active($key),  // @todo: this is always returning FALSE
+        'status' => is_plugin_active($key),
         'version' => $plugin['Version'],
         'project_link' => !empty( $plugin['PluginURI'] ) ? $plugin['PluginURI'] : ''
       ) );
