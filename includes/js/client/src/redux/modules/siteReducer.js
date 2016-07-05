@@ -200,7 +200,7 @@ export function sitePre( mode: string = config.mode ): Function {
             allSet = false;
           }
         })
-        if(false && allSet || forceDispatch) {
+        if(allSet || forceDispatch) {
           dispatch(siteLoaded(config.mode ? config.mode : 'remote'));
           return;
         }

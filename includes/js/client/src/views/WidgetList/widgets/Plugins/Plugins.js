@@ -35,7 +35,7 @@ class Plugins extends Component {
 
     let updates = 0;
     let totalPlugins = 0;
-    let coreUpdate = false;
+    let coreUpdate = (widget.data.core && widget.data.core.updates) ? widget.data.core.updates : false ;
 
     // Compile data for display
     if (widget.data && widget.data.plugins && widget.data.plugins.length) {
@@ -45,7 +45,6 @@ class Plugins extends Component {
         }
       });
       totalPlugins = widget.data.plugins.length;
-      coreUpdate = widget.data.core.updates;
     }
 
     let pluginText, cmsUrl;

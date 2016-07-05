@@ -85,7 +85,7 @@ class Accounts extends Component {
       else {
         const subHeader = () => {
           return (
-            <h5>Are these users still in your organization?  <a href={userUrl}>Edit them</a>.</h5>
+            <h5>Are these users still in your organization?  <a href={userUrl}>Edit them</a>.  If not, <a href={userUrl}>delete them</a>.</h5>
           );
         }
         return (
