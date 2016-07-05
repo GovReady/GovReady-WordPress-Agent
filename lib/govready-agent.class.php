@@ -45,6 +45,8 @@ class GovreadyAgent extends Govready\Govready {
             $return = parent::api( $endpoint, 'POST', $data );
             //print_r($return); // @todo: comment this out, also don't return data in API
           }
+          // @TODO return meaningful information
+          wp_send_json(array('response' => 'ok'));
         }
       }
     }

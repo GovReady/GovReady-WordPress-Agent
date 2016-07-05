@@ -11,7 +11,7 @@ import CoreLayout from 'layouts/CoreLayout/CoreLayout';
 import SiteState from 'views/SiteState';
 import WidgetList from 'views/WidgetList/WidgetList';
 import WidgetPage from 'views/WidgetList/WidgetPage';
-import { SITE_LOADED, sitePreCheck, isSiteLoaded } from 'redux/modules/siteReducer';
+import { SITE_LOADED, sitePre, isSiteLoaded } from 'redux/modules/siteReducer';
 
 export default (store) => {
 
@@ -25,7 +25,7 @@ export default (store) => {
     }
     // Not loaded, try to dispatch before redirect
     if(!isSiteLoaded(store.getState())) {
-      store.dispatch(sitePreCheck()).then(checkInit);
+      store.dispatch(sitePre()).then(checkInit);
     }
     else{
       cb();

@@ -7,9 +7,9 @@ import config from 'config';
 import { 
   actions,
   SITE_INIT,
-  SITE_CHECK_FAILED, 
-  SITE_PING_CHECK_FAILED,
-  SITE_LOCAL_CHECK_FAILED, 
+  SITE_AGG_FAILED, 
+  SITE_PING_FAILED,
+  SITE_LOCAL_AGG_FAILED, 
   SITE_LOADED 
 } from '../../redux/modules/siteReducer';
 
@@ -18,7 +18,7 @@ class SiteState extends Component {
     let { siteState } = this.props; 
     // Need to check site availability
     if(siteState.status === SITE_INIT) {
-      this.props.actions.sitePreCheck(siteState.mode);
+      this.props.actions.sitePre(siteState.mode);
     }
     // We're loaded, so redirect
     else if (siteState.status === SITE_LOADED) {
@@ -35,15 +35,15 @@ class SiteState extends Component {
 
   goLocalClick(event) {
     event.preventDefault();
-    this.props.actions.siteLocalCheckPostAll();
+    this.props.actions.siteLocalAggAll();
   }
 
   render () {
     let { siteState } = this.props;
     switch(siteState.status) {
       
-      case SITE_CHECK_FAILED:
-      case SITE_PING_CHECK_FAILED:
+      case SITE_AGG_FAILED:
+      case SITE_PING_FAILED:
         return (
           <div>
             <h2>Oops</h2>
@@ -54,7 +54,8 @@ class SiteState extends Component {
             <p><a href="#" onClick={this.goLocalClick.bind(this)} id="local-mode-continue" className="btn btn-primary">Continue in Localhost mode</a></p>
           </div>
         )
-      case SITE_LOCAL_CHECK_FAILED:
+      case SITE_LOCAL_AGG_FAILED:
+        //@TODO acutally log
         return (
           <div>
             <h2>Sorry, something has gone wrong</h2>

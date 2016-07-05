@@ -12,7 +12,7 @@ if(window.govready) {
   }
   config.apiUrl = url + 'action=govready_proxy&endpoint=/sites/' + config.siteId + '/';
   config.apiUrlNoSite = url + 'action=govready_proxy&endpoint=';
-  config.apiTrigger = url + 'action=govready_v1_trigger&endpoint=/sites/' + config.siteId + '/';
+  config.apiTrigger = url + 'action=govready_v1_trigger';
   config.pluginUrl = 'https://wordpress.org/plugins/';
 }
 else if(window.Drupal && window.Drupal.settings.govready) {
