@@ -177,10 +177,8 @@ export function sitePost (url: string, appendUrl: boolean, data: object, method:
 export function sitePre( mode: string = config.mode ): Function {
   return (dispatch: Function) => {
     dispatch(sitePreStart());
-    console.log(mode);
     return dispatch(sitePost('/sites/' + config.siteId, true, {}, 'GET')
     ).then((res) => {
-      console.log(res);
       if(!(res instanceof Error)) {
         // @TODO Cache all these endpoints
         let allSet = true;
@@ -231,18 +229,15 @@ export function siteUser(): Function {
       // We have an error
       if(res instanceof Error) {
         // Dispatch to local mode
-        console.log('errir1');
         dispatch(sitePing());
         dispatch(siteUserFailed(res));
         return;
       }
       // Dispatch post all to get data
-      console.log('errir2');
       dispatch(siteUserFailed(res));
       dispatch(sitePing());
     }).catch((error) => {
       // Dispatch to local mode
-      console.log('errir3');
       dispatch(siteUserFailed(error));
       dispatch(sitePing());
     });

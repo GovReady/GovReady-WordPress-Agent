@@ -24,6 +24,11 @@ function CoreLayout ({ children }) {
             <p>Please try refreshing the page</p>
           </div>
         )}
+        <br />
+        <br />
+        <p className="well well-sm well-faint text-center">
+          <small>Dashboard connected to {config.connectUrl}</small>
+        </p>
       </div>
     </div>
   );

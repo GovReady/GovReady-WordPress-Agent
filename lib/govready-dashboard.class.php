@@ -130,7 +130,8 @@ class GovreadyDashboard extends Govready\Govready {
       wp_localize_script( 'govready-dashboard-app', 'govready', array( 
         'siteId' => !is_null($options['siteId']) ? $options['siteId'] : null, 
         'nonce' => wp_create_nonce( $this->key ),
-        'mode' => !empty($options['mode']) ? $options['mode'] : 'remote'
+        'mode' => !empty($options['mode']) ? $options['mode'] : 'remote',
+        'connectUrl' => $this->govready_url
       ) );
       wp_enqueue_style ( 'govready-dashboard-app', $path . 'client/dist/app.dist.css' );
 
