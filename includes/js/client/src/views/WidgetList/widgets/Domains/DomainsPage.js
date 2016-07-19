@@ -9,8 +9,10 @@ class DomainsPage extends Component {
     return (
       <div>
         {this.props.header}
+        <hr/>
         <p>Information about your site domain and SSL certificate can be found below.  It's important to keep track of who has the information necessary to update and renew.</p> 
         <p><Link className="btn btn-default btn-sm" to={'/dashboard/Contacts/'} >Go to contacts</Link></p>
+        <hr/>
         <h3>Domains</h3>
         <div className='domains'>
           {this.props.domains.map((domain, index) => (

@@ -8,17 +8,23 @@ import config from 'config';
 
 export const SITE_INIT = 'SITE_INIT';
 export const SITE_RESET = 'SITE_RESET';
-export const SITE_PRE_CHECKING = 'SITE_PRE_CHECKING';
-export const SITE_PRE_CHECK_FAILED = 'SITE_PRE_CHECK_FAILED';
-export const SITE_PING_CHECKING = 'SITE_PING_CHECKING';
-export const SITE_PING_CHECK_FAILED = 'SITE_PING_CHECK_FAILED';
+export const SITE_USER_START = 'SITE_USER_START';
+export const SITE_USER_FAILED = 'SITE_USER_FAILED';
+export const SITE_PRE_START = 'SITE_PRE_START';
+export const SITE_PRE_FAILED = 'SITE_PRE_FAILED';
+export const SITE_PING_START = 'SITE_PING_START';
+export const SITE_PING_FAILED = 'SITE_PING_FAILED';
 export const SITE_MODE_CHANGE_START = 'SITE_MODE_CHANGE_START';
 export const SITE_MODE_CHANGE_SUCCESS = 'SITE_MODE_CHANGE_SUCCESS';
 export const SITE_MODE_CHANGE_FAILED = 'SITE_MODE_CHANGE_FAILED';
-export const SITE_CHECKING = 'SITE_CHECKING';
-export const SITE_CHECK_FAILED = 'SITE_CHECK_FAILED';
-export const SITE_LOCAL_CHECKING = 'SITE_LOCAL_CHECKING';
-export const SITE_LOCAL_CHECK_FAILED = 'SITE_LOCAL_CHECK_FAILED';
+export const SITE_AGG_START = 'SITE_AGG_START';
+export const SITE_AGG_FAILED = 'SITE_AGG_FAILED';
+export const SITE_LOCAL_AGG_START = 'SITE_LOCAL_AGG_START';
+export const SITE_LOCAL_AGG_FAILED = 'SITE_LOCAL_AGG_FAILED';
+export const SITE_VULNERABILITY_AGG_START = 'SITE_VULNERABILITY_AGG_START';
+export const SITE_VULNERABILITY_AGG_FAILED = 'SITE_VULNERABILITY_AGG_FAILED';
+export const SITE_REFRESH_START = 'SITE_REFRESH_START';
+export const SITE_REFRESH_FAILED = 'SITE_REFRESH_FAILED';
 export const SITE_LOADED = 'SITE_LOADED';
 
 // ------------------------------------
@@ -30,24 +36,34 @@ export function siteReset (): Action {
   return { type: SITE_RESET };
 }
 
-// Changes site status
-export function sitePreChecking (): Action {
-  return { type: SITE_PRE_CHECKING };
+// Attempts to attach user
+export function siteUserStart (): Action {
+  return { type: SITE_USER_START };
 }
 
 // Changes site status
-export function sitePreCheckFailed (error: object): Action {
-  return { type: SITE_PRE_CHECK_FAILED, error: error };
+export function siteUserFailed (error: object): Action {
+  return { type: SITE_USER_FAILED, error: error };
 }
 
 // Changes site status
-export function sitePingChecking (): Action {
-  return { type: SITE_PING_CHECKING };
+export function sitePreStart (): Action {
+  return { type: SITE_PRE_START };
 }
 
 // Changes site status
-export function sitePingCheckFailed (error: object): Action {
-  return { type: SITE_PING_CHECK_FAILED, error: error };
+export function sitePreFailed (error: object): Action {
+  return { type: SITE_PRE_FAILED, error: error };
+}
+
+// Changes site status
+export function sitePingStart (): Action {
+  return { type: SITE_PING_START };
+}
+
+// Changes site status
+export function sitePingFailed (error: object): Action {
+  return { type: SITE_PING_FAILED, error: error };
 }
 
 // Changes site mode
@@ -66,23 +82,43 @@ export function siteModeChangeFailed (mode: string, error: object): Action {
 }
 
 // Changes site status
-export function siteChecking (): Action {
-  return { type: SITE_CHECKING };
+export function siteAggStart (): Action {
+  return { type: SITE_AGG_START };
 }
 
 // Changes site status
-export function siteCheckFailed (error: object): Action {
-  return { type: SITE_CHECK_FAILED, error: error };
+export function siteAggFailed (error: object): Action {
+  return { type: SITE_AGG_FAILED, error: error };
 }
 
 // Changes site status
-export function siteLocalChecking (): Action {
-  return { type: SITE_LOCAL_CHECKING };
+export function siteLocalAggStart (): Action {
+  return { type: SITE_LOCAL_AGG_START };
 }
 
 // Changes site status
-export function siteLocalCheckFailed (error: object): Action {
-  return { type: SITE_LOCAL_CHECK_FAILED, error: error };
+export function siteLocalAggFailed (error: object): Action {
+  return { type: SITE_LOCAL_AGG_FAILED, error: error };
+}
+
+// Changes site status
+export function siteVulnerabilityAggStart (): Action {
+  return { type: SITE_VULNERABILITY_AGG_START };
+}
+
+// Changes site status
+export function siteVulnerabilityAggFailed (error: object): Action {
+  return { type: SITE_VULNERABILITY_AGG_FAILED, error: error };
+}
+
+// Changes site mode
+export function siteRefreshStart (mode: string): Action {
+  return { type: SITE_REFRESH_START, mode: mode };
+}
+
+// Changes site status
+export function siteRefreshFailed (mode: string, error: object): Action {
+  return { type: SITE_REFRESH_FAILED, mode: mode, error: error };
 }
 
 // Changes site status
@@ -91,7 +127,7 @@ export function siteLoaded (mode: string): Action {
 }
 
 // Calls endpoint
-export function siteCheckPost (url: string, appendUrl: boolean, data: object, method: string): Function {
+export function sitePost (url: string, appendUrl: boolean, data: object, method: string): Function {
   return (dispatch: Function) => {
     // Build post data
     let form_data = new FormData();
@@ -138,10 +174,10 @@ export function siteCheckPost (url: string, appendUrl: boolean, data: object, me
   };
 }
 
-export function sitePreCheck( mode: string = config.mode ): Function {
+export function sitePre( mode: string = config.mode ): Function {
   return (dispatch: Function) => {
-    dispatch(sitePreChecking());
-    return dispatch(siteCheckPost('/sites/' + config.siteId, true, {}, 'GET')
+    dispatch(sitePreStart());
+    return dispatch(sitePost('/sites/' + config.siteId, true, {}, 'GET')
     ).then((res) => {
       if(!(res instanceof Error)) {
         // @TODO Cache all these endpoints
@@ -169,42 +205,76 @@ export function sitePreCheck( mode: string = config.mode ): Function {
       }
       // Someting went wrong, so dispatch failed
       // Then try the ping check
-      dispatch(sitePreCheckFailed());
-      dispatch(sitePingCheck());
+      dispatch(sitePreFailed());
+      dispatch(siteUser());
     }).catch((error) => {
       // Someting went wrong, so dispatch failed
       // Then try the ping check
-      dispatch(sitePreCheckFailed());
-      dispatch(sitePingCheck());
+      dispatch(sitePreFailed());
+      dispatch(siteUser());
     });
   }
 }
 
-export function sitePingCheck(calls: Array, isLocal: boolean ): Function {
+//
+// Attaches site user 
+// @todo make work with proper errors... moving to ping no matter what
+// since the enpoint returns 500 if user is already created
+//
+export function siteUser(): Function {
   return (dispatch: Function) => {
-    dispatch(sitePingChecking());
-    return dispatch(siteCheckPost('/monitor/' + config.siteId + '/ping', true, {}, 'POST')
+    dispatch(siteUserStart());
+    return dispatch(sitePost('/user-site/' + config.siteId, true, {}, 'POST')
     ).then((res) => {
       // We have an error
       if(res instanceof Error) {
         // Dispatch to local mode
-        dispatch(sitePingCheckFailed());
+        dispatch(sitePing());
+        dispatch(siteUserFailed(res));
         return;
       }
       // Dispatch post all to get data
-      dispatch(siteCheckPostAll());
+      dispatch(siteUserFailed(res));
+      dispatch(sitePing());
     }).catch((error) => {
       // Dispatch to local mode
-      dispatch(sitePingCheckFailed());
+      dispatch(siteUserFailed(error));
+      dispatch(sitePing());
     });
   }
 }
 
+//
+// Attempts to have exteral server ping this one
+//
+export function sitePing(): Function {
+  return (dispatch: Function) => {
+    dispatch(sitePingStart());
+    return dispatch(sitePost('/monitor/' + config.siteId + '/ping', true, {}, 'POST')
+    ).then((res) => {
+      // We have an error
+      if(res instanceof Error) {
+        // Dispatch to local mode
+        dispatch(sitePingFailed(res));
+        return;
+      }
+      // Dispatch post all to get data
+      dispatch(siteAggAll());
+    }).catch((error) => {
+      // Dispatch to local mode
+      dispatch(sitePingFailed(error));
+    });
+  }
+}
+
+/**
+ * Attempts to have exteral server ping this one
+**/
 export function siteModeChange(mode: string, reset: boolean = '', redirect: string = '') {
   return (dispatch: Function) => {
     dispatch(siteModeChangeStart(mode));
     return dispatch(
-      siteCheckPost(config.apiTrigger + '&key=changeMode', false, {
+      sitePost(config.apiTrigger, false, {
           key: 'changeMode',
           mode: mode,
           siteId: config.siteId
@@ -231,12 +301,12 @@ export function siteModeChange(mode: string, reset: boolean = '', redirect: stri
   }
 }
 
-
-export function siteCheckPostAll(): Function {
+// Triggers full call 
+export function siteAggAll(): Function {
   return (dispatch: Function) => {
     let calls = [
       {
-        url: config.apiTrigger + '&key=changeMode',
+        url: config.apiTrigger,
         data: {
           key: 'changeMode',
           mode: 'remote',
@@ -245,27 +315,32 @@ export function siteCheckPostAll(): Function {
       },
       {
         url:  '/monitor/' + config.siteId + '/domain',
-        data: {}
+        data: {},
+        appendUrl: true
       },
       {
         url: '/monitor/' + config.siteId + '/plugins',
-        data: {}
+        data: {},
+        appendUrl: true
       },
       {
         url: '/monitor/' + config.siteId + '/accounts',
-        data: {}
+        data: {},
+        appendUrl: true
       },
       {
         url: '/monitor/' + config.siteId + '/stack',
-        data: {}
-      }
+        data: {},
+        appendUrl: true
+      },
+      
     ];
-    dispatch(siteChecking());
+    dispatch(siteAggStart());
     return Promise.all(calls.map((call) => {
-      return dispatch(siteCheckPost(call.url, true, call.data));
+      return dispatch(sitePost(call.url, call.appendUrl, call.data, call.method));
     })).then((returns) => {
       let error;
-      // Check results for errors
+      // Agg results for errors
       returns.map((returnItem) => {
         if(returnItem.error) {
           error = returnItem.error;
@@ -274,25 +349,26 @@ export function siteCheckPostAll(): Function {
       // we had some errors ?
       if(error) {
         // Dispatch failed
-        dispatch(siteCheckFailed(error));
+        dispatch(siteAggFailed(error));
       }
       else {
-        dispatch(siteLoaded('remote'));
+        // Aggregate vulnerabilities
+        dispatch(siteVulnerabilityAgg('remote'));
       }
       
     })
     .catch((error) => {
       // Dispatch Failed
-      dispatch(siteCheckFailed(error));
+      dispatch(siteAggFailed(error));
     });
   }
 }
 
-export function siteLocalCheckPostAll(): Function {
+export function siteLocalAggAll(): Function {
   return (dispatch: Function) => {
     let calls = [
       {
-        url: config.apiTrigger + '&key=changeMode',
+        url: config.apiTrigger,
         data: {
           key: 'changeMode',
           mode: 'local',
@@ -300,7 +376,7 @@ export function siteLocalCheckPostAll(): Function {
         }
       },
       {
-        url: config.apiTrigger + 'plugins&key=plugins&siteId=' + config.siteId,
+        url: config.apiTrigger,
         data: {
           key: 'plugins',
           endpoint: 'plugins',
@@ -308,7 +384,7 @@ export function siteLocalCheckPostAll(): Function {
         }
       },
       {
-        url: config.apiTrigger+ 'accounts&key=accounts&siteId=' + config.siteId,
+        url: config.apiTrigger,
         data: {
           key: 'accounts',
           endpoint: 'accounts',
@@ -316,20 +392,21 @@ export function siteLocalCheckPostAll(): Function {
         }
       },
       {
-        url: config.apiTrigger+ 'stack&key=stack&siteId=' + config.siteId,
+        url: config.apiTrigger,
         data: {
           key: 'stack',
           endpoint: 'stack',
           siteId: config.siteId
         }
-      }
+      },
+      
     ];
-    dispatch(siteLocalChecking());
+    dispatch(siteLocalAggStart());
     return Promise.all(calls.map((call) => {
-      return dispatch(siteCheckPost(call.url, false, call.data));
+      return dispatch(sitePost(call.url, call.appendUrl, call.data, call.method));
     })).then((returns) => {
       let error;
-      // Check results for errors
+      // Agg results for errors
       returns.map((returnItem) => {
         if(returnItem.error) {
           error = returnItem.error;
@@ -337,39 +414,77 @@ export function siteLocalCheckPostAll(): Function {
       });
       // we had some errors ?
       if(error) {
-        dispatch(siteLocalCheckFailed(error));
+        dispatch(siteLocalAggFailed(error));
       }
       else {
-        dispatch(siteLoaded('local'));
+        // Aggregate vulnerabilities
+        dispatch(siteVulnerabilityAgg('local'));
       }
       
     })
     .catch((error) => {
-      dispatch(siteLocalCheckFailed(error));
+      dispatch(siteLocalAggFailed(error));
     });
   }
 }
 
+export function siteVulnerabilityAgg(mode: string): Function {
+  return (dispatch: Function) => {
+    dispatch(siteVulnerabilityAggStart());
+    return dispatch(sitePost(config.apiUrl + 'vulnerabilities', false, {}, 'GET')
+    ).then((res) => {
+      // We have an error
+      if(res instanceof Error) {
+        // Dispatch to local mode
+        dispatch(siteVulnerabilityAggFailed(res));
+        return;
+      }
+      // Dispatch post all to get data
+      dispatch(siteLoaded(mode));
+    }).catch((error) => {
+      // Dispatch to local mode
+      dispatch(siteVulnerabilityAggFailed(error));
+    });
+  }
+}
+
+// export function siteRefreshData(): Function {
+//   calls = [
+//     {
+//       url: config.apiTrigger,
+//       data: {
+//         key: 'stack',
+//         endpoint: 'stack',
+//         siteId: config.siteId
+//       }
+//     },
+// }
+
 export const actions = {
   siteReset,
-  sitePreChecking,
-  sitePreCheckFailed,
-  sitePingChecking,
-  sitePingCheckFailed,
+  sitePreStart,
+  sitePreFailed,
+  sitePingStart,
+  sitePingFailed,
   siteModeChangeStart,
   siteModeChangeSuccess,
   siteModeChangeFailed,
-  siteChecking,
-  siteCheckFailed,
-  siteLocalChecking,
-  siteLocalCheckFailed,
+  siteAggStart,
+  siteAggFailed,
+  siteLocalAggStart,
+  siteLocalAggFailed,
+  siteVulnerabilityAggStart,
+  siteVulnerabilityAggFailed,
+  // siteRefreshStart,
+  // siteRefreshFailed,
   siteLoaded,
-  siteCheckPost,
-  sitePreCheck,
-  sitePingCheck,
+  sitePost,
+  sitePre,
+  sitePing,
   siteModeChange,
-  siteCheckPostAll,
-  siteLocalCheckPostAll
+  siteAggAll,
+  siteLocalAggAll,
+  siteVulnerabilityAgg
 }
 
 // ------------------------------------
@@ -381,28 +496,28 @@ const ACTION_HANDLERS = {
       'status': SITE_INIT
     });
   },
-  [SITE_PRE_CHECKING]: (state: object): object => {
+  [SITE_PRE_START]: (state: object): object => {
     return objectAssign({}, state, {
-      'status': SITE_PRE_CHECKING
+      'status': SITE_PRE_START
     });
   },
   
-  [SITE_PRE_CHECK_FAILED]: (state: object, action: {error: object}): object => {
+  [SITE_PRE_FAILED]: (state: object, action: {error: object}): object => {
     return objectAssign({}, state, {
-      'status': SITE_PRE_CHECK_FAILED,
+      'status': SITE_PRE_FAILED,
       'error': action.error
     });
   },
   
-  [SITE_PING_CHECKING]: (state: object): object => {
+  [SITE_PING_START]: (state: object): object => {
     return objectAssign({}, state, {
-      'status': SITE_PING_CHECKING
+      'status': SITE_PING_START
     });
   },
   
-  [SITE_PING_CHECK_FAILED]: (state: object, action: {error: object}): object => {
+  [SITE_PING_FAILED]: (state: object, action: {error: object}): object => {
     return objectAssign({}, state, {
-      'status': SITE_PING_CHECK_FAILED,
+      'status': SITE_PING_FAILED,
       'error': action.error
     });
   },
@@ -423,28 +538,41 @@ const ACTION_HANDLERS = {
     });
   },
 
-  [SITE_CHECKING]: (state: object): object => {
+  [SITE_AGG_START]: (state: object): object => {
     return objectAssign({}, state, {
-      'status': SITE_CHECKING
+      'status': SITE_AGG_START
     });
   },
   
-  [SITE_CHECK_FAILED]: (state: object, action: {error: object}): object => {
+  [SITE_AGG_FAILED]: (state: object, action: {error: object}): object => {
     return objectAssign({}, state, {
-      'status': SITE_CHECK_FAILED,
+      'status': SITE_AGG_FAILED,
       'error': action.error
     });
   },
   
-  [SITE_LOCAL_CHECKING]: (state: object): object => {
+  [SITE_LOCAL_AGG_START]: (state: object): object => {
     return objectAssign({}, state, {
-      'status': SITE_LOCAL_CHECKING
+      'status': SITE_LOCAL_AGG_START
     });
   },
   
-  [SITE_LOCAL_CHECK_FAILED]: (state: object, action: {error: object}): object => {
+  [SITE_LOCAL_AGG_FAILED]: (state: object, action: {error: object}): object => {
     return objectAssign({}, state, {
-      'status': SITE_LOCAL_CHECK_FAILED,
+      'status': SITE_LOCAL_AGG_FAILED,
+      'error': action.error
+    });
+  },
+
+  [SITE_VULNERABILITY_AGG_START]: (state: object): object => {
+    return objectAssign({}, state, {
+      'status': SITE_VULNERABILITY_AGG_START
+    });
+  },
+  
+  [SITE_VULNERABILITY_AGG_FAILED]: (state: object, action: {error: object}): object => {
+    return objectAssign({}, state, {
+      'status': SITE_VULNERABILITY_AGG_FAILED,
       'error': action.error
     });
   },

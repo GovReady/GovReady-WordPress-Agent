@@ -36,7 +36,7 @@ class Measures extends Component {
   }
 
   createDefault(text, classes) {
-    console.log(this);
+    // console.log(this);
   }
 
   createNewLink(text, to = 'new', classes) {

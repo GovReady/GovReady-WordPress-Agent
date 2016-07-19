@@ -3,6 +3,19 @@ import React, { PropTypes as PT, Component } from 'react';
 class PluginsWidget extends Component {
 
   render () {
+    const coreUpdate = () => {
+      if(!this.props.coreUpdate) {
+        return '';
+      }
+      if(this.props.coreUpdate === 'security') {
+        return (
+          <div><span className="label label-danger">{this.props.cms} Core security update!</span></div>
+        )
+      }
+      return (
+        <div><span className="label label-warning">including {this.props.cms} Core</span></div>
+      )
+    }
     return (
       <div className='panel panel-default'>
         <div className='panel-body'>
@@ -10,9 +23,7 @@ class PluginsWidget extends Component {
             {this.props.updates}
             <br/>
             <small>{this.props.pluginText} updates</small>
-            {this.props.coreUpdate &&
-              <small>including {this.props.cms} Core</small>
-            }
+            {coreUpdate()}
           </h4>
         </div>
         {this.props.footer}

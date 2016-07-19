@@ -1,42 +1,8 @@
 import React, { Component, PropTypes as PT } from 'react';
 import Accordion from 'react-bootstrap/lib/Accordion';
 import Panel from 'react-bootstrap/lib/Panel';
+import Vulnerability from 'components/Vulnerability';
 
-class Vulnerability extends Component {
-  render() {
-    const { data } = this.props;
-    const references = () => {
-      if(!data.references || !data.references.url || !data.references.url.length) {
-        return '';
-      }
-      return (
-        <div>
-          <h6>References</h6>
-          <ul>
-            {data.references.url.map((reference, index) => (
-              <li key={index}>
-                <a href={reference} target="_blank">{reference}</a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )
-    }
-    return (
-      <div className="vulnerability">
-        <h5>
-          {data.title}
-        </h5>
-        <p><span className="label label-warning pull-left">{data.vuln_type}</span><strong>Fixed in:</strong><span> {data.fixed_in}</span></p>
-        {references()}
-      </div>
-    )  
-  }
-}
-
-Vulnerability.propTypes = {
-  data: PT.object.isRequired
-}
 
 class CmsVulnerabilitiesWidget extends Component {
 

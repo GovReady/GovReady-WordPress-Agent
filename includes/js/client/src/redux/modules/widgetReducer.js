@@ -111,18 +111,14 @@ export function widgetPostData (widgetName: string, url: string, method: string 
         return error;
       }
     }).then((json: object) => {
-      console.log('hello');
       if(json && !json.error) {
         // Call loaded action
         // dispatch(widgetLoaded(widgetName, null));
-        console.log('post success');
       }
       else {
-        console.log('request failed', json);
         dispatch(widgetPostFailed(widgetName, json));
       }
     }).catch(function (error) {
-      console.log('request failed', error);
       dispatch(widgetPostFailed(widgetName, error));
     });
   };

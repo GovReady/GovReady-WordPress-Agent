@@ -1,10 +1,55 @@
 import React, { PropTypes as PT, Component } from 'react';
+import Accordion from 'react-bootstrap/lib/Accordion';
+import Panel from 'react-bootstrap/lib/Panel';
 import config from 'config';
+import Vulnerability from 'components/Vulnerability';
 
 class PluginsPage extends Component {
 
   render () {
-    let {header, pluginText, cmsUrl, updates, coreUpdate, cms, plugins} = this.props;
+    let {header, pluginText, cmsUrl, updates, core, cms, plugins} = this.props;
+    // core update alert
+    const coreUpdate = () => {
+      if(!core.updates) {
+        return '';
+      }
+      let title = cms + ' Core update available';
+      let classes = 'panel panel-warning';
+      if(core.updates === 'security') {
+        title = cms + ' Core security update!';
+        classes = 'panel panel-danger';
+      }
+      return (
+        <Panel className={classes} header={title} eventKey="0">
+          {core.vulnerabilities.map((vulnerability, index) => (
+            <Vulnerability data={vulnerability} key={index} />
+          ))}
+        </Panel>
+      )
+    }
+    // Returns class for plugin warning vs danger
+    const pluginClasses = (plugin) => {
+      let classes = 'list-group-item';
+      if(!plugin.updates) {
+        return classes;
+      }
+      return (plugin.updates === 'security') ? classes + ' list-group-item-danger' : classes + ' list-group-item-warning';
+    }
+    // returns plugin updates label
+    const pluginUpdate = (plugin) => {
+      if(!plugin.updates) {
+        return '';
+      }
+      if(plugin.updates === 'security') {
+        return (
+          <span className="pull-right"><span className="label label-danger">Security Update Available!</span></span>
+        );
+      }
+      return (
+        <span className="pull-right"><span className="label label-warning">Update Available</span></span>
+      );
+      
+    }
     return (
       <div>
         {header}
@@ -13,12 +58,10 @@ class PluginsPage extends Component {
         <p><a className="btn btn-default btn-sml" href={cmsUrl}>Go to CMS page</a></p>
         <hr/>
         <div className="alert-region">
+          {coreUpdate()}
           {updates > 0 && (
             <div className="alert alert-danger">
               {updates} <small>{pluginText + 's'} updates</small>
-              {coreUpdate && (
-                <small>including {cms} Core</small>
-              )}
             </div>
           )}
           {!updates && (
@@ -27,14 +70,27 @@ class PluginsPage extends Component {
         </div>
         <ul className="list-group">
           {plugins.map((plugin) => (
-            <li key={plugin.namespace} className={'list-group-item' + (plugin.update ? ' list-group-item-warning' : '')}>
-              <h4 className="list-group-item-heading">{plugin.label}</h4>
-              <p className="list-group-item-text clearfix">
-                <span className="pull-left">Version: <span className="badge">{plugin.version}</span></span>
-                {plugin.project_link && (  
-                  <span className="pull-right">
-                    <a className="btn btn-default btn-xs" target="_blank" href={plugin.project_link}>{pluginText} page</a>
-                  </span>
+            <li key={plugin.namespace} className={pluginClasses(plugin)}>
+              <h4 className="list-group-item-heading">{plugin.label} {pluginUpdate(plugin)}</h4>
+              <p className="list-group-item-text">
+                <div className="clearfix">
+                  <span className="pull-left">Version: <span className="badge">{plugin.version}</span></span>
+                  {plugin.project_link && (  
+                    <span className="pull-right">
+                      <a className="btn btn-default btn-xs" target="_blank" href={plugin.project_link}>{pluginText} page</a>
+                    </span>
+                  )}
+                </div>
+                {plugin.vulnerabilities && plugin.vulnerabilities.length && (
+                  <div>
+                    <br />
+                    <div className="well">
+                      <h4 className="margin-top-none">Vulnerabilties</h4>
+                      {plugin.vulnerabilities.map((vulnerability, index) => (
+                        <Vulnerability data={vulnerability} key={index} />
+                      ))}
+                    </div>
+                  </div>
                 )}
               </p>
             </li>
@@ -52,7 +108,7 @@ PluginsPage.propTypes = {
   cmsUrl: PT.string.isRequired,
   pluginUrl: PT.string.isRequired,
   updates: PT.number.isRequired,
-  coreUpdate: PT.bool,
+  core: PT.object.isRequired,
   plugins: PT.array.isRequired
 };
 
