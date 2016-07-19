@@ -102,6 +102,7 @@ class GovreadyDashboard extends Govready\Govready {
       if (empty($options['siteId'])) {
         $data = array(
           'url' => get_site_url(),
+          'application' => 'wordpress',
         );
         $response = $this->api( '/initialize', 'POST', $data, true );
         $options['siteId'] = $response['_id'];
