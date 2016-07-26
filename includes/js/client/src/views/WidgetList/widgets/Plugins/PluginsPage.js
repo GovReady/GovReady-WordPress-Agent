@@ -10,21 +10,22 @@ class PluginsPage extends Component {
     let {header, pluginText, cmsUrl, updates, core, cms, plugins} = this.props;
     // core update alert
     const coreUpdate = () => {
+      // No update
       if(!core.updates) {
         return '';
       }
-      let title = cms + ' Core update available';
-      let classes = 'panel panel-warning';
-      if(core.updates === 'security') {
-        title = cms + ' Core security update!';
-        classes = 'panel panel-danger';
+      // Has security vulnerabilities
+      if(core.vulnerabilities.length) {
+        return (
+          <Panel className='panel panel-danger' header={cms + ' Core security update!'} eventKey="0">
+            {core.vulnerabilities.map((vulnerability, index) => (
+              <Vulnerability data={vulnerability} version={core.version} key={index} />
+            ))}
+          </Panel>
+        )
       }
       return (
-        <Panel className={classes} header={title} eventKey="0">
-          {core.vulnerabilities.map((vulnerability, index) => (
-            <Vulnerability data={vulnerability} key={index} />
-          ))}
-        </Panel>
+        <div className="alert alert-warning">{cms} Core update available</div>
       )
     }
     // Returns class for plugin warning vs danger
@@ -72,7 +73,7 @@ class PluginsPage extends Component {
           {plugins.map((plugin) => (
             <li key={plugin.namespace} className={pluginClasses(plugin)}>
               <h4 className="list-group-item-heading">{plugin.label} {pluginUpdate(plugin)}</h4>
-              <p className="list-group-item-text">
+              <div className="list-group-item-text">
                 <div className="clearfix">
                   <span className="pull-left">Version: <span className="badge">{plugin.version}</span></span>
                   {plugin.project_link && (  
@@ -92,7 +93,7 @@ class PluginsPage extends Component {
                     </div>
                   </div>
                 )}
-              </p>
+              </div>
             </li>
           ))}
         </ul>

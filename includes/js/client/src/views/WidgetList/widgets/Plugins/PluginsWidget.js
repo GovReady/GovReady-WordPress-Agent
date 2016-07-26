@@ -13,7 +13,7 @@ class PluginsWidget extends Component {
         )
       }
       return (
-        <div><span className="label label-warning">including {this.props.cms} Core</span></div>
+        <div><span className="label label-warning">{this.props.cms} Core update available</span></div>
       )
     }
     return (

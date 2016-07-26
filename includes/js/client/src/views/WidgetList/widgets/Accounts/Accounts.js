@@ -49,7 +49,8 @@ class Accounts extends Component {
       }      
       const lastLogin = window.moment(user.lastLogin, 'MMMM Do YYYY, h:mm:ss a');
       const days = window.moment().diff(lastLogin, 'days');
-      return days && days % 1 === 0 && days > 30;
+      console.log(days);
+      return days && days % 1 === 0 && days > 30 && days < 10000;
     });
   }
 

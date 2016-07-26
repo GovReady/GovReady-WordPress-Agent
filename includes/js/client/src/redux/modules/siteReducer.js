@@ -1,6 +1,9 @@
 import objectAssign from 'object-assign';
 import { hashHistory } from 'react-router';
+import { Promise as BPromise } from 'bluebird';
 import config from 'config';
+
+// var BPromise = require('bluebird');
 
 // ------------------------------------
 // Constants
@@ -314,12 +317,12 @@ export function siteAggAll(): Function {
         }
       },
       {
-        url:  '/monitor/' + config.siteId + '/domain',
+        url: '/monitor/' + config.siteId + '/stack',
         data: {},
         appendUrl: true
       },
       {
-        url: '/monitor/' + config.siteId + '/plugins',
+        url:  '/monitor/' + config.siteId + '/domain',
         data: {},
         appendUrl: true
       },
@@ -329,16 +332,15 @@ export function siteAggAll(): Function {
         appendUrl: true
       },
       {
-        url: '/monitor/' + config.siteId + '/stack',
+        url: '/monitor/' + config.siteId + '/plugins',
         data: {},
         appendUrl: true
       },
-      
     ];
     dispatch(siteAggStart());
-    return Promise.all(calls.map((call) => {
+    return BPromise.each(calls, (call) => {
       return dispatch(sitePost(call.url, call.appendUrl, call.data, call.method));
-    })).then((returns) => {
+    }).then((returns) => {
       let error;
       // Agg results for errors
       returns.map((returnItem) => {
@@ -378,8 +380,8 @@ export function siteLocalAggAll(): Function {
       {
         url: config.apiTrigger,
         data: {
-          key: 'plugins',
-          endpoint: 'plugins',
+          key: 'stack',
+          endpoint: 'stack',
           siteId: config.siteId
         }
       },
@@ -394,17 +396,16 @@ export function siteLocalAggAll(): Function {
       {
         url: config.apiTrigger,
         data: {
-          key: 'stack',
-          endpoint: 'stack',
+          key: 'plugins',
+          endpoint: 'plugins',
           siteId: config.siteId
         }
       },
-      
     ];
     dispatch(siteLocalAggStart());
-    return Promise.all(calls.map((call) => {
+    return BPromise.each(calls, (call) => {
       return dispatch(sitePost(call.url, call.appendUrl, call.data, call.method));
-    })).then((returns) => {
+    }).then((returns) => {
       let error;
       // Agg results for errors
       returns.map((returnItem) => {

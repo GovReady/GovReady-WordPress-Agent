@@ -59,7 +59,7 @@ class Recommended extends Component {
         <RecommendedWidget 
           pluginText={config.pluginText}
           pluginUrl={config.pluginUrl}
-          header={Widget.titleSection('Recommended security plugins', false, 'h3')} 
+          header={Widget.titleSection('Recommended security ' + config.pluginText.toLowerCase() + 's' , false, 'h3')} 
           plugins={widget.data.plugins} />
       )
     }
