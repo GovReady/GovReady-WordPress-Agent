@@ -1,4 +1,5 @@
 import objectAssign from 'object-assign';
+import apiHelper from './apiHelper';
 
 // ------------------------------------
 // Constants
@@ -51,32 +52,17 @@ export function widgetLoadData (widgetName: string, url: string, processData: Fu
     // Call loading action
     dispatch(widgetLoading(widgetName));
     // Load data
-    return fetch(url + '&method=GET', {
-      method: 'get',
-      credentials: 'same-origin',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      }
-    }).then((response: object) => {
-      // Good?
-      if (response.status >= 200 && response.status < 300) {
-        return response.json();
-        // @TODO handle Error
-      } else {
-        let error = new Error(response.statusText);
-        error.response = response;
-        error.error = response.statusText;
-        return error;
-      }
+    return fetch(url + '&method=GET', apiHelper.requestParams('post')).then((response: object) => {
+      return apiHelper.responseCheck(response);
     }).then((json: object) => {
-      if(json && !json.error) {
+      const error = apiHelper.jsonCheck(json);
+      if(error) {
+        dispatch(widgetLoadFailed(widgetName, json));
+      }
+      else {
         const data = processData(json);
         // Call loaded action
         dispatch(widgetLoaded(widgetName, data));
-      }
-      else {
-        dispatch(widgetLoadFailed(widgetName, json));
       }
     }).catch(function (error) {
       dispatch(widgetLoadFailed(widgetName, error));
@@ -89,34 +75,17 @@ export function widgetPostData (widgetName: string, url: string, method: string 
   return (dispatch: Function) => {
     // Call ;posting action
     dispatch(widgetPosting(widgetName));
-    // Compile post
-    let form_data = new FormData();
-    for(let key of Object.keys(data)) {
-      form_data.append(key, data[key]);
-    }
     // Load data
-    return fetch(url + '&method=' + method, {
-      method: 'post',
-      body: form_data,
-      credentials: 'same-origin'
-    }).then((response: object) => {
-      // Good?
-      if (response.status >= 200 && response.status < 300) {
-        return response.json();
-        // @TODO handle Error
-      } else {
-        let error = new Error(response.statusText);
-        error.response = response;
-        error.error = response.statusText;
-        return error;
-      }
+    return fetch(url + '&method=' + method, apiHelper.requestParams('post', data)).then((response: object) => {
+      return apiHelper.responseCheck(response);
     }).then((json: object) => {
-      if(json && !json.error) {
-        // Call loaded action
-        // dispatch(widgetLoaded(widgetName, null));
+      const error = apiHelper.jsonCheck(json);
+      if(error) {
+        dispatch(widgetPostFailed(widgetName, json));
       }
       else {
-        dispatch(widgetPostFailed(widgetName, json));
+        // Call loaded action
+        // dispatch(widgetLoaded(widgetName, null));
       }
     }).catch(function (error) {
       dispatch(widgetPostFailed(widgetName, error));

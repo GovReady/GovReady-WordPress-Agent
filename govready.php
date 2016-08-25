@@ -57,6 +57,14 @@ class Govready {
   }*/ // end plugin_textdomain
 
   /**
+   * Validates nonced requests
+   */
+  public function validate_token() {
+    check_ajax_referer($this->key, 'govready_nonce');
+  }
+
+
+  /**
    * Make a request to the GovReady API.
    * @todo: error handling
    */
@@ -107,14 +115,11 @@ class Govready {
    * Refresh the access token.
    */
   public function api_refresh_token( $return = false ) {
+
+    $this->validate_token();
     
-    // @todo: nonce this call
     $options = get_option( 'govready_options' );
     if ( !empty( $_REQUEST['refresh_token'] ) ) {
-      // Validate the nonce
-      if (check_ajax_referer( $this->key, '_ajax_nonce' )) {
-        //return;
-      }
       $token = $_REQUEST['refresh_token'];
       $options['refresh_token'] = $token;
       update_option( 'govready_options', $options );
@@ -133,7 +138,6 @@ class Govready {
     else {
       wp_send_json($response);
     }
-
   }
 
 
@@ -142,11 +146,12 @@ class Govready {
    */
   public function api_proxy() {
 
+    $this->validate_token();
+
     $method = !empty($_REQUEST['method']) ? $_REQUEST['method'] : $_SERVER['REQUEST_METHOD'];
     $response = $this->api( $_REQUEST['endpoint'], $method, $_REQUEST );
     wp_send_json($response);
     wp_die();
-
   }
 
 

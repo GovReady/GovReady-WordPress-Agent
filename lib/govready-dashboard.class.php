@@ -112,7 +112,8 @@ class GovreadyDashboard extends Govready\Govready {
       // Save some JS variables (available at govready.siteId, etc)
       wp_enqueue_script( 'govready-connect', $path . 'govready-connect.js' );
       wp_localize_script( 'govready-connect', 'govready_connect', array( 
-        'nonce' => wp_create_nonce( $this->key ),
+        'govready_nonce' => wp_create_nonce( $this->key ),
+        'key' => $this->key,
         'auth0' => $this->auth0,
         'siteId' => $options['siteId']
       ) );
@@ -130,7 +131,8 @@ class GovreadyDashboard extends Govready\Govready {
       // Save some JS variables (available at govready.siteId, etc)
       wp_localize_script( 'govready-dashboard-app', 'govready', array( 
         'siteId' => !is_null($options['siteId']) ? $options['siteId'] : null, 
-        'nonce' => wp_create_nonce( $this->key ),
+        'key'=> $this->key,
+        'govready_nonce' => wp_create_nonce( $this->key ),
         'mode' => !empty($options['mode']) ? $options['mode'] : 'remote',
         'connectUrl' => $this->govready_url
       ) );

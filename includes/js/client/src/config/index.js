@@ -37,4 +37,8 @@ else {
 // Date format
 config.dateFormat = 'MMMM Do YYYY';
 
+export function updateNonce(nonce) {
+  config.govready_nonce = none;
+}
+
 export default config;

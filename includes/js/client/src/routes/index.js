@@ -6,6 +6,7 @@ import { Route, IndexRoute } from 'react-router';
 // they were from the root of the ~/src directory. This makes it
 // very easy to navigate to files regardless of how deeply nested
 // your current file is.
+import AccessDenied from 'components/AccessDenied'; 
 import EmptyPage from 'components/EmptyPage'; 
 import CoreLayout from 'layouts/CoreLayout/CoreLayout';
 import SiteState from 'views/SiteState';
@@ -42,7 +43,7 @@ export default (store) => {
         <Route path="/dashboard/:widget/:individual" component={WidgetPage}/>
         <Route path="/dashboard/:widget/:individual/:view" component={WidgetPage}/>
       </Route>
-
+      <Route path="/reload" component={AccessDenied} />
       { /* Catch all route */ }
       <Route path="*" component={EmptyPage} status={404} />
     </Route>

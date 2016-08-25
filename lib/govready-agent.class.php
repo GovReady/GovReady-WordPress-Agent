@@ -31,9 +31,11 @@ class GovreadyAgent extends Govready\Govready {
    */
   public function ping() {
     // print_r($_POST);
+    
+    $this->validate_token();
 
-    $options = get_option( 'govready_options' );
     // @todo: check that request is coming from plugin.govready.com, or is properly nonced (for manual refreshes)
+    $options = get_option( 'govready_options' );
     if ($_POST['siteId'] == $options['siteId']) {
       if ( !empty( $_POST['key'] ) ) { 
         $key = $_POST['key'];
