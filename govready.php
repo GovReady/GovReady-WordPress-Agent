@@ -31,8 +31,9 @@ class Govready {
       'client_id' => 'HbYZO5QXKfgNshjKlhZGizskiaJH9kGH'
     );
     $this->commercial = false; // Is this the commercial or open source version?
-    $this->govready_url = 'https://plugin.govready.com/v1.0';
-    //$this->govready_url = 'http://localhost:4000/v1.0'; // NOTE: Docker can't see this!
+    $this->govready_client_url = 'https://plugin.govready.com';
+    $this->govready_api_url = 'https://plugin.govready.com/v1.0';
+    //$this->govready_api_url = 'http://localhost:4000/v1.0'; // NOTE: Docker can't see this!
     //$this->api_debug = true;
 
     // Load plugin textdomain
@@ -70,7 +71,7 @@ class Govready {
    */
   public function api( $endpoint, $method = 'GET', $data = array(), $anonymous = false ) {
 
-    $url = $this->govready_url . $endpoint;
+    $url = $this->govready_api_url . $endpoint;
 
     // Make sure our token is a-ok
     $token = get_option( 'govready_token', array() );
@@ -99,9 +100,16 @@ class Govready {
     
     // Only for debugging
     if ( !empty($this->api_debug) && $this->api_debug ) {
-      print_r($url);
+      print_r($method .' '. $url);
       print_r($data);
       print_r($response);
+    }
+
+    // We need to save the siteId in the Drupal govready_options variable if this is a new site.
+    if ($method == 'POST' && $endpoint == '/sites') {
+      $options = get_option( 'govready_options' );
+      $options['siteId'] = $response['_id'];
+      update_option( 'govready_options', $options );
     }
 
     $response = json_decode( $response, true );

@@ -89,7 +89,8 @@ class GovreadyDashboard extends Govready\Govready {
    */
   public function dashboard_page() {
     $options = get_option( 'govready_options', array() );
-    $path = plugins_url('../includes/js/',__FILE__);
+    $path = plugins_url('../includes/js/', __FILE__);
+    $client_path = get_option('govready_client', 'remote') != 'local' ? $this->govready_client_url : $path . '/client/dist';
     $logo = plugins_url('/../images/logo.png', __FILE__);
 
     // Enqueue Bootstrap 
@@ -105,20 +106,18 @@ class GovreadyDashboard extends Govready\Govready {
           'application' => 'wordpress',
         );
         $response = $this->api( '/initialize', 'POST', $data, true );
-        $options['siteId'] = $response['_id'];
-        update_option( 'govready_options', $options );
       }
 
       // Save some JS variables (available at govready.siteId, etc)
-      wp_enqueue_script( 'govready-connect', $path . 'govready-connect.js' );
+      wp_enqueue_script( 'govready-connect', $path . '/govready-connect.js' );
       wp_localize_script( 'govready-connect', 'govready_connect', array( 
         'govready_nonce' => wp_create_nonce( $this->key ),
         'key' => $this->key,
         'auth0' => $this->auth0,
-        'siteId' => $options['siteId']
+        'siteId' => !empty($options['siteId']) ? $options['siteId'] : NULL
       ) );
 
-      require_once plugin_dir_path(__FILE__) . '../templates/govready-connect.php';
+      require_once plugin_dir_path(__FILE__) . '/../templates/govready-connect.php';
     
     }
 
@@ -126,17 +125,17 @@ class GovreadyDashboard extends Govready\Govready {
     else {
 
       // Enqueue react
-      wp_enqueue_script( 'govready-dashboard-app-vendor', $path . 'client/dist/vendor.dist.js' );
-      wp_enqueue_script( 'govready-dashboard-app', $path . 'client/dist/app.dist.js', array('govready-dashboard-app-vendor') );
+      wp_enqueue_script( 'govready-dashboard-app-vendor', $client_path . '/vendor.dist.js' );
+      wp_enqueue_script( 'govready-dashboard-app', $client_path . '/app.dist.js', array('govready-dashboard-app-vendor') );
       // Save some JS variables (available at govready.siteId, etc)
       wp_localize_script( 'govready-dashboard-app', 'govready', array( 
         'siteId' => !is_null($options['siteId']) ? $options['siteId'] : null, 
         'key'=> $this->key,
         'govready_nonce' => wp_create_nonce( $this->key ),
         'mode' => !empty($options['mode']) ? $options['mode'] : 'remote',
-        'connectUrl' => $this->govready_url
+        'connectUrl' => $this->govready_api_url
       ) );
-      wp_enqueue_style ( 'govready-dashboard-app', $path . 'client/dist/app.dist.css' );
+      wp_enqueue_style ( 'govready-dashboard-app', $client_path . '/app.dist.css' );
 
       require_once plugin_dir_path(__FILE__) . '../templates/govready-dashboard.php';
 
