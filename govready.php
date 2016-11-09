@@ -61,9 +61,26 @@ class Govready {
    * Validates nonced requests
    */
   public function validate_token() {
+    if (in_array($this->get_client_ip(), $this->govready_api_ips)) {
+      return TRUE;
+    }
     check_ajax_referer($this->key, 'govready_nonce');
   }
 
+  /**
+   * Helper function gets the client IP address
+   */
+  private function get_client_ip() {
+    foreach (array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR') as $key) {
+      if (array_key_exists($key, $_SERVER) === true) {
+        foreach (array_map('trim', explode(',', $_SERVER[$key])) as $ip) {
+          if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false) {
+            return $ip;
+          }
+        }
+      }
+    }
+  }
 
   /**
    * Make a request to the GovReady API.
