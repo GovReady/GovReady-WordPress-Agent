@@ -114,7 +114,7 @@ class GovreadyDashboard extends Govready\Govready {
         'govready_nonce' => wp_create_nonce( $this->key ),
         'key' => $this->key,
         'auth0' => $this->auth0,
-        'siteId' => !empty($options['siteId']) ? $options['siteId'] : NULL
+        'siteId' => !empty( $options['siteId'] ) ? $options['siteId'] : NULL
       ) );
 
       require_once plugin_dir_path(__FILE__) . '/../templates/govready-connect.php';
@@ -125,16 +125,19 @@ class GovreadyDashboard extends Govready\Govready {
     else {
 
       // Enqueue react
-      wp_enqueue_script( 'govready-dashboard-app-vendor', $client_path . '/vendor.dist.js' );
-      wp_enqueue_script( 'govready-dashboard-app', $client_path . '/app.dist.js', array('govready-dashboard-app-vendor') );
+      wp_register_script( 'govready-dashboard-app-vendor', $client_path . '/vendor.dist.js' );
+      wp_register_script( 'govready-dashboard-app', $client_path . '/app.dist.js', array('govready-dashboard-app-vendor') );
       // Save some JS variables (available at govready.siteId, etc)
-      wp_localize_script( 'govready-dashboard-app', 'govready', array( 
-        'siteId' => !is_null($options['siteId']) ? $options['siteId'] : null, 
+      wp_localize_script( 'govready-dashboard-app-vendor', 'govready', array( 
+        'siteId' => !empty( $options['siteId'] ) ? $options['siteId'] : null, 
         'key'=> $this->key,
         'govready_nonce' => wp_create_nonce( $this->key ),
-        'mode' => !empty($options['mode']) ? $options['mode'] : 'remote',
-        'connectUrl' => $this->govready_api_url
+        'mode' => !empty($options['mode']) ? $options['mode'] : 'preview',
+        'connectUrl' => $this->govready_api_url,
+        'application' => 'wordpress'
       ) );
+      wp_enqueue_script( 'govready-dashboard-app-vendor' );
+      wp_enqueue_script( 'govready-dashboard-app' );
       wp_enqueue_style ( 'govready-dashboard-app', $client_path . '/app.dist.css' );
 
       require_once plugin_dir_path(__FILE__) . '../templates/govready-dashboard.php';

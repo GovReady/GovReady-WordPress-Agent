@@ -105,15 +105,15 @@ class Govready {
       print_r($response);
     }
 
+    $response = json_decode( $response, true );
+
     // We need to save the siteId in the Drupal govready_options variable if this is a new site.
     if ($method == 'POST' && $endpoint == '/sites') {
       $options = get_option( 'govready_options' );
       $options['siteId'] = $response['_id'];
       update_option( 'govready_options', $options );
     }
-
-    $response = json_decode( $response, true );
-
+    
     return $response;
 
   }

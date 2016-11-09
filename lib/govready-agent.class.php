@@ -33,13 +33,16 @@ class GovreadyAgent extends Govready\Govready {
     // print_r($_POST);
     
     $this->validate_token();
-
-    // @todo: check that request is coming from plugin.govready.com, or is properly nonced (for manual refreshes)
     $options = get_option( 'govready_options' );
-    if ($_POST['siteId'] == $options['siteId']) {
+    if ( empty($options['siteId']) || $_POST['siteId'] == $options['siteId'] ) {
       if ( !empty( $_POST['key'] ) ) { 
         $key = $_POST['key'];
         $data = call_user_func( array( $this, $key ) );
+        $options = get_option( 'govready_options' );
+        if( empty( $options['siteId'] ) ) {
+          print_r('Invalid siteId');
+          return;
+        }
         if ( !empty( $data ) ) {
           //print_r($data);
           if( !empty( $_POST['endpoint'] ) ) {
@@ -136,6 +139,10 @@ class GovreadyAgent extends Govready\Govready {
     
     $options = get_option( 'govready_options', array() );
     $options['mode'] = $_POST['mode'];
+    // If we don't have siteId and do have it in post, save
+    if( empty( $options['siteId'] ) && !empty( $_POST['siteId'] ) ) {
+      $options['siteId'] = $_POST['siteId'];
+    } 
     update_option( 'govready_options', $options );
 
     return array( 'mode' => $options['mode'] );
