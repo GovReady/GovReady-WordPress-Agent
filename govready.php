@@ -33,6 +33,7 @@ class Govready {
     $this->commercial = false; // Is this the commercial or open source version?
     $this->govready_client_url = 'https://plugin.govready.com';
     $this->govready_api_url = 'https://plugin.govready.com/v1.0';
+    $this->govready_api_ips = array('104.131.125.39');
     //$this->govready_api_url = 'http://localhost:4000/v1.0'; // NOTE: Docker can't see this!
     //$this->api_debug = true;
 
