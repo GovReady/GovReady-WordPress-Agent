@@ -21,7 +21,7 @@ website, including:
 * Recent WordPress security news
 * Recent important Internet security news (such as the recent [HeartBleed bug](http://heartbleed.com/))
 
-![screenshot of GovReady WordPress dashboard](images/govready-wordpress-plugin-screen-may2016.png)
+![screenshot of GovReady WordPress dashboard](https://raw.githubusercontent.com/GovReady/GovReady-WordPress-Agent/master/images/screenshot.png)
 
 ## Requirements
 * cURL must be installed and appear in `php.ini`. [Tutorial to enable cURL in PHP]

@@ -28,7 +28,7 @@
       {
         //'action': 'govready_refresh_token',
         'refresh_token': refresh_token,
-        '_ajax_nonce': govready_connect.nonce
+        'govready_nonce': govready_connect.govready_nonce
       }, 
       function(response){
         if (response.id_token != undefined) {
