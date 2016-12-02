@@ -138,13 +138,21 @@ class GovreadyAgent extends Govready\Govready {
   private function changeMode() {
     
     $options = get_option( 'govready_options', array() );
-    $options['mode'] = $_POST['mode'];
-    // If we don't have siteId and do have it in post, save
-    if( empty( $options['siteId'] ) && !empty( $_POST['siteId'] ) ) {
-      $options['siteId'] = $_POST['siteId'];
-    } 
-    update_option( 'govready_options', $options );
+    // Should we update?
+    $update_mode = !empty($_POST['mode']) &&
+                 ( $_POST['mode'] === 'local'
+                || $_POST['mode'] === 'remote'
+                || $_POST['mode'] === 'preview' );
+    if($update_mode) {
+      $options['mode'] = $_POST['mode'];
+  
+      // If we don't have siteId and do have it in post, save
+      if(empty($options['siteId']) && !empty($_POST['siteId'])) {
+        $options['siteId'] = $_POST['siteId'];
+      }
 
+      update_option( 'govready_options', $options );
+    }
     return array( 'mode' => $options['mode'] );
 
   }
