@@ -84,11 +84,25 @@ class Govready {
   }
 
   /**
+   * Resets token completely
+   */
+  private function reset_token() {
+    $options = get_option( 'govready_options', array() );
+    $options['refresh_token'] = '';
+    update_option( 'govready_options', $options );
+    wp_send_json( array( 'reset' => true ) );
+    wp_die();
+  }
+
+  /**
    * Make a request to the GovReady API.
    * @todo: error handling
    */
   public function api( $endpoint, $method = 'GET', $data = array(), $anonymous = false ) {
-
+    // Resetting?
+    if( strpos( $endpoint, 'reset-token' ) ) {
+      return $this->reset_token();
+    }
     $url = $this->govready_api_url . $endpoint;
 
     // Make sure our token is a-ok
